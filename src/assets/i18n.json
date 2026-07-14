@@ -1,0 +1,14 @@
+{
+  "en-US": {
+    "home-title": "SilentWrite",
+    "home-subtitle": "Start from here",
+    "home-new-essay": "New Essay",
+    "home-open-library": "Open Library"
+  },
+  "zh-CN": {
+    "home-title": "SilentWrite",
+    "home-subtitle": "从这里开始",
+    "home-new-essay": "新建随笔",
+    "home-open-library": "查看文章"
+  }
+}
