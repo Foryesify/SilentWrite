@@ -1,14 +1,23 @@
 {
   "en-US": {
-    "home-title": "SilentWrite",
-    "home-subtitle": "Start from here",
+    "home-title": "The Silent Writing Tool",
+    "home-subtitle": "Creating pure, focused writing experience for everyone",
     "home-new-essay": "New Essay",
-    "home-open-library": "Open Library"
+    "home-open-library": "Open Library",
+    "notfound-title": "Nothing Here",
+    "notfound-subtitle": "You were directed into an empty page",
+    "notfound-back": "Start Page",
+    "about-title": "关于SilentWrite",
+    "about-p1": "",
+    "about-p2": ""
   },
   "zh-CN": {
-    "home-title": "SilentWrite",
-    "home-subtitle": "从这里开始",
+    "home-title": "安静的写作工具",
+    "home-subtitle": "为每一位写作者创造纯净、专注的写作体验",
     "home-new-essay": "新建随笔",
-    "home-open-library": "查看文章"
+    "home-open-library": "我的文章",
+    "notfound-title": "页面未找到",
+    "notfound-subtitle": "当前地址指向一个空页面",
+    "notfound-back": "起始页"
   }
 }

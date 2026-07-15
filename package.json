@@ -15,12 +15,25 @@
     "@codemirror/search": "^6.7.1",
     "@codemirror/state": "^6.7.1",
     "@codemirror/view": "^6.43.6",
-    "vue": "^3.5.38"
+    "vue": "^3.5.38",
+    "vue-router": "^5.1.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.7",
+    "prettier": "^3.9.5",
     "vite": "^8.0.16",
     "vite-plugin-vue-devtools": "^8.1.2"
+  },
+  "prettier": {
+    "singleQuote": true,
+    "semi": false,
+    "trailingComma": "all",
+    "printWidth": 80,
+    "tabWidth": 2,
+    "useTabs": false,
+    "arrowParens": "always",
+    "bracketSpacing": true,
+    "endOfLine": "lf"
   },
   "engines": {
     "node": "^22.18.0 || >=24.12.0"
