@@ -1,13 +1,23 @@
 <template>
-  <Titlebar />
-  <div class="view">
-    <RouterView />
+  <div class="app">
+    <Titlebar />
+    <div class="view">
+      <RouterView />
+    </div>
   </div>
 </template>
 
 <style scoped>
+.app {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
 .view {
   display: flex;
+  flex: 1;
+  overflow: hidden;
 }
 
 .view > * {

@@ -62,8 +62,7 @@ body {
   background: var(--color-background);
   transition:
     color 0.5s,
-    background-color 0.5s
-    width 0.3s;
+    background-color 0.5s;
   line-height: 1.6;
   font-family:
     Inter,
@@ -85,4 +84,68 @@ body {
 #app {
   flex: 1;
   display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+}
+
+/* Hide native scrollbars; overlay thumbs are drawn by JS. */
+* {
+  scrollbar-width: none;
+}
+
+*::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+.mac-scrollbar {
+  position: fixed;
+  z-index: 9999;
+  width: 12px;
+  padding: 3px 2px;
+  box-sizing: border-box;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+.mac-scrollbar.is-active {
+  pointer-events: auto;
+}
+
+.mac-scrollbar.is-visible,
+.mac-scrollbar.is-dragging {
+  opacity: 1;
+}
+
+.mac-scrollbar-thumb {
+  width: 100%;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.35);
+  box-shadow: 0 0 0 0.5px rgba(255, 255, 255, 0.12);
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
+  cursor: default;
+  transition:
+    background 0.15s ease,
+    width 0.15s ease;
+}
+
+.mac-scrollbar-thumb:hover,
+.mac-scrollbar.is-dragging .mac-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+@media (prefers-color-scheme: dark) {
+  .mac-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.35);
+    box-shadow: 0 0 0 0.5px rgba(0, 0, 0, 0.2);
+  }
+
+  .mac-scrollbar-thumb:hover,
+  .mac-scrollbar.is-dragging .mac-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.5);
+  }
 }

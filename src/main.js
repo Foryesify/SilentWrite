@@ -12,12 +12,12 @@ import About from './views/About.vue'
 const router = createRouter({
   history: createWebHashHistory(),
   routes: [
-    { name: "Home", path: '/', component: Home },
-    { name: "Editor", path: '/editor', component: Editor },
-    { name: "Settings", path: '/settings', component: Settings },
-    { name: "Library", path: '/library', component: Library },
-    { name: "About", path: '/about', component: About },
-    { name: "NotFound", path: '/:pathMatch(.*)*', component: NotFound },
+    { name: 'Home', path: '/', component: Home },
+    { name: 'Editor', path: '/editor', component: Editor },
+    { name: 'Settings', path: '/settings', component: Settings },
+    { name: 'Library', path: '/library', component: Library },
+    { name: 'About', path: '/about', component: About },
+    { name: 'NotFound', path: '/:pathMatch(.*)*', component: NotFound },
   ],
 })
 
