@@ -33,7 +33,8 @@
     "useTabs": false,
     "arrowParens": "always",
     "bracketSpacing": true,
-    "endOfLine": "lf"
+    "endOfLine": "lf",
+    "singleAttributePerLine": false
   },
   "engines": {
     "node": "^22.18.0 || >=24.12.0"
