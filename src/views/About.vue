@@ -26,7 +26,11 @@
         <li class="about-li8">{{ aboutLi8 }}</li>
         <li class="about-li9">{{ aboutLi9 }}</li>
       </ul>
-  <button @click="lang = lang == 'en-US' ? 'zh-CN' : 'en-US'">change</button>
+      <button
+        @click="settings.lang = settings.lang == 'en-US' ? 'zh-CN' : 'en-US'"
+      >
+        change
+      </button>
     </div>
     <div class="about-items"></div>
   </div>
@@ -105,30 +109,30 @@
 
 <script setup>
 import i18n from '@/assets/i18n.json'
-import { lang } from '@/components/state'
+import { settings } from '@/components/state'
 import { computed } from 'vue'
 
-const aboutH1 = computed(() => i18n[lang.value]['about-h1'])
-const aboutP1 = computed(() => i18n[lang.value]['about-p1'])
-const aboutP2 = computed(() => i18n[lang.value]['about-p2'])
-const aboutP3 = computed(() => i18n[lang.value]['about-p3'])
-const aboutP4 = computed(() => i18n[lang.value]['about-p4'])
-const aboutP5 = computed(() => i18n[lang.value]['about-p5'])
-const aboutP6 = computed(() => i18n[lang.value]['about-p6'])
-const aboutP7 = computed(() => i18n[lang.value]['about-p7'])
-const aboutP8 = computed(() => i18n[lang.value]['about-p8'])
-const aboutP9 = computed(() => i18n[lang.value]['about-p9'])
-const aboutP10 = computed(() => i18n[lang.value]['about-p10'])
-const aboutP11 = computed(() => i18n[lang.value]['about-p11'])
-const aboutH2 = computed(() => i18n[lang.value]['about-h2'])
-const aboutP12 = computed(() => i18n[lang.value]['about-p12'])
-const aboutLi1 = computed(() => i18n[lang.value]['about-li1'])
-const aboutLi2 = computed(() => i18n[lang.value]['about-li2'])
-const aboutLi3 = computed(() => i18n[lang.value]['about-li3'])
-const aboutLi4 = computed(() => i18n[lang.value]['about-li4'])
-const aboutLi5 = computed(() => i18n[lang.value]['about-li5'])
-const aboutLi6 = computed(() => i18n[lang.value]['about-li6'])
-const aboutLi7 = computed(() => i18n[lang.value]['about-li7'])
-const aboutLi8 = computed(() => i18n[lang.value]['about-li8'])
-const aboutLi9 = computed(() => i18n[lang.value]['about-li9'])
+const aboutH1 = computed(() => i18n[settings.lang]['about-h1'])
+const aboutP1 = computed(() => i18n[settings.lang]['about-p1'])
+const aboutP2 = computed(() => i18n[settings.lang]['about-p2'])
+const aboutP3 = computed(() => i18n[settings.lang]['about-p3'])
+const aboutP4 = computed(() => i18n[settings.lang]['about-p4'])
+const aboutP5 = computed(() => i18n[settings.lang]['about-p5'])
+const aboutP6 = computed(() => i18n[settings.lang]['about-p6'])
+const aboutP7 = computed(() => i18n[settings.lang]['about-p7'])
+const aboutP8 = computed(() => i18n[settings.lang]['about-p8'])
+const aboutP9 = computed(() => i18n[settings.lang]['about-p9'])
+const aboutP10 = computed(() => i18n[settings.lang]['about-p10'])
+const aboutP11 = computed(() => i18n[settings.lang]['about-p11'])
+const aboutH2 = computed(() => i18n[settings.lang]['about-h2'])
+const aboutP12 = computed(() => i18n[settings.lang]['about-p12'])
+const aboutLi1 = computed(() => i18n[settings.lang]['about-li1'])
+const aboutLi2 = computed(() => i18n[settings.lang]['about-li2'])
+const aboutLi3 = computed(() => i18n[settings.lang]['about-li3'])
+const aboutLi4 = computed(() => i18n[settings.lang]['about-li4'])
+const aboutLi5 = computed(() => i18n[settings.lang]['about-li5'])
+const aboutLi6 = computed(() => i18n[settings.lang]['about-li6'])
+const aboutLi7 = computed(() => i18n[settings.lang]['about-li7'])
+const aboutLi8 = computed(() => i18n[settings.lang]['about-li8'])
+const aboutLi9 = computed(() => i18n[settings.lang]['about-li9'])
 </script>

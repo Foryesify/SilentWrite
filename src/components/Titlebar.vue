@@ -1,7 +1,7 @@
 <template>
   <div class="titlebar" :class="{ shadow: scrolled }">
     <div class="titlebar-left">
-      <div class="titlebar-title">SilentWrite</div>
+      <div class="titlebar-title" @click="router.push('/')">SilentWrite</div>
       <div class="titlebar-menu">
         <span v-for="item in titlebarMenuItems">
           {{ item.name }}
@@ -37,7 +37,9 @@
   position: sticky;
   top: 0;
   z-index: 100;
-  transition: box-shadow 0.2s;
+  transition:
+    box-shadow 0.2s,
+    opacity 0.3s;
 }
 
 .titlebar-left {
@@ -52,6 +54,12 @@
 .titlebar-title {
   font-size: 16px;
   font-weight: 500;
+  transition: all 0.3s;
+}
+
+.titlebar-title:hover {
+  color: var(--color-white);
+  cursor: pointer;
 }
 
 .titlebar-menu {
@@ -64,7 +72,9 @@
   padding: 5px 8px;
   line-height: 32px;
   border-radius: 4px;
-  transition: background 0.2s, color 0.2s;
+  transition:
+    background 0.2s,
+    color 0.2s;
 }
 
 .titlebar-menu > span:hover {
@@ -84,14 +94,16 @@
   width: 48px;
   height: 32px;
   cursor: pointer;
-  transition: background 0.2s, color 0.2s;
+  transition:
+    background 0.2s,
+    color 0.2s;
 }
 
 .titlebar-right > div:hover {
   background: var(--color-hover);
 }
 
-.titlebar-right >div:last-child:hover {
+.titlebar-right > div:last-child:hover {
   background: #b22;
   color: #fff;
 }
@@ -108,117 +120,146 @@
 
 <script setup>
 import i18n from '@/assets/i18n.json'
-import { lang } from './state'
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { settings } from './state'
+
+const router = useRouter()
+const route = useRoute()
+
 function minimize() {}
 function toggle() {}
 function close() {}
 
 const titlebarMenuItems = [
   {
-    name: computed(() => i18n[lang.value]['titlebarFile']),
+    name: computed(() => i18n[settings.lang]['titlebarFile']),
     children: [
       {
-        name: computed(() => i18n[lang.value]['titlebarFile1']),
+        name: computed(() => i18n[settings.lang]['titlebarFile1']),
         action: () => {},
       },
       {
-        name: computed(() => i18n[lang.value]['titlebarFile2']),
+        name: computed(() => i18n[settings.lang]['titlebarFile2']),
         action: () => {},
       },
       {
-        name: computed(() => i18n[lang.value]['titlebarFile3']),
+        name: computed(() => i18n[settings.lang]['titlebarFile3']),
         action: () => {},
       },
     ],
   },
   {
-    name: computed(() => i18n[lang.value]['titlebarEdit']),
+    name: computed(() => i18n[settings.lang]['titlebarEdit']),
     children: [
       {
-        name: computed(() => i18n[lang.value]['titlebarEdit1']),
+        name: computed(() => i18n[settings.lang]['titlebarEdit1']),
         action: () => {},
       },
       {
-        name: computed(() => i18n[lang.value]['titlebarEdit2']),
+        name: computed(() => i18n[settings.lang]['titlebarEdit2']),
         action: () => {},
       },
       {
-        name: computed(() => i18n[lang.value]['titlebarEdit3']),
+        name: computed(() => i18n[settings.lang]['titlebarEdit3']),
         action: () => {},
       },
       {
-        name: computed(() => i18n[lang.value]['titlebarEdit4']),
+        name: computed(() => i18n[settings.lang]['titlebarEdit4']),
         action: () => {},
       },
       {
-        name: computed(() => i18n[lang.value]['titlebarEdit5']),
+        name: computed(() => i18n[settings.lang]['titlebarEdit5']),
         action: () => {},
       },
     ],
   },
   {
-    name: computed(() => i18n[lang.value]['titlebarView']),
+    name: computed(() => i18n[settings.lang]['titlebarView']),
     children: [
       {
-        name: computed(() => i18n[lang.value]['titlebarView1']),
+        name: computed(() => i18n[settings.lang]['titlebarView1']),
         action: () => {},
       },
       {
-        name: computed(() => i18n[lang.value]['titlebarView2']),
+        name: computed(() => i18n[settings.lang]['titlebarView2']),
         action: () => {},
       },
     ],
   },
   {
-    name: computed(() => i18n[lang.value]['titlebarSettings']),
+    name: computed(() => i18n[settings.lang]['titlebarSettings']),
     children: [
       {
-        name: computed(() => i18n[lang.value]['titlebarSettings1']),
+        name: computed(() => i18n[settings.lang]['titlebarSettings1']),
         action: () => {},
       },
       {
-        name: computed(() => i18n[lang.value]['titlebarSettings2']),
+        name: computed(() => i18n[settings.lang]['titlebarSettings2']),
         action: () => {},
       },
     ],
   },
   {
-    name: computed(() => i18n[lang.value]['titlebarHelp']),
+    name: computed(() => i18n[settings.lang]['titlebarHelp']),
     children: [
       {
-        name: computed(() => i18n[lang.value]['titlebarHelp1']),
+        name: computed(() => i18n[settings.lang]['titlebarHelp1']),
         action: () => {},
       },
       {
-        name: computed(() => i18n[lang.value]['titlebarHelp2']),
+        name: computed(() => i18n[settings.lang]['titlebarHelp2']),
         action: () => {},
       },
       {
-        name: computed(() => i18n[lang.value]['titlebarHelp3']),
+        name: computed(() => i18n[settings.lang]['titlebarHelp3']),
         action: () => {},
       },
       {
-        name: computed(() => i18n[lang.value]['titlebarHelp4']),
+        name: computed(() => i18n[settings.lang]['titlebarHelp4']),
         action: () => {},
       },
       {
-        name: computed(() => i18n[lang.value]['titlebarHelp5']),
+        name: computed(() => i18n[settings.lang]['titlebarHelp5']),
         action: () => {},
       },
       {
-        name: computed(() => i18n[lang.value]['titlebarHelp6']),
+        name: computed(() => i18n[settings.lang]['titlebarHelp6']),
         action: () => {},
       },
     ],
   },
 ]
 
-const scrolled = ref(false);
-
+// Auto-Hide
+const scrolled = ref(false)
 onMounted(() => {
+  let hover = false
   window.addEventListener('scroll', () => {
     scrolled.value = window.scrollY > 0
   })
+  const element = document.querySelector('.titlebar')
+  element.addEventListener('mouseenter', (e) => {
+    if (settings.titlebarAutoHideDisabled) return;
+    if (route.fullPath != '/') {
+      e.target.style.opacity = '1'
+    }
+    hover = true
+  })
+  element.addEventListener('mouseleave', (e) => {
+    if (settings.titlebarAutoHideDisabled) return;
+    hover = false
+    setTimeout(() => {
+      if (!hover && route.fullPath != '/') {
+        e.target.style.opacity = '0'
+      }
+    }, 700)
+  })
+  watch(
+    () => route.fullPath + settings.titlebarAutoHideDisabled,
+    () => {
+      element.style.opacity = '1'
+    },
+  )
 })
 </script>

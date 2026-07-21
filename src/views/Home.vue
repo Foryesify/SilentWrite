@@ -11,11 +11,11 @@
 
 <script setup>
 import i18n from '@/assets/i18n.json'
-import { lang } from '@/components/state'
+import { settings } from '@/components/state'
 import { computed } from 'vue'
 
-const homeTitle = computed(() => i18n[lang.value]['home-title'])
-const homeSubtitle = computed(() => i18n[lang.value]['home-subtitle'])
-const homeNewEssay = computed(() => i18n[lang.value]['home-new-essay'])
-const homeOpenLibrary = computed(() => i18n[lang.value]['home-open-library'])
+const homeTitle = computed(() => i18n[settings.lang]['home-title'])
+const homeSubtitle = computed(() => i18n[settings.lang]['home-subtitle'])
+const homeNewEssay = computed(() => i18n[settings.lang]['home-new-essay'])
+const homeOpenLibrary = computed(() => i18n[settings.lang]['home-open-library'])
 </script>
