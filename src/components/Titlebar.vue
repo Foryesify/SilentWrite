@@ -4,7 +4,7 @@
       <div class="titlebar-title" @click="router.push('/')">SilentWrite</div>
       <div class="titlebar-menu">
         <span v-for="item in titlebarMenuItems">
-          {{ item.name }}
+          {{ text[item.name] }}
         </span>
       </div>
     </div>
@@ -119,10 +119,9 @@
 </style>
 
 <script setup>
-import i18n from '@/assets/i18n.json'
-import { computed, onMounted, ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { settings } from './state'
+import { settings, text } from './state'
 
 const router = useRouter()
 const route = useRoute()
@@ -133,100 +132,46 @@ function close() {}
 
 const titlebarMenuItems = [
   {
-    name: computed(() => i18n[settings.lang]['titlebarFile']),
+    name: 'titlebar-file',
     children: [
-      {
-        name: computed(() => i18n[settings.lang]['titlebarFile1']),
-        action: () => {},
-      },
-      {
-        name: computed(() => i18n[settings.lang]['titlebarFile2']),
-        action: () => {},
-      },
-      {
-        name: computed(() => i18n[settings.lang]['titlebarFile3']),
-        action: () => {},
-      },
+      { name: 'titlebar-file1', action: () => {} },
+      { name: 'titlebar-file2', action: () => {} },
+      { name: 'titlebar-file3', action: () => {} },
     ],
   },
   {
-    name: computed(() => i18n[settings.lang]['titlebarEdit']),
+    name: 'titlebar-edit',
     children: [
-      {
-        name: computed(() => i18n[settings.lang]['titlebarEdit1']),
-        action: () => {},
-      },
-      {
-        name: computed(() => i18n[settings.lang]['titlebarEdit2']),
-        action: () => {},
-      },
-      {
-        name: computed(() => i18n[settings.lang]['titlebarEdit3']),
-        action: () => {},
-      },
-      {
-        name: computed(() => i18n[settings.lang]['titlebarEdit4']),
-        action: () => {},
-      },
-      {
-        name: computed(() => i18n[settings.lang]['titlebarEdit5']),
-        action: () => {},
-      },
+      { name: 'titlebar-edit1', action: () => {} },
+      { name: 'titlebar-edit2', action: () => {} },
+      { name: 'titlebar-edit3', action: () => {} },
+      { name: 'titlebar-edit4', action: () => {} },
+      { name: 'titlebar-edit5', action: () => {} },
     ],
   },
   {
-    name: computed(() => i18n[settings.lang]['titlebarView']),
+    name: 'titlebar-view',
     children: [
-      {
-        name: computed(() => i18n[settings.lang]['titlebarView1']),
-        action: () => {},
-      },
-      {
-        name: computed(() => i18n[settings.lang]['titlebarView2']),
-        action: () => {},
-      },
+      { name: 'titlebar-view1', action: () => {} },
+      { name: 'titlebar-view2', action: () => {} },
     ],
   },
   {
-    name: computed(() => i18n[settings.lang]['titlebarSettings']),
+    name: 'titlebar-settings',
     children: [
-      {
-        name: computed(() => i18n[settings.lang]['titlebarSettings1']),
-        action: () => {},
-      },
-      {
-        name: computed(() => i18n[settings.lang]['titlebarSettings2']),
-        action: () => {},
-      },
+      { name: 'titlebar-settings1', action: () => {} },
+      { name: 'titlebar-settings2', action: () => {} },
     ],
   },
   {
-    name: computed(() => i18n[settings.lang]['titlebarHelp']),
+    name: 'titlebar-help',
     children: [
-      {
-        name: computed(() => i18n[settings.lang]['titlebarHelp1']),
-        action: () => {},
-      },
-      {
-        name: computed(() => i18n[settings.lang]['titlebarHelp2']),
-        action: () => {},
-      },
-      {
-        name: computed(() => i18n[settings.lang]['titlebarHelp3']),
-        action: () => {},
-      },
-      {
-        name: computed(() => i18n[settings.lang]['titlebarHelp4']),
-        action: () => {},
-      },
-      {
-        name: computed(() => i18n[settings.lang]['titlebarHelp5']),
-        action: () => {},
-      },
-      {
-        name: computed(() => i18n[settings.lang]['titlebarHelp6']),
-        action: () => {},
-      },
+      { name: 'titlebar-help1', action: () => {} },
+      { name: 'titlebar-help2', action: () => {} },
+      { name: 'titlebar-help3', action: () => {} },
+      { name: 'titlebar-help4', action: () => {} },
+      { name: 'titlebar-help5', action: () => {} },
+      { name: 'titlebar-help6', action: () => {} },
     ],
   },
 ]
@@ -240,14 +185,14 @@ onMounted(() => {
   })
   const element = document.querySelector('.titlebar')
   element.addEventListener('mouseenter', (e) => {
-    if (settings.titlebarAutoHideDisabled) return;
+    if (settings.titlebarAutohideDisabled) return;
     if (route.fullPath != '/') {
       e.target.style.opacity = '1'
     }
     hover = true
   })
   element.addEventListener('mouseleave', (e) => {
-    if (settings.titlebarAutoHideDisabled) return;
+    if (settings.titlebarAutohideDisabled) return;
     hover = false
     setTimeout(() => {
       if (!hover && route.fullPath != '/') {
@@ -256,7 +201,7 @@ onMounted(() => {
     }, 700)
   })
   watch(
-    () => route.fullPath + settings.titlebarAutoHideDisabled,
+    () => route.fullPath + settings.titlebarAutohideDisabled,
     () => {
       element.style.opacity = '1'
     },

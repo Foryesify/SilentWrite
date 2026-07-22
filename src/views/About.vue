@@ -1,30 +1,30 @@
 <template>
   <div class="about">
     <div class="about-passage">
-      <h1 class="about-title">{{ aboutH1 }}</h1>
-      <p class="about-p1">{{ aboutP1 }}</p>
-      <p class="about-p2">{{ aboutP2 }}</p>
-      <p class="about-p3">{{ aboutP3 }}</p>
-      <p class="about-p4">{{ aboutP4 }}</p>
-      <p class="about-p5">{{ aboutP5 }}</p>
-      <p class="about-p6">{{ aboutP6 }}</p>
-      <p class="about-p7">{{ aboutP7 }}</p>
-      <p class="about-p8">{{ aboutP8 }}</p>
-      <p class="about-p9">{{ aboutP9 }}</p>
-      <p class="about-p10">{{ aboutP10 }}</p>
-      <p class="about-p11">{{ aboutP11 }}</p>
-      <h2 class="about-h2">{{ aboutH2 }}</h2>
-      <p class="about-p12">{{ aboutP12 }}</p>
+      <h1 class="about-title">{{ text['about-h1'] }}</h1>
+      <p class="about-p1">{{ text['about-p1'] }}</p>
+      <p class="about-p2">{{ text['about-p2'] }}</p>
+      <p class="about-p3">{{ text['about-p3'] }}</p>
+      <p class="about-p4">{{ text['about-p4'] }}</p>
+      <p class="about-p5">{{ text['about-p5'] }}</p>
+      <p class="about-p6">{{ text['about-p6'] }}</p>
+      <p class="about-p7">{{ text['about-p7'] }}</p>
+      <p class="about-p8">{{ text['about-p8'] }}</p>
+      <p class="about-p9">{{ text['about-p9'] }}</p>
+      <p class="about-p10">{{ text['about-p10'] }}</p>
+      <p class="about-p11">{{ text['about-p11'] }}</p>
+      <h2 class="about-h2">{{ text['about-h2'] }}</h2>
+      <p class="about-p12">{{ text['about-p12'] }}</p>
       <ul class="about-list">
-        <li class="about-li1">{{ aboutLi1 }}</li>
-        <li class="about-li2">{{ aboutLi2 }}</li>
-        <li class="about-li3">{{ aboutLi3 }}</li>
-        <li class="about-li4">{{ aboutLi4 }}</li>
-        <li class="about-li5">{{ aboutLi5 }}</li>
-        <li class="about-li6">{{ aboutLi6 }}</li>
-        <li class="about-li7">{{ aboutLi7 }}</li>
-        <li class="about-li8">{{ aboutLi8 }}</li>
-        <li class="about-li9">{{ aboutLi9 }}</li>
+        <li class="about-li1">{{ text['about-li1'] }}</li>
+        <li class="about-li2">{{ text['about-li2'] }}</li>
+        <li class="about-li3">{{ text['about-li3'] }}</li>
+        <li class="about-li4">{{ text['about-li4'] }}</li>
+        <li class="about-li5">{{ text['about-li5'] }}</li>
+        <li class="about-li6">{{ text['about-li6'] }}</li>
+        <li class="about-li7">{{ text['about-li7'] }}</li>
+        <li class="about-li8">{{ text['about-li8'] }}</li>
+        <li class="about-li9">{{ text['about-li9'] }}</li>
       </ul>
       <button
         @click="settings.lang = settings.lang == 'en-US' ? 'zh-CN' : 'en-US'"
@@ -108,31 +108,5 @@
 </style>
 
 <script setup>
-import i18n from '@/assets/i18n.json'
-import { settings } from '@/components/state'
-import { computed } from 'vue'
-
-const aboutH1 = computed(() => i18n[settings.lang]['about-h1'])
-const aboutP1 = computed(() => i18n[settings.lang]['about-p1'])
-const aboutP2 = computed(() => i18n[settings.lang]['about-p2'])
-const aboutP3 = computed(() => i18n[settings.lang]['about-p3'])
-const aboutP4 = computed(() => i18n[settings.lang]['about-p4'])
-const aboutP5 = computed(() => i18n[settings.lang]['about-p5'])
-const aboutP6 = computed(() => i18n[settings.lang]['about-p6'])
-const aboutP7 = computed(() => i18n[settings.lang]['about-p7'])
-const aboutP8 = computed(() => i18n[settings.lang]['about-p8'])
-const aboutP9 = computed(() => i18n[settings.lang]['about-p9'])
-const aboutP10 = computed(() => i18n[settings.lang]['about-p10'])
-const aboutP11 = computed(() => i18n[settings.lang]['about-p11'])
-const aboutH2 = computed(() => i18n[settings.lang]['about-h2'])
-const aboutP12 = computed(() => i18n[settings.lang]['about-p12'])
-const aboutLi1 = computed(() => i18n[settings.lang]['about-li1'])
-const aboutLi2 = computed(() => i18n[settings.lang]['about-li2'])
-const aboutLi3 = computed(() => i18n[settings.lang]['about-li3'])
-const aboutLi4 = computed(() => i18n[settings.lang]['about-li4'])
-const aboutLi5 = computed(() => i18n[settings.lang]['about-li5'])
-const aboutLi6 = computed(() => i18n[settings.lang]['about-li6'])
-const aboutLi7 = computed(() => i18n[settings.lang]['about-li7'])
-const aboutLi8 = computed(() => i18n[settings.lang]['about-li8'])
-const aboutLi9 = computed(() => i18n[settings.lang]['about-li9'])
+import { settings, text } from '@/components/state'
 </script>

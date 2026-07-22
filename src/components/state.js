@@ -1,6 +1,9 @@
-import { reactive, ref } from 'vue'
+import { computed, reactive } from 'vue'
+import i18n from '@/assets/i18n.json'
 
 export const settings = reactive({
   titlebarAutoHideDisabled: false,
-  lang: 'zh-CN'
+  lang: 'zh-CN',
 })
+
+export const text = computed(() => i18n[settings.lang])
