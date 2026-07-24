@@ -4,18 +4,40 @@
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.editor {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  min-width: 0;
+}
+
+.codemirror-root {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+}
+
+.codemirror-root :deep(.cm-editor) {
+  height: 100%;
+  width: 100%;
+}
+</style>
 
 <script setup>
 import { onMounted, onBeforeUnmount, ref, watch } from 'vue'
 import { EditorState } from '@codemirror/state'
-import { EditorView,placeholder, keymap } from '@codemirror/view'
+import { EditorView, placeholder, keymap } from '@codemirror/view'
 import { defaultKeymap, history, historyKeymap } from '@codemirror/commands'
 import { indentWithTab } from '@codemirror/commands'
-import { markdown } from '@codemirror/lang-markdown'
 import { yamlFrontmatter } from '@codemirror/lang-yaml'
 import { searchKeymap } from '@codemirror/search'
 import { text } from '@/components/state'
+import { markdownTheme } from '@/editor/markdownTheme'
+import { markdownLang } from '@/editor/markdownConfig'
 
 const props = defineProps({
   modelValue: {
@@ -44,7 +66,10 @@ onMounted(() => {
           ...historyKeymap,
           ...searchKeymap,
         ]),
-        yamlFrontmatter({ content: markdown() }),
+        yamlFrontmatter({ content: markdownLang }),
+        ...markdownTheme,
+
+        // 更新输入追踪到Vue emits
         EditorView.updateListener.of((update) => {
           if (update.docChanged) {
             emit('update:modelValue', update.state.doc.toString())
