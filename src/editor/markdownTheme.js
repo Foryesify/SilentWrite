@@ -52,17 +52,26 @@ const editorChrome = EditorView.theme({
     backgroundColor: 'transparent',
   },
 
-  // Cursor — smooth move + blink handled by drawSelection layer
+  // Cursor — drawSelection reuses DOM nodes so left/top transitions animate moves
   '.cm-cursor, .cm-dropCursor': {
     borderLeftColor: 'var(--cm-caret)',
     borderLeftWidth: '2px',
     marginLeft: '-1px',
     transition:
-      'left var(--cm-cursor-move) var(--cm-ease), top var(--cm-cursor-move) var(--cm-ease)',
+      'left var(--cm-cursor-move) var(--cm-ease), top var(--cm-cursor-move) var(--cm-ease), height var(--cm-cursor-move) var(--cm-ease)',
+    willChange: 'left, top',
   },
-  '.cm-cursorLayer': {
-    animationDuration: 'var(--cm-cursor-blink)',
-    animationTimingFunction: 'steps(1)',
+  // Smooth fade blink (override CM's steps(1) hard blink)
+  '&.cm-focused > .cm-scroller > .cm-cursorLayer': {
+    animation: 'cm-blink var(--cm-cursor-blink) ease-in-out infinite',
+  },
+  '@keyframes cm-blink': {
+    '0%, 100%': { opacity: 1 },
+    '50%': { opacity: 0 },
+  },
+  '@keyframes cm-blink2': {
+    '0%, 100%': { opacity: 1 },
+    '50%': { opacity: 0 },
   },
 
   // Selection — animate box geometry when the layer reuses elements
@@ -226,7 +235,7 @@ const markdownHighlightStyle = HighlightStyle.define([
 ])
 
 export const markdownTheme = [
-  drawSelection({ cursorBlinkRate: 1100 }),
+  drawSelection({ cursorBlinkRate: 1050 }),
   highlightActiveLine(),
   editorChrome,
   syntaxHighlighting(markdownHighlightStyle),

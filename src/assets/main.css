@@ -56,9 +56,9 @@
   --cm-placeholder: rgba(28, 28, 28, 0.32);
   /* Room for "###### " at editor font-size (hashes don't scale with heading) */
   --cm-hash-gutter: 5.5rem;
-  --cm-cursor-move: 90ms;
+  --cm-cursor-move: 120ms;
   --cm-selection-move: 100ms;
-  --cm-cursor-blink: 1.1s;
+  --cm-cursor-blink: 1.05s;
   --cm-focus-fade: 180ms;
   --cm-hang-duration: 280ms;
   --cm-line-dim: 0.38;

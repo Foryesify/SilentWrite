@@ -1,5 +1,5 @@
 import { Decoration, EditorView, ViewPlugin } from '@codemirror/view'
-import { Prec, StateEffect } from '@codemirror/state'
+import { EditorSelection, StateEffect } from '@codemirror/state'
 import { syntaxTree } from '@codemirror/language'
 
 const ATX_HEADING_RE = /^ATXHeading([1-6])$/
@@ -162,48 +162,79 @@ const headingPlugin = ViewPlugin.fromClass(
   { decorations: (v) => v.decorations },
 )
 
-/** Map clicks on hung hashes to the correct source positions (still selectable). */
-const hashClick = Prec.highest(
-  EditorView.domEventHandlers({
-    mousedown(event, view) {
-      const target = event.target
-      if (!(target instanceof Element)) return false
-      const hashEl = target.closest('.cm-heading-hash')
-      if (!hashEl) return false
+/**
+ * Absolute-positioned `#` marks sit outside CM's normal hit-testing.
+ * Hook mouse selection so clicks/drags starting on them map to real doc
+ * positions and still participate in the native drag-select gesture.
+ */
+function resolveHashMark(view, hashEl, clientY) {
+  const probeX = hashEl.getBoundingClientRect().right + 2
+  const linePos = view.posAtCoords({ x: probeX, y: clientY })
+  if (linePos == null) return null
+  const lineFrom = view.state.doc.lineAt(linePos).from
+  const heading = headingAtLine(view.state, lineFrom)
+  if (!heading) return null
+  return findHeaderMark(heading.node)
+}
 
-      const probeX = hashEl.getBoundingClientRect().right + 2
-      const linePos = view.posAtCoords({ x: probeX, y: event.clientY })
-      if (linePos === null) return false
+function posInHashEl(event, hashEl, mark) {
+  const rect = hashEl.getBoundingClientRect()
+  const t =
+    rect.width > 0
+      ? Math.min(1, Math.max(0, (event.clientX - rect.left) / rect.width))
+      : 0
+  return mark.from + Math.round(t * (mark.to - mark.from))
+}
 
-      const lineFrom = view.state.doc.lineAt(linePos).from
-      const heading = headingAtLine(view.state, lineFrom)
-      if (!heading) return false
+function posFromPointer(view, event) {
+  const target = event.target
+  if (target instanceof Element) {
+    const hashEl = target.closest('.cm-heading-hash')
+    if (hashEl) {
+      const mark = resolveHashMark(view, hashEl, event.clientY)
+      if (mark) return posInHashEl(event, hashEl, mark)
+    }
+  }
+  return view.posAtCoords({ x: event.clientX, y: event.clientY })
+}
 
-      const mark = findHeaderMark(heading.node)
-      if (!mark) return false
+const hashMouseSelection = EditorView.mouseSelectionStyle.of((view, event) => {
+  if (event.button !== 0) return null
+  if (!(event.target instanceof Element)) return null
+  const hashEl = event.target.closest('.cm-heading-hash')
+  if (!hashEl) return null
 
-      const rect = hashEl.getBoundingClientRect()
-      const t =
-        rect.width > 0
-          ? Math.min(1, Math.max(0, (event.clientX - rect.left) / rect.width))
-          : 0
-      const pos = mark.from + Math.round(t * (mark.to - mark.from))
+  const mark = resolveHashMark(view, hashEl, event.clientY)
+  if (!mark) return null
 
-      event.preventDefault()
-      if (event.shiftKey) {
-        view.dispatch({
-          selection: {
-            anchor: view.state.selection.main.anchor,
-            head: pos,
-          },
-        })
-      } else {
-        view.dispatch({ selection: { anchor: pos } })
+  let startPos = posInHashEl(event, hashEl, mark)
+  let startSel = view.state.selection
+
+  return {
+    update(update) {
+      if (update.docChanged) {
+        startPos = update.changes.mapPos(startPos)
+        startSel = startSel.map(update.changes)
       }
-      view.focus()
-      return true
     },
-  }),
-)
+    get(curEvent, extend, multiple) {
+      let curPos = posFromPointer(view, curEvent)
+      if (curPos == null) curPos = startPos
 
-export const headingHang = [headingPlugin, hashClick]
+      const range =
+        startPos === curPos
+          ? EditorSelection.cursor(startPos)
+          : EditorSelection.range(startPos, curPos)
+
+      if (extend) {
+        return startSel.replaceRange(
+          startSel.main.extend(range.from, range.to, range.assoc),
+        )
+      }
+      if (multiple) return startSel.addRange(range)
+      return EditorSelection.create([range])
+    },
+  }
+})
+
+export const headingHang = [headingPlugin, hashMouseSelection]
