@@ -33,11 +33,11 @@ import { EditorState } from '@codemirror/state'
 import { EditorView, placeholder, keymap } from '@codemirror/view'
 import { defaultKeymap, history, historyKeymap } from '@codemirror/commands'
 import { indentWithTab } from '@codemirror/commands'
+import { markdown } from '@codemirror/lang-markdown'
 import { yamlFrontmatter } from '@codemirror/lang-yaml'
 import { searchKeymap } from '@codemirror/search'
 import { text } from '@/components/state'
 import { markdownTheme } from '@/editor/markdownTheme'
-import { markdownLang } from '@/editor/markdownConfig'
 
 const props = defineProps({
   modelValue: {
@@ -66,7 +66,7 @@ onMounted(() => {
           ...historyKeymap,
           ...searchKeymap,
         ]),
-        yamlFrontmatter({ content: markdownLang }),
+        yamlFrontmatter({ content: markdown() }),
         ...markdownTheme,
 
         // 更新输入追踪到Vue emits

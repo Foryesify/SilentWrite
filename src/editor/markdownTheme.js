@@ -197,14 +197,8 @@ const markdownHighlightStyle = HighlightStyle.define([
     textDecoration: 'line-through',
   },
 
-  // Links — markers + label share link style
-  {
-    tag: tags.link,
-    color: 'var(--cm-link)',
-    textDecoration: 'underline',
-    textUnderlineOffset: '0.18em',
-    textDecorationColor: 'var(--cm-link-underline)',
-  },
+  // Links — only the URL in `[](url)` gets underline; label stays plain
+  { tag: tags.link, color: 'var(--cm-link)' },
   {
     tag: tags.url,
     color: 'var(--cm-link)',
