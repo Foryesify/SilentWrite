@@ -1,6 +1,6 @@
 {
   "en-US": {
-    "home-title": "The Silent Writing Tool",
+    "home-title": "The quiet, pure and <br> costomizable Markdown editor.",
     "home-subtitle": "It is the place to start your essay",
     "home-new-essay": "New Essay",
     "home-open-library": "Open Library",
@@ -59,7 +59,7 @@
     "editor-placeholder": "Write here..."
   },
   "zh-CN": {
-    "home-title": "安静的写作工具",
+    "home-title": "沉浸且纯粹的<br>Markdown 写作工具",
     "home-subtitle": "从这里开始写作",
     "home-new-essay": "新建随笔",
     "home-open-library": "我的文章",
