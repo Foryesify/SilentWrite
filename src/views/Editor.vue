@@ -37,7 +37,7 @@ import { markdown } from '@codemirror/lang-markdown'
 import { yamlFrontmatter } from '@codemirror/lang-yaml'
 import { searchKeymap } from '@codemirror/search'
 import { text } from '@/components/state'
-import { markdownTheme } from '@/editor/markdownTheme'
+import { markdownTheme } from '@/views/editor/markdownTheme'
 
 const props = defineProps({
   modelValue: {

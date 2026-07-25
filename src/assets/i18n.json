@@ -56,7 +56,7 @@
     "titlebar-help4": "GitHub",
     "titlebar-help5": "Feedback",
     "titlebar-help6": "Open Console",
-    "editorPlaceholder": "Write here..."
+    "editor-placeholder": "Write here..."
   },
   "zh-CN": {
     "home-title": "安静的写作工具",
