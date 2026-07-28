@@ -53,12 +53,12 @@
 
 .titlebar-title {
   font-size: 16px;
-  font-weight: 500;
+  font-weight: bold;
   transition: all 0.3s;
 }
 
 .titlebar-title:hover {
-  color: var(--color-white);
+  color: var(--color-primary);
   cursor: pointer;
 }
 

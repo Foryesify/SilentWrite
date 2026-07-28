@@ -1,7 +1,6 @@
 {
   "en-US": {
-    "home-title": "The quiet, pure and <br> costomizable Markdown editor.",
-    "home-subtitle": "It is the place to start your essay",
+    "home-title": "✧",
     "home-new-essay": "New Essay",
     "home-open-library": "Open Library",
     "notfound-title": "Nothing Here",
@@ -59,8 +58,7 @@
     "editor-placeholder": "Write here..."
   },
   "zh-CN": {
-    "home-title": "沉浸且纯粹的<br>Markdown 写作工具",
-    "home-subtitle": "从这里开始写作",
+    "home-title": "✧",
     "home-new-essay": "新建随笔",
     "home-open-library": "我的文章",
     "notfound-title": "页面未找到",
