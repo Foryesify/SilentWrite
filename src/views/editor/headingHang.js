@@ -109,59 +109,6 @@ function buildDecorations(view, settled) {
   }
 }
 
-const headingPlugin = ViewPlugin.fromClass(
-  class {
-    constructor(view) {
-      this.settled = new Set()
-      this.raf = 0
-      const built = buildDecorations(view, this.settled)
-      this.decorations = built.decorations
-      this.queuePrime(view, built.priming)
-    }
-
-    queuePrime(view, priming) {
-      if (!priming.length) return
-      if (this.raf) cancelAnimationFrame(this.raf)
-      const lines = [...priming]
-      // Two frames: paint pre pose, then settle so transition can run
-      this.raf = requestAnimationFrame(() => {
-        this.raf = requestAnimationFrame(() => {
-          this.raf = 0
-          if (!view.dom.isConnected) return
-          for (const pos of lines) this.settled.add(pos)
-          view.dispatch({ effects: hangTickEffect.of(null) })
-        })
-      })
-    }
-
-    update(update) {
-      const tick = update.transactions.some((tr) =>
-        tr.effects.some((e) => e.is(hangTickEffect)),
-      )
-
-      if (update.docChanged) {
-        this.settled = mapPosSet(this.settled, update.changes)
-      }
-
-      if (update.docChanged || update.viewportChanged || tick) {
-        const built = buildDecorations(update.view, this.settled)
-        this.decorations = built.decorations
-
-        for (const pos of [...this.settled]) {
-          if (!built.present.has(pos)) this.settled.delete(pos)
-        }
-
-        if (!tick) this.queuePrime(update.view, built.priming)
-      }
-    }
-
-    destroy() {
-      if (this.raf) cancelAnimationFrame(this.raf)
-    }
-  },
-  { decorations: (v) => v.decorations },
-)
-
 /**
  * Absolute-positioned `#` marks sit outside CM's normal hit-testing.
  * Hook mouse selection so clicks/drags starting on them map to real doc
@@ -198,7 +145,7 @@ function posFromPointer(view, event) {
   return view.posAtCoords({ x: event.clientX, y: event.clientY })
 }
 
-const hashMouseSelection = EditorView.mouseSelectionStyle.of((view, event) => {
+function hashMouseSelection(view, event) {
   if (event.button !== 0) return null
   if (!(event.target instanceof Element)) return null
   const hashEl = event.target.closest('.cm-heading-hash')
@@ -235,6 +182,61 @@ const hashMouseSelection = EditorView.mouseSelectionStyle.of((view, event) => {
       return EditorSelection.create([range])
     },
   }
-})
+}
 
-export const headingHang = [headingPlugin, hashMouseSelection]
+export const headingHang = () =>
+  ViewPlugin.fromClass(
+    class {
+      constructor(view) {
+        this.settled = new Set()
+        this.raf = 0
+        const built = buildDecorations(view, this.settled)
+        this.decorations = built.decorations
+        this.queuePrime(view, built.priming)
+      }
+
+      queuePrime(view, priming) {
+        if (!priming.length) return
+        if (this.raf) cancelAnimationFrame(this.raf)
+        const lines = [...priming]
+        // Two frames: paint pre pose, then settle so transition can run
+        this.raf = requestAnimationFrame(() => {
+          this.raf = requestAnimationFrame(() => {
+            this.raf = 0
+            if (!view.dom.isConnected) return
+            for (const pos of lines) this.settled.add(pos)
+            view.dispatch({ effects: hangTickEffect.of(null) })
+          })
+        })
+      }
+
+      update(update) {
+        const tick = update.transactions.some((tr) =>
+          tr.effects.some((e) => e.is(hangTickEffect)),
+        )
+
+        if (update.docChanged) {
+          this.settled = mapPosSet(this.settled, update.changes)
+        }
+
+        if (update.docChanged || update.viewportChanged || tick) {
+          const built = buildDecorations(update.view, this.settled)
+          this.decorations = built.decorations
+
+          for (const pos of [...this.settled]) {
+            if (!built.present.has(pos)) this.settled.delete(pos)
+          }
+
+          if (!tick) this.queuePrime(update.view, built.priming)
+        }
+      }
+
+      destroy() {
+        if (this.raf) cancelAnimationFrame(this.raf)
+      }
+    },
+    {
+      decorations: (v) => v.decorations,
+      provide: () => EditorView.mouseSelectionStyle.of(hashMouseSelection),
+    },
+  )
