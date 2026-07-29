@@ -1,6 +1,7 @@
 import './assets/main.css'
 import { createApp } from 'vue'
 import { createRouter, createWebHashHistory } from 'vue-router'
+import { registerSW } from 'virtual:pwa-register'
 import App from './App.vue'
 import Home from './views/Home.vue'
 import Editor from './views/Editor.vue'
@@ -20,5 +21,7 @@ const router = createRouter({
     { name: 'NotFound', path: '/:pathMatch(.*)*', component: NotFound },
   ],
 })
+
+registerSW({ immediate: true })
 
 createApp(App).use(router).mount('#app')

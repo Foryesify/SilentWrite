@@ -4,7 +4,6 @@ import { syntaxTree } from '@codemirror/language'
 
 const ATX_HEADING_RE = /^ATXHeading([1-6])$/
 
-/** Advance hang marks from pre → animated settle. */
 const hangTickEffect = StateEffect.define()
 
 const hashMark = Decoration.mark({ class: 'cm-heading-hash' })
@@ -42,7 +41,6 @@ const linePreDecos = Object.fromEntries(
 function findHeaderMark(node) {
   const cursor = node.cursor()
   if (!cursor.firstChild() || cursor.name !== 'HeaderMark') return null
-  // Include the space after hashes so title text starts flush
   return { from: cursor.from, to: Math.min(cursor.to + 1, node.to) }
 }
 
@@ -109,11 +107,6 @@ function buildDecorations(view, settled) {
   }
 }
 
-/**
- * Absolute-positioned `#` marks sit outside CM's normal hit-testing.
- * Hook mouse selection so clicks/drags starting on them map to real doc
- * positions and still participate in the native drag-select gesture.
- */
 function resolveHashMark(view, hashEl, clientY) {
   const probeX = hashEl.getBoundingClientRect().right + 2
   const linePos = view.posAtCoords({ x: probeX, y: clientY })
@@ -199,7 +192,6 @@ export const headingHang = () =>
         if (!priming.length) return
         if (this.raf) cancelAnimationFrame(this.raf)
         const lines = [...priming]
-        // Two frames: paint pre pose, then settle so transition can run
         this.raf = requestAnimationFrame(() => {
           this.raf = requestAnimationFrame(() => {
             this.raf = 0

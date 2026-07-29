@@ -138,7 +138,6 @@ export const theme = () => EditorView.theme({
   },
   '.cm-placeholder': {
     color: 'var(--cm-placeholder)',
-    fontStyle: 'italic',
   },
   '.cm-matchingBracket, &.cm-focused .cm-matchingBracket': {
     backgroundColor: 'transparent',
