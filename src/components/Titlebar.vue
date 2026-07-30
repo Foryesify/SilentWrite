@@ -26,20 +26,28 @@
       </div>
     </div>
   </div>
+  <div class="titlebar-placeholder"></div>
 </template>
 
 <style scoped>
 .titlebar {
+  width: 100%;
   height: 32px;
   background: var(--color-background);
   user-select: none;
   display: flex;
-  position: sticky;
+  position: fixed;
   top: 0;
   z-index: 100;
   transition:
     box-shadow 0.2s,
     opacity 0.3s;
+}
+
+.titlebar-placeholder {
+  width: 100%;
+  height: 38px;
+  pointer-events: none;
 }
 
 .titlebar-left {

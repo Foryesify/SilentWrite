@@ -86,7 +86,7 @@
     "msgbox-confirm": "确定",
     "msgbox-cancel": "取消",
     "notfound-title": "页面未找到",
-    "notfound-subtitle": "当前地址指向一个空页面",
+    "notfound-subtitle": "这是一个空页面",
     "notfound-back": "起始页",
     "about-h1": "关于SilentWrite",
     "about-p1": "市面上已经有很多成熟的Markdown编辑器了，比如iA，Ulysses，Nomo之类的，我也用过很多",
