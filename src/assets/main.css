@@ -1,163 +1,39 @@
-:root {
-  --color-white: #ffffff;
-  --color-white-soft: #eee;
-  --color-white-mute: #f2f2f2;
-
-  --color-black: #181818;
-  --color-black-soft: #373737;
-  --color-black-mute: #282828;
-
-  --color-indigo: #2c3e50;
-
-  --color-divider-light-1: rgba(60, 60, 60, 0.29);
-  --color-divider-light-2: rgba(60, 60, 60, 0.12);
-  --color-divider-dark-1: rgba(84, 84, 84, 0.65);
-  --color-divider-dark-2: rgba(84, 84, 84, 0.48);
-
-  --color-text-light-1: var(--color-indigo);
-  --color-text-light-2: rgba(60, 60, 60, 0.66);
-  --color-text-dark-1: var(--color-white);
-  --color-text-dark-2: rgba(235, 235, 235, 0.64);
-
-  --color-fading-grey: #8885;
-
-  --color-primary: #3ae;
-}
-
-:root {
-  --color-background: var(--color-white);
-  --color-background-soft: var(--color-white-soft);
-  --color-background-mute: var(--color-white-mute);
-
-  --color-border: var(--color-divider-light-2);
-  --color-border-hover: var(--color-divider-light-1);
-
-  --color-heading: var(--color-text-light-1);
-  --color-text: var(--color-text-light-1);
-
-  --color-hover: var(--color-fading-grey);
-
-  --section-gap: 160px;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-background: var(--color-black);
-    --color-background-soft: var(--color-black-soft);
-    --color-background-mute: var(--color-black-mute);
-
-    --color-border: var(--color-divider-dark-2);
-    --color-border-hover: var(--color-divider-dark-1);
-
-    --color-heading: var(--color-text-dark-1);
-    --color-text: var(--color-text-dark-2);
-  }
-}
-
 *,
 *::before,
 *::after {
   box-sizing: border-box;
   margin: 0;
+  padding: 0;
   font-weight: normal;
 }
 
-html,
-body {
-  height: 100%;
+:root {
+  --color-text: #444;
+  --color-background: #f1f3f7;
+  --color-bold: #000;
+  --color-hover: #e1e3e7;
 }
 
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-text: #ccc;
+    --color-background: #333;
+    --color-bold: #fff;
+    --color-hover: #555;
+  }
+}
 body {
-  min-height: 100vh;
-  min-height: 100dvh;
   color: var(--color-text);
   background: var(--color-background);
-  transition:
-    color 0.5s,
-    background-color 0.5s;
+  transition: all 0.3s;
   line-height: 1.6;
-  font-family:
-    Inter,
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    Roboto,
-    Oxygen,
-    Ubuntu,
-    Cantarell,
-    'Fira Sans',
-    'Droid Sans',
-    'Helvetica Neue',
-    sans-serif;
   font-size: 16px;
-  display: flex;
 }
 
 #app {
   flex: 1;
   display: flex;
   flex-direction: column;
-  min-height: 0;
-  min-width: 0;
-}
-
-/* Hide native scrollbars; overlay thumbs are drawn by JS. */
-* {
-  scrollbar-width: none;
-}
-
-*::-webkit-scrollbar {
-  width: 0;
-  height: 0;
-  display: none;
-}
-
-.mac-scrollbar {
-  position: fixed;
-  z-index: 9999;
-  width: 12px;
-  padding: 3px 2px;
-  box-sizing: border-box;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.35s ease;
-}
-
-.mac-scrollbar.is-active {
-  pointer-events: auto;
-}
-
-.mac-scrollbar.is-visible,
-.mac-scrollbar.is-dragging {
-  opacity: 1;
-}
-
-.mac-scrollbar-thumb {
-  width: 100%;
-  border-radius: 999px;
-  background: rgba(0, 0, 0, 0.35);
-  box-shadow: 0 0 0 0.5px rgba(255, 255, 255, 0.12);
-  transform: translate3d(0, 0, 0);
-  will-change: transform;
-  cursor: default;
-  transition:
-    background 0.15s ease,
-    width 0.15s ease;
-}
-
-.mac-scrollbar-thumb:hover,
-.mac-scrollbar.is-dragging .mac-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.5);
-}
-
-@media (prefers-color-scheme: dark) {
-  .mac-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.35);
-    box-shadow: 0 0 0 0.5px rgba(0, 0, 0, 0.2);
-  }
-
-  .mac-scrollbar-thumb:hover,
-  .mac-scrollbar.is-dragging .mac-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.5);
-  }
+  min-height: 100dvh;
+  min-width: 100dvw;
 }

@@ -16,3 +16,4 @@ coverage
 
 # Vite
 *.timestamp-*-*.mjs
+dev-dist

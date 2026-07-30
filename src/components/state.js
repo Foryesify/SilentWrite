@@ -6,4 +6,4 @@ export const settings = reactive({
   lang: 'zh-CN',
 })
 
-export const text = computed(() => i18n[settings.lang])
+export const ui = computed(() => i18n[settings.lang])
