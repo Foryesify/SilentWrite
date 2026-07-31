@@ -1,9 +1,6 @@
 <template>
   <div class="about">
     <div class="passage" v-html="passageHtml"></div>
-    <div class="information">
-      <h1 class="title"></h1>
-    </div>
   </div>
 </template>
 
@@ -21,9 +18,9 @@ const passageHtml = computed(() =>
 <style scoped>
 .about {
   flex: 1;
-  min-width: 0;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
 }
 
 .passage {

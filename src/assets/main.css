@@ -38,7 +38,7 @@ body {
   min-height: 100dvh;
 }
 
-/* GitHub-like markdown */
+/* GitHub Markdown */
 
 h1,
 h2,
@@ -146,4 +146,3 @@ a:hover {
     color: #4493f8;
   }
 }
-
