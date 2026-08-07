@@ -1,4 +1,4 @@
-import './assets/main.css'
+import './style.css'
 import { createApp } from 'vue'
 import { createRouter, createWebHashHistory } from 'vue-router'
 import { registerSW } from 'virtual:pwa-register'

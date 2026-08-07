@@ -8,7 +8,6 @@
 </template>
 
 <style scoped>
-/* Keep app shell so Editor can fill the viewport during refactor. */
 .app {
   flex: 1;
   display: flex;
