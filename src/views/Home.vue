@@ -18,15 +18,51 @@ import { newEssay, openLibrary } from '@/components/methods'
 </script>
 
 <style scoped>
+.home {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  padding: 1.5rem;
+}
+
 .title {
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 20px;
+  font-size: 1.5rem;
+  color: var(--color-bold);
 }
 
 .buttons {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 1rem;
+  width: 10rem;
+  margin-bottom: 15dvh;
+}
+
+.button-primary,
+.button-secondary {
+  padding: 0.4rem 0.75rem;
+  text-align: center;
+  border-radius: 4px;
+  cursor: pointer;transition: all 0.2s ease;
+}
+
+.button-primary {
+  background: var(--color-bold);
+  color: var(--color-background);
+}
+
+.button-secondary:hover,
+.button-primary:hover {
+  opacity: 0.85;
+}
+
+.button-secondary {
+  border: 1px solid #7775;
+}
+
+.button-secondary:hover {
+  background: var(--color-hover);
 }
 </style>
