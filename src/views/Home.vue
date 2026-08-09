@@ -36,7 +36,7 @@ import { newEssay, openLibrary } from '@/components/methods'
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  width: 10rem;
+  width: 14rem;
   margin-bottom: 15dvh;
 }
 
@@ -53,9 +53,8 @@ import { newEssay, openLibrary } from '@/components/methods'
   color: var(--color-background);
 }
 
-.button-secondary:hover,
 .button-primary:hover {
-  opacity: 0.85;
+  opacity: 0.7;
 }
 
 .button-secondary {

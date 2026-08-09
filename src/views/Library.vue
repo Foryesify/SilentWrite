@@ -3,8 +3,8 @@
     <div class="header">
       <div class="title">{{ ui['library-title'] }}</div>
       <div class="side-buttons">
-        <div class="button-primary" @click="newEssay"></div>
-        <div class="button-secondary" @click="newFolder"></div>
+        <div class="button-primary" @click="createEssay"></div>
+        <div class="button-secondary" @click="createFolder"></div>
         <div class="button-secondary" @click="batchItems"></div>
       </div>
     </div>
@@ -20,9 +20,12 @@
 
 <script setup>
 import { ui } from '@/components/state'
+import { newEssay } from '@/components/methods'
 
-function newEssay() {}
-function newFolder() {}
+function createEssay() {
+  newEssay()
+}
+function createFolder() {}
 function batchItems() {}
 
 </script>

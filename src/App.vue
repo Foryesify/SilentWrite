@@ -4,6 +4,7 @@
     <div class="view">
       <RouterView />
     </div>
+    <NewEssayMsgbox />
   </div>
 </template>
 
@@ -27,5 +28,6 @@
 
 <script setup>
 import Titlebar from './components/Titlebar.vue'
+import NewEssayMsgbox from './components/NewEssayMsgbox.vue'
 import { RouterView } from 'vue-router'
 </script>

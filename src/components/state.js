@@ -7,3 +7,7 @@ export const settings = reactive({
 })
 
 export const ui = computed(() => i18n[settings.lang])
+
+export const newEssayMsgbox = reactive({
+  visible: false,
+})
