@@ -4,7 +4,6 @@ import Editor from './views/Editor.vue'
 import Settings from './views/Settings.vue'
 import Library from './views/Library.vue'
 import NotFound from './views/NotFound.vue'
-import About from './views/About.vue'
 
 export const router = createRouter({
   history: createWebHashHistory(),
@@ -13,7 +12,6 @@ export const router = createRouter({
     { name: 'Editor', path: '/editor/:id?', component: Editor },
     { name: 'Settings', path: '/settings', component: Settings },
     { name: 'Library', path: '/library', component: Library },
-    { name: 'About', path: '/about', component: About },
     { name: 'NotFound', path: '/:pathMatch(.*)*', component: NotFound },
   ],
 })
