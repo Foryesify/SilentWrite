@@ -13,6 +13,7 @@
 </style>
 
 <script setup>
+import i18n from '@/i18n'
 import { onMounted, onBeforeUnmount } from 'vue'
 import { EditorState } from '@codemirror/state'
 import { EditorView, placeholder, keymap } from '@codemirror/view'
@@ -22,7 +23,6 @@ import { searchKeymap } from '@codemirror/search'
 import { markdown } from '@codemirror/lang-markdown'
 import { yamlFrontmatter } from '@codemirror/lang-yaml'
 import { markdownTheme } from '@/views/editor/markdownTheme'
-import { ui } from '@/components/state'
 
 let view = null
 
@@ -32,7 +32,7 @@ onMounted(() => {
     state: EditorState.create({
       extensions: [
         history(),
-        placeholder(ui.value['editor-placeholder']),
+        placeholder(i18n.value['editor-placeholder']),
         EditorView.lineWrapping,
         keymap.of([
           indentWithTab,

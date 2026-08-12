@@ -1,3 +1,5 @@
+import{ reactive} from 'vue'
+
 export class Folder {
   children = []
   password = ''
@@ -36,3 +38,8 @@ export class File {
 }
 
 export const library = new Folder()
+
+export const settings = reactive({
+  titlebarAutoHideDisabled: false,
+  lang: 'zh-CN',
+})

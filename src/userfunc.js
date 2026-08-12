@@ -1,9 +1,8 @@
-import { newEssayMsgbox } from '@/components/state'
-import { library, File } from '@/components/usrdata'
+import { library, File } from '@/userdata'
 import { router } from '@/router'
 
 export function newEssay() {
-  newEssayMsgbox.visible = true
+  router.push({ name: 'Editor' })
 }
 
 export function createEssay(title) {
@@ -14,4 +13,11 @@ export function createEssay(title) {
 
 export function openLibrary() {
   router.push({ name: 'Library' })
+}
+
+export const appwindow = {
+  toggleFullscreen() { },
+  minimize() { },
+  toggleMaximize() { },
+  close() { },
 }

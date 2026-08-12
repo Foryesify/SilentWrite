@@ -1,9 +1,25 @@
 {
   "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
     "paths": {
       "@/*": ["./src/*"]
     },
-    "types": ["vite-plugin-pwa/client"]
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "jsx": "preserve",
+    "allowJs": true,
+    "checkJs": false,
+    "strict": false,
+    "noEmit": true,
+    "isolatedModules": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "types": ["vite/client", "vite-plugin-pwa/client"]
   },
+  "vueCompilerOptions": {
+    "target": 3.5
+  },
+  "include": ["src/**/*.js", "src/**/*.vue"],
   "exclude": ["node_modules", "dist"]
 }

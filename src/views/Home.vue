@@ -1,20 +1,20 @@
 <template>
   <div class="home">
-    <div class="title">{{ ui['home-title'] }}</div>
+    <div class="title">{{ i18n['home-title'] }}</div>
     <div class="buttons">
       <div class="button-primary" @click="newEssay">
-        {{ ui['home-new-essay'] }}
+        {{ i18n['home-new-essay'] }}
       </div>
       <div class="button-secondary" @click="openLibrary">
-        {{ ui['home-open-library'] }}
+        {{ i18n['home-open-library'] }}
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ui } from '@/components/state'
-import { newEssay, openLibrary } from '@/components/methods'
+import i18n from '@/i18n';
+import { newEssay, openLibrary } from '@/userfunc'
 </script>
 
 <style scoped>

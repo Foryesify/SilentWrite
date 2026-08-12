@@ -1,10 +1,10 @@
 <template>
   <div class="app">
-    <Titlebar />
+    <WindowControls />
+    <ActionsButton />
     <div class="view">
       <RouterView />
     </div>
-    <NewEssayMsgbox />
   </div>
 </template>
 
@@ -27,7 +27,7 @@
 </style>
 
 <script setup>
-import Titlebar from './components/Titlebar.vue'
-import NewEssayMsgbox from './components/NewEssayMsgbox.vue'
+import WindowControls from './components/WindowControls.vue'
+import ActionsButton from './components/ActionsButton.vue';
 import { RouterView } from 'vue-router'
 </script>

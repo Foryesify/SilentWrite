@@ -1,6 +1,6 @@
 import { drawSelection, highlightActiveLine } from '@codemirror/view'
 import { headingHang } from './headingHang'
-import { highlightStyle } from './highlightStyle'
+import { frontmatterYamlStyle, highlightStyle } from './highlightStyle'
 import { theme } from './theme'
 
 export const markdownTheme = [
@@ -8,5 +8,6 @@ export const markdownTheme = [
   highlightActiveLine(),
   theme(),
   highlightStyle(),
+  frontmatterYamlStyle(),
   headingHang(),
 ]

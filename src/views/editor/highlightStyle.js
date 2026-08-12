@@ -1,5 +1,8 @@
 import { HighlightStyle, syntaxHighlighting } from '@codemirror/language'
+import { yamlLanguage } from '@codemirror/lang-yaml'
 import { tags } from '@lezer/highlight'
+
+const mono = { fontFamily: 'var(--cm-mono)', fontSize: '0.92em' }
 
 export const highlightStyle = () => syntaxHighlighting(HighlightStyle.define([
   { tag: tags.heading1, fontSize: '1.85em', fontWeight: '700', lineHeight: '1.3', color: 'var(--cm-heading)', },
@@ -13,7 +16,7 @@ export const highlightStyle = () => syntaxHighlighting(HighlightStyle.define([
   { tag: tags.strikethrough, textDecoration: 'line-through', },
   { tag: tags.link, textDecoration: 'underline', textDecorationColor: 'var(--cm-link-underline)' },
   { tag: tags.url, textDecoration: 'underline', textDecorationColor: 'var(--cm-link-underline)', },
-  { tag: tags.monospace, fontFamily: 'var(--cm-mono)', fontSize: '0.92em' },
+  { tag: tags.monospace, ...mono },
   { tag: tags.quote, color: 'var(--cm-muted)', fontStyle: 'italic' },
   { tag: tags.contentSeparator, color: 'var(--cm-muted)' },
   { tag: tags.escape, color: 'var(--cm-muted)' },
@@ -28,3 +31,11 @@ export const highlightStyle = () => syntaxHighlighting(HighlightStyle.define([
   { tag: tags.bool, color: 'var(--cm-muted)' },
   { tag: tags.number, color: 'var(--cm-muted)' },
 ]))
+
+export const frontmatterYamlStyle = () =>
+  syntaxHighlighting(
+    HighlightStyle.define([], {
+      scope: yamlLanguage,
+      all: mono,
+    }),
+  )

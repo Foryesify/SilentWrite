@@ -2,13 +2,11 @@ import { fileURLToPath, URL } from 'node:url'
 
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import vueDevTools from 'vite-plugin-vue-devtools'
 import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
   plugins: [
     vue(),
-    vueDevTools(),
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.png'],
@@ -44,8 +42,7 @@ export default defineConfig({
         cleanupOutdatedCaches: true,
       },
       devOptions: {
-        enabled: true,
-        suppressWarnings: true,
+        enabled: false,
       },
     }),
   ],

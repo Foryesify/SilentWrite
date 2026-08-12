@@ -17,6 +17,7 @@
   --color-background: #f1f3f7;
   --color-bold: #000;
   --color-hover: #e1e3e7;
+  --color-hover-darker: #ccc;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -25,6 +26,7 @@
     --color-background: #333;
     --color-bold: #fff;
     --color-hover: #444;
+    --color-hover-darker: #555;
   }
 }
 
@@ -41,113 +43,4 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100dvh;
-}
-
-/* GitHub Markdown */
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  margin-top: 1.5em;
-  margin-bottom: 0.5em;
-  font-weight: 600;
-  line-height: 1.25;
-  color: var(--color-bold);
-}
-
-h1 {
-  padding-bottom: 0.3em;
-  font-size: 2em;
-  border-bottom: 1px solid #7773;
-}
-
-h2 {
-  padding-bottom: 0.3em;
-  font-size: 1.5em;
-  border-bottom: 1px solid #7773;
-}
-
-h3 {
-  font-size: 1.25em;
-}
-
-h4 {
-  font-size: 1em;
-}
-
-h5 {
-  font-size: 0.875em;
-}
-
-h6 {
-  font-size: 0.85em;
-  color: var(--color-text);
-}
-
-h1:first-child,
-h2:first-child,
-h3:first-child,
-h4:first-child,
-h5:first-child,
-h6:first-child {
-  margin-top: 0;
-}
-
-p {
-  margin-top: 0;
-  margin-bottom: 1em;
-}
-
-ul,
-ol {
-  margin-top: 0;
-  margin-bottom: 1em;
-  padding-left: 2em;
-}
-
-ul {
-  list-style: disc;
-}
-
-ol {
-  list-style: decimal;
-}
-
-li + li {
-  margin-top: 0.25em;
-}
-
-li > ul,
-li > ol {
-  margin-top: 0.25em;
-  margin-bottom: 0;
-}
-
-strong,
-b {
-  font-weight: 600;
-  color: var(--color-bold);
-}
-
-em,
-i {
-  font-style: italic;
-}
-
-a {
-  color: #0969da;
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-@media (prefers-color-scheme: dark) {
-  a {
-    color: #4493f8;
-  }
 }

@@ -1,7 +1,7 @@
 <template>
   <div class="library">
     <div class="header">
-      <div class="title">{{ ui['library-title'] }}</div>
+      <div class="title">{{ i18n['library-title'] }}</div>
       <div class="side-buttons">
         <div class="button-primary" @click="createEssay"></div>
         <div class="button-secondary" @click="createFolder"></div>
@@ -19,12 +19,9 @@
 </template>
 
 <script setup>
-import { ui } from '@/components/state'
-import { newEssay } from '@/components/methods'
+import i18n from '@/i18n';
 
-function createEssay() {
-  newEssay()
-}
+function createEssay() {}
 function createFolder() {}
 function batchItems() {}
 
