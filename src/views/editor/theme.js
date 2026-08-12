@@ -52,6 +52,7 @@ export const theme = () => EditorView.theme({
     lineHeight: '1.75',
     fontWeight: '400',
     overflow: 'auto',
+    justifyContent: 'center',
   },
   '@media (prefers-color-scheme: dark)': {
     '.cm-scroller': cmVarsDark,
@@ -66,12 +67,11 @@ export const theme = () => EditorView.theme({
   },
   // Editor fills the screen; only the text column is width-constrained
   '.cm-content': {
-    width: '90%',
+    width: '100%',
     maxWidth: '800px',
-    marginLeft: 'auto',
-    marginRight: 'auto',
-    padding: '2.5rem 0.5rem 45vh',
-    paddingLeft: 'var(--cm-hash-gutter)',
+    flex: '1 1 auto',
+    minWidth: '0',
+    padding: '2.5rem var(--cm-hash-gutter) 45vh',
     caretColor: 'transparent',
     fontFamily: 'inherit',
   },

@@ -24,6 +24,8 @@
   position: fixed;
   right: 0;
   z-index: 100;
+  opacity: 0;
+  transition: all 0.2s ease;
 
   div {
     display: flex;
@@ -31,7 +33,7 @@
     align-items: center;
     width: 48px;
     height: 32px;
-    transition: background 0.15s ease-in;
+    transition: all 0.15s ease-in;
 
     svg {
       width: 12px;
@@ -52,6 +54,17 @@
       width: 48px;
       height: 32px;
     }
+  }
+
+  &:hover {
+    opacity: 1;
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -100px;
+    z-index: -1;
   }
 }
 </style>
