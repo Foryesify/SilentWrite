@@ -15,7 +15,7 @@ const cmVars = {
   '--cm-caret': '#1c1c1c',
   '--cm-placeholder': 'rgba(28, 28, 28, 0.32)',
   '--cm-hash-gutter': '5.5rem',
-  '--cm-cursor-move': '120ms',
+  '--cm-cursor-move': '60ms',
   '--cm-selection-move': '100ms',
   '--cm-cursor-blink': '1.05s',
   '--cm-focus-fade': '180ms',
@@ -79,7 +79,7 @@ export const theme = () => EditorView.theme({
     padding: '0',
     position: 'relative',
     opacity: 'var(--cm-line-dim)',
-    transition: 'opacity var(--cm-focus-fade) var(--cm-ease)',
+    transition: 'opacity var(--cm-focus-fade) ease-out',
   },
 
   // Focus mode — only the active line stays full strength
@@ -93,9 +93,9 @@ export const theme = () => EditorView.theme({
     borderLeftColor: 'var(--cm-caret)',
     borderLeftWidth: '2px',
     marginLeft: '-1px',
-    transition: `left var(--cm-cursor-move) var(--cm-ease),
-                 top var(--cm-cursor-move) var(--cm-ease),
-                 height var(--cm-cursor-move) var(--cm-ease)`,
+    transition: `left var(--cm-cursor-move) ease-out,
+                 top var(--cm-cursor-move) ease-out,
+                 height var(--cm-cursor-move) ease-out`,
     willChange: 'left, top',
   },
   // Smooth fade blink (override CM's steps(1) hard blink)
