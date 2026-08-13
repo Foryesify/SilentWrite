@@ -15,7 +15,7 @@
   transition: all 0.2s ease;
   position: sticky;
   width: 150px;
-  height: 100px;
+  height: 50px;
 
   .actions-button {
     display: flex;

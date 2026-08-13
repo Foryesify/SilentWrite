@@ -40,7 +40,7 @@ export const theme = () => EditorView.theme({
   '&': {
     height: '100%',
     width: '100%',
-    fontSize: '1.125rem',
+    fontSize: '1.2em',
     backgroundColor: 'transparent',
   },
   // Vars live on .cm-scroller (not `&` inside @media — style-mod expands that
@@ -71,7 +71,7 @@ export const theme = () => EditorView.theme({
     maxWidth: '800px',
     flex: '1 1 auto',
     minWidth: '0',
-    padding: '2.5rem var(--cm-hash-gutter) 45vh',
+    padding: '1rem var(--cm-hash-gutter) 45dvh',
     caretColor: 'transparent',
     fontFamily: 'inherit',
   },
