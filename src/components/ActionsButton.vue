@@ -1,12 +1,12 @@
 <template>
-  <div class="actions-button-container">
-    <div class="actions-button" @click="">
-      <span></span>
-      <span></span>
-      <span></span>
-    </div>
+  <div class="actions-button" 
+  :style="menuHidden ? {} : { opacity: 1 }"
+   @click="menuHidden = !menuHidden">
+    <span></span>
+    <span></span>
+    <span></span>
   </div>
-  <div class="actions-menu" v-bind:hidden="menuHidden"></div>
+  <div class="actions-menu" :class="{ hidden: menuHidden }"></div>
 </template>
 
 <style scoped>
@@ -48,10 +48,26 @@
     opacity: 1;
   }
 }
+
+.actions-menu {
+  position: fixed;
+  margin-top: 55px;
+  margin-left: 10px;
+  width: 100px;
+  height: 100px;
+  z-index: 100;
+  transition: all 0.2s ease-out;
+
+  &.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+}
 </style>
 
-<script>
-import { ref } from 'vue';
+<script setup>
+import { ref } from 'vue'
 
-const menuHidden = ref(true); 
+const menuHidden = ref(true)
 </script>
