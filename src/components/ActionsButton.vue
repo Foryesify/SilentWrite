@@ -1,12 +1,16 @@
 <template>
-  <div class="actions-button" 
-  :style="menuHidden ? {} : { opacity: 1 }"
-   @click="menuHidden = !menuHidden">
+  <div
+    class="actions-button"
+    :style="menuHidden ? {} : { opacity: 1 }"
+    @click="menuHidden = !menuHidden"
+  >
     <span></span>
     <span></span>
     <span></span>
   </div>
-  <div class="actions-menu" :class="{ hidden: menuHidden }"></div>
+  <div class="actions-menu" :class="{ hidden: menuHidden }">
+    <Menu :items="appMenu" />
+  </div>
 </template>
 
 <style scoped>
@@ -17,8 +21,6 @@
   gap: 3px;
   width: 40px;
   height: 40px;
-  margin-top: 8px;
-  margin-left: 8px;
   cursor: pointer;
   z-index: 100;
   transition: all 0.2s ease;
@@ -38,14 +40,11 @@
 
   &:hover {
     background-color: var(--color-hover);
+    opacity: 1;
   }
 
   &:active {
     background-color: var(--color-hover-darker);
-  }
-
-  &:hover {
-    opacity: 1;
   }
 }
 
@@ -53,8 +52,6 @@
   position: fixed;
   margin-top: 55px;
   margin-left: 10px;
-  width: 100px;
-  height: 100px;
   z-index: 100;
   transition: all 0.2s ease-out;
 
@@ -67,7 +64,52 @@
 </style>
 
 <script setup>
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
+import Menu from '@/basic/Menu.vue'
+import { Menu as MenuModel, MenuItem, MenuItemChild } from '@/basic/Menu'
+import i18n from '@/i18n'
+import { newEssay, openLibrary, appwindow } from '@/userfunc'
+import { router } from '@/router'
 
 const menuHidden = ref(true)
+
+const appMenu = computed(
+  () =>
+    new MenuModel([
+      new MenuItem(i18n.value['titlebar-file'], [
+        new MenuItemChild(i18n.value['titlebar-file1'], newEssay),
+        new MenuItemChild(i18n.value['titlebar-file2']),
+        new MenuItemChild(i18n.value['titlebar-file4'], openLibrary),
+        new MenuItemChild(i18n.value['titlebar-file5']),
+      ]),
+      new MenuItem(i18n.value['titlebar-edit'], [
+        new MenuItemChild(i18n.value['titlebar-edit1']),
+        new MenuItemChild(i18n.value['titlebar-edit2']),
+        new MenuItemChild(i18n.value['titlebar-edit3']),
+        new MenuItemChild(i18n.value['titlebar-edit4']),
+        new MenuItemChild(i18n.value['titlebar-edit5']),
+        new MenuItemChild(i18n.value['titlebar-edit6']),
+      ]),
+      new MenuItem(i18n.value['titlebar-view'], [
+        new MenuItemChild(i18n.value['titlebar-view1'], () =>
+          appwindow.toggleFullscreen(),
+        ),
+        new MenuItemChild(i18n.value['titlebar-view2']),
+      ]),
+      new MenuItem(i18n.value['titlebar-settings'], [
+        new MenuItemChild(i18n.value['titlebar-settings1'], () =>
+          router.push({ name: 'Settings' }),
+        ),
+        new MenuItemChild(i18n.value['titlebar-settings2']),
+      ]),
+      new MenuItem(i18n.value['titlebar-help'], [
+        new MenuItemChild(i18n.value['titlebar-help1']),
+        new MenuItemChild(i18n.value['titlebar-help2']),
+        new MenuItemChild(i18n.value['titlebar-help3']),
+        new MenuItemChild(i18n.value['titlebar-help4']),
+        new MenuItemChild(i18n.value['titlebar-help5']),
+        new MenuItemChild(i18n.value['titlebar-help6']),
+      ]),
+    ]),
+)
 </script>

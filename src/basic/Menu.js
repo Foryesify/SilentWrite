@@ -6,18 +6,18 @@ export class Menu {
 }
 
 export class MenuItem {
-  name = ""
+  name = ''
   children = []
-  constructor(name, children) {
+  constructor(name, children = []) {
     this.name = name
     this.children = children
   }
 }
 
 export class MenuItemChild {
-  name = ""
+  name = ''
   action = () => {}
-  constructor(name, action) {
+  constructor(name, action = () => {}) {
     this.name = name
     this.action = action
   }
