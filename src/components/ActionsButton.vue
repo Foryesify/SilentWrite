@@ -10,42 +10,38 @@
 </template>
 
 <style scoped>
-.actions-button-container {
-  opacity: 0;
+.actions-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 3px;
+  width: 40px;
+  height: 40px;
+  margin-top: 8px;
+  margin-left: 8px;
+  cursor: pointer;
+  z-index: 100;
   transition: all 0.2s ease;
-  position: sticky;
-  width: 150px;
-  height: 50px;
+  border-radius: 100%;
+  opacity: 0;
+  position: fixed;
+  margin-top: 10px;
+  margin-left: 10px;
 
-  .actions-button {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 3px;
-    width: 40px;
-    height: 40px;
-    margin-top: 8px;
-    margin-left: 8px;
-    cursor: pointer;
-    z-index: 100;
-    transition: all 0.2s ease;
+  span {
+    display: block;
     border-radius: 100%;
+    width: 4px;
+    aspect-ratio: 1;
+    background: var(--color-text);
+  }
 
-    span {
-      display: block;
-      border-radius: 100%;
-      width: 4px;
-      aspect-ratio: 1;
-      background: var(--color-text);
-    }
+  &:hover {
+    background-color: var(--color-hover);
+  }
 
-    &:hover {
-      background-color: var(--color-hover);
-    }
-
-    &:active {
-      background-color: var(--color-hover-darker);
-    }
+  &:active {
+    background-color: var(--color-hover-darker);
   }
 
   &:hover {

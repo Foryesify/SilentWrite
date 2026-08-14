@@ -59,13 +59,6 @@
   &:hover {
     opacity: 1;
   }
-
-  &::before {
-    content: '';
-    position: absolute;
-    inset: -100px;
-    z-index: -1;
-  }
 }
 </style>
 
