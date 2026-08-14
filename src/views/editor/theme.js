@@ -38,7 +38,7 @@ export const theme = () => EditorView.theme({
     '.cm-scroller': cmVarsDark,
   },
   '.cm-content': {
-    maxWidth: '48em',
+    maxWidth: '42em',
     flex: '1 1 auto',
     padding: '0 var(--cm-hash-gutter) 90dvh',
   },
@@ -62,12 +62,15 @@ export const theme = () => EditorView.theme({
     transition: `all 0.05s ease-out`,
     willChange: 'left, top, height, opacity',
   },
+  // '&.cm-focused > .cm-scroller > .cm-cursorLayer': {
+  //   animation: 'cm-blink 1s ease-in-out infinite',
+  // },
+  // '@keyframes cm-blink': {
+  //   '0%, 100%': { opacity: 1 },
+  //   '50%': { opacity: 0 },
+  // },
   '&.cm-focused > .cm-scroller > .cm-cursorLayer': {
-    animation: 'cm-blink 1s ease-in-out infinite',
-  },
-  '@keyframes cm-blink': {
-    '0%, 100%': { opacity: 1 },
-    '50%': { opacity: 0 },
+    animation: 'none',
   },
 
   // Selection

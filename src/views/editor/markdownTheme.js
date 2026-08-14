@@ -4,7 +4,7 @@ import { frontmatterYamlStyle, highlightStyle } from './highlightStyle'
 import { theme } from './theme'
 
 export const markdownTheme = [
-  drawSelection({ cursorBlinkRate: 1050 }),
+  drawSelection({ cursorBlinkRate: 0 }),
   highlightActiveLine(),
   theme(),
   highlightStyle(),

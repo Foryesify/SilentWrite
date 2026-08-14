@@ -14,7 +14,7 @@
     <span></span>
   </div>
   <div class="actions-menu" :class="{ hidden: menuHidden }">
-    <Menu :items="appMenu" @action="menuHidden = true" />
+    <Menu v-if="!menuHidden" :items="appMenu" @action="menuHidden = true" />
   </div>
 </template>
 

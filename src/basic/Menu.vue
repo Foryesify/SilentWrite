@@ -1,10 +1,9 @@
 <template>
-  <div class="menu" @mouseleave="openIndex = -1">
+  <div class="menu" @mouseleave="onMouseLeave">
     <div
       v-for="(item, index) in items.items"
       :key="index"
       class="item"
-      :class="{ open: openIndex === index }"
       @click="collapse(index)"
       @mouseenter="activate(index)"
     >
@@ -19,14 +18,16 @@
         height: submenuHeight,
       }"
     >
-      <div ref="bodyEl" class="submenu-body">
-        <div
-          v-for="(child, cIndex) in currentChildren"
-          :key="cIndex"
-          class="subitem"
-          @click.stop="run(child)"
-        >
-          {{ child.name }}
+      <div class="submenu-clip">
+        <div ref="bodyEl" class="submenu-body">
+          <div
+            v-for="(child, cIndex) in currentChildren"
+            :key="cIndex"
+            class="subitem"
+            @click.stop="run(child)"
+          >
+            {{ child.name }}
+          </div>
         </div>
       </div>
     </div>
@@ -39,7 +40,6 @@
   min-width: 140px;
   background: var(--color-background);
   border: 1px solid #8885;
-  box-shadow: 0 4px 16px #0002;
   border-radius: 6px;
   font-size: 13px;
 }
@@ -47,6 +47,7 @@
 .menu {
   position: relative;
   padding: 4px;
+  box-shadow: 0 4px 16px #0002;
 }
 
 .item,
@@ -61,24 +62,32 @@
   transition: background 0.15s ease;
 }
 
-.item:hover,
-.item.open,
-.subitem:hover {
-  background: var(--color-hover);
+@media (hover: hover) {
+  .item:hover,
+  .subitem:hover {
+    background: var(--color-hover);
+  }
 }
 
 .submenu {
   position: absolute;
   box-sizing: content-box;
-  margin-left: calc(100% - 2px);
+  left: calc(100% - 2px);
   top: 0;
-  overflow: hidden;
+  box-shadow: 0 8px 24px #0003;
   transition:
     margin-top 0.2s ease,
     width 0.2s ease,
     height 0.2s ease,
     opacity 0.2s ease,
     transform 0.2s ease;
+}
+
+.submenu-clip {
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
 }
 
 .submenu-body {
@@ -102,7 +111,14 @@
   .menu,
   .submenu {
     border-color: #fff2;
+  }
+
+  .menu {
     box-shadow: 0 6px 20px #0005;
+  }
+
+  .submenu {
+    box-shadow: 0 10px 32px #0008;
   }
 }
 </style>
@@ -117,6 +133,7 @@ const emit = defineEmits(['action'])
 const ITEM_HEIGHT = 32
 const openIndex = ref(-1)
 const lastIndex = ref(0)
+const hoverLocked = ref(false)
 const submenuTop = ref('0px')
 const submenuWidth = ref('140px')
 const submenuHeight = ref('0px')
@@ -137,7 +154,7 @@ function measure() {
   submenuHeight.value = `${el.offsetHeight}px`
 }
 
-async function activate(index) {
+async function open(index) {
   const wasClosed = openIndex.value < 0
   follow(index)
   lastIndex.value = index
@@ -147,17 +164,30 @@ async function activate(index) {
   openIndex.value = index
 }
 
+function activate(index) {
+  if (hoverLocked.value) return
+  open(index)
+}
+
 function collapse(index) {
-  if (openIndex.value === index) {
+  if (openIndex.value === index && hoverLocked.value) {
     openIndex.value = -1
+    hoverLocked.value = false
     return
   }
-  activate(index)
+  hoverLocked.value = true
+  if (openIndex.value !== index) open(index)
+}
+
+function onMouseLeave() {
+  if (hoverLocked.value) return
+  openIndex.value = -1
 }
 
 function run(child) {
   child.action?.()
   openIndex.value = -1
+  hoverLocked.value = false
   emit('action')
 }
 </script>
