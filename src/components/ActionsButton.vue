@@ -1,5 +1,10 @@
 <template>
   <div
+    class="actions-backdrop"
+    :class="{ hidden: menuHidden }"
+    @click="menuHidden = true"
+  />
+  <div
     class="actions-button"
     :style="menuHidden ? {} : { opacity: 1 }"
     @click="menuHidden = !menuHidden"
@@ -9,11 +14,27 @@
     <span></span>
   </div>
   <div class="actions-menu" :class="{ hidden: menuHidden }">
-    <Menu :items="appMenu" />
+    <Menu :items="appMenu" @action="menuHidden = true" />
   </div>
 </template>
 
 <style scoped>
+.actions-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 110;
+  background: #0001;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: all 0.2s ease-out;
+
+  &.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+}
+
 .actions-button {
   display: flex;
   justify-content: center;
@@ -22,7 +43,7 @@
   width: 40px;
   height: 40px;
   cursor: pointer;
-  z-index: 100;
+  z-index: 111;
   transition: all 0.2s ease;
   border-radius: 100%;
   opacity: 0;
@@ -52,7 +73,7 @@
   position: fixed;
   margin-top: 55px;
   margin-left: 10px;
-  z-index: 100;
+  z-index: 111;
   transition: all 0.2s ease-out;
 
   &.hidden {
