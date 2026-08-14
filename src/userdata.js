@@ -40,6 +40,8 @@ export class File {
 export const library = new Folder()
 
 export const settings = reactive({
-  titlebarAutoHideDisabled: false,
+  autohideDistraction: true,
+  cursorBlinking: true,
+  cursorMoveAnimation: true,
   lang: 'zh-CN',
 })

@@ -1,5 +1,11 @@
 import { EditorView } from "@codemirror/view"
 
+const isWebKit =
+  typeof CSS !== 'undefined' &&
+  (CSS.supports('-webkit-touch-callout', 'none') ||
+    (/AppleWebKit/.test(navigator.userAgent) &&
+      !/Chrome|Chromium|Edg\//.test(navigator.userAgent)))
+
 const cmVars = {
   '--cm-font': "system-ui, sans-serif",
   '--cm-mono': "monospace",
@@ -58,19 +64,14 @@ export const theme = () => EditorView.theme({
   // Cursor
   '.cm-cursor, .cm-dropCursor': {
     borderLeft: '2px solid var(--cm-caret)',
-    marginLeft: '1px',
-    transition: `all 0.05s ease-out`,
-    willChange: 'left, top, height, opacity',
+    transition: isWebKit ? 'none' : 'all 0.08s ease-out',
   },
-  // '&.cm-focused > .cm-scroller > .cm-cursorLayer': {
-  //   animation: 'cm-blink 1s ease-in-out infinite',
-  // },
-  // '@keyframes cm-blink': {
-  //   '0%, 100%': { opacity: 1 },
-  //   '50%': { opacity: 0 },
-  // },
   '&.cm-focused > .cm-scroller > .cm-cursorLayer': {
-    animation: 'none',
+    animation: 'cm-blink 1s ease-in-out infinite',
+  },
+  '@keyframes cm-blink': {
+    '0%, 100%': { opacity: 1 },
+    '50%': { opacity: 0 },
   },
 
   // Selection
