@@ -88,7 +88,7 @@ import { computed, ref } from 'vue'
 import Menu from '@/basic/Menu.vue'
 import { Menu as MenuModel, MenuItem, MenuItemChild } from '@/basic/Menu'
 import i18n from '@/i18n'
-import { newEssay, openLibrary, appwindow } from '@/userfunc'
+import { newEssay, openLibrary, saveEssay, saveEssayAs, appwindow } from '@/userfunc'
 import { router } from '@/router'
 
 const menuHidden = ref(true)
@@ -100,7 +100,8 @@ const appMenu = computed(
         new MenuItemChild(i18n.value['titlebar-file1'], newEssay),
         new MenuItemChild(i18n.value['titlebar-file2']),
         new MenuItemChild(i18n.value['titlebar-file4'], openLibrary),
-        new MenuItemChild(i18n.value['titlebar-file5']),
+        new MenuItemChild(i18n.value['titlebar-file-save'], saveEssay),
+        new MenuItemChild(i18n.value['titlebar-file5'], saveEssayAs),
       ]),
       new MenuItem(i18n.value['titlebar-edit'], [
         new MenuItemChild(i18n.value['titlebar-edit1']),

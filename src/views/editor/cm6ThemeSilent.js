@@ -3,7 +3,7 @@ import { headingHang } from './headingHang'
 import { frontmatterYamlStyle, highlightStyle } from './highlightStyle'
 import { theme } from './theme'
 
-export const markdownTheme = [
+export const cm6ThemeSilent = [
   drawSelection({ cursorBlinkRate: 1000 }),
   highlightActiveLine(),
   theme(),
