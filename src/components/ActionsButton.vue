@@ -25,8 +25,7 @@
   z-index: 110;
   background: #0001;
   backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  transition: all 0.2s ease-out;
+  transition: opacity 0.2s ease-out, visibility 0.2s ease-out;
 
   &.hidden {
     opacity: 0;
