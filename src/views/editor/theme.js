@@ -47,7 +47,7 @@ export const theme = () => EditorView.theme({
   '.cm-content': {
     maxWidth: '46em',
     flex: '1 1 auto',
-    padding: '16px 8px 30dvh var(--cm-hash-gutter)',
+    padding: '0 8px 30dvh var(--cm-hash-gutter)',
   },
 
   // Line
