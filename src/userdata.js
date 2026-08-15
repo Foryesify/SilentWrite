@@ -3,8 +3,14 @@ import { reactive } from 'vue'
 const STORAGE_KEY = 'silentwrite.library'
 
 export class Folder {
+  id = crypto.randomUUID()
+  name = ''
   children = []
   password = ''
+
+  constructor(name = '') {
+    this.name = name
+  }
 
   appendChild(item) {
     this.children.push(item)
@@ -54,7 +60,7 @@ export class File {
   setPassword() {}
 }
 
-export const library = new Folder()
+export const library = reactive(new Folder())
 
 export const editorSession = {
   file: null,
@@ -65,6 +71,8 @@ function serializeItem(item) {
   if (item instanceof Folder) {
     return {
       type: 'folder',
+      id: item.id,
+      name: item.name,
       password: item.password,
       children: item.children.map(serializeItem),
     }
@@ -83,7 +91,8 @@ function serializeItem(item) {
 
 function hydrateItem(data) {
   if (data?.type === 'folder') {
-    const folder = new Folder()
+    const folder = new Folder(data.name || '')
+    if (typeof data.id === 'string' && data.id) folder.id = data.id
     folder.password = data.password || ''
     folder.children = (data.children || []).map(hydrateItem).filter(Boolean)
     return folder

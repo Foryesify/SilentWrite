@@ -27,7 +27,7 @@
 </style>
 
 <script setup>
-import WindowControls from './components/WindowControls.vue'
-import ActionsButton from './components/ActionsButton.vue';
 import { RouterView } from 'vue-router'
+import WindowControls from './components/WindowControls.vue'
+import ActionsButton from './components/ActionsButton.vue'
 </script>

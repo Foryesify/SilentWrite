@@ -1,10 +1,6 @@
 import { EditorView } from "@codemirror/view"
 
-const isWebKit =
-  typeof CSS !== 'undefined' &&
-  (CSS.supports('-webkit-touch-callout', 'none') ||
-    (/AppleWebKit/.test(navigator.userAgent) &&
-      !/Chrome|Chromium|Edg\//.test(navigator.userAgent)))
+const isTouch = matchMedia('(pointer: coarse)').matches
 
 const cmVars = {
   '--cm-font': "system-ui, sans-serif",
@@ -64,7 +60,7 @@ export const theme = () => EditorView.theme({
   // Cursor
   '.cm-cursor, .cm-dropCursor': {
     borderLeft: '2px solid var(--cm-caret)',
-    transition: isWebKit ? 'none' : 'all 0.08s ease-out',
+    transition: isTouch ? 'none' : 'all 0.08s ease-out',
   },
   '&.cm-focused > .cm-scroller > .cm-cursorLayer': {
     animation: 'cm-blink 1s ease-in-out infinite',

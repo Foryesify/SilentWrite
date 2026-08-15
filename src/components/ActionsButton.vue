@@ -23,8 +23,7 @@
   position: fixed;
   inset: 0;
   z-index: 110;
-  background: #0001;
-  backdrop-filter: blur(10px);
+  background: #0008;
   transition: opacity 0.2s ease-out, visibility 0.2s ease-out;
 
   &.hidden {

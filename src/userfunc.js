@@ -1,16 +1,23 @@
-import { library, File, persistLibrary, editorSession } from '@/userdata'
+import { library, File, Folder, persistLibrary, editorSession } from '@/userdata'
 import { router } from '@/router'
 
-export function newEssay() {
-  const file = createEssay('')
+export function newEssay(parent = library) {
+  const file = createEssay('', parent)
   router.push({ name: 'Editor', params: { id: file.id } })
 }
 
-export function createEssay(title) {
+export function createEssay(title, parent = library) {
   const file = new File(title)
-  library.appendChild(file)
+  parent.appendChild(file)
   persistLibrary()
   return file
+}
+
+export function createFolder(name = '', parent = library) {
+  const folder = new Folder(name)
+  parent.appendChild(folder)
+  persistLibrary()
+  return folder
 }
 
 export function saveEssay() {
