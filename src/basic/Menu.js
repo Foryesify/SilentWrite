@@ -8,9 +8,14 @@ export class Menu {
 export class MenuItem {
   name = ''
   children = []
-  constructor(name, children = []) {
+  action = null
+  constructor(name, childrenOrAction = []) {
     this.name = name
-    this.children = children
+    if (typeof childrenOrAction === 'function') {
+      this.action = childrenOrAction
+    } else {
+      this.children = childrenOrAction
+    }
   }
 }
 

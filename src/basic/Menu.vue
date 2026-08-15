@@ -1,15 +1,17 @@
 <template>
-  <div class="menu" @mouseleave="onMouseLeave">
+  <div class="menu" :class="{ flat: isFlat }" @mouseleave="onMouseLeave">
     <div
       v-for="(item, index) in items.items"
       :key="index"
       class="item"
-      @click="collapse(index)"
-      @mouseenter="activate(index)"
+      :class="{ leaf: isLeaf(item) }"
+      @click="onItemClick(index)"
+      @mouseenter="onItemEnter(index)"
     >
       {{ item.name }}
     </div>
     <div
+      v-if="!isFlat"
       class="submenu"
       :class="{ hidden: openIndex < 0 }"
       :style="{
@@ -60,6 +62,10 @@
   cursor: default;
   white-space: nowrap;
   transition: background 0.15s ease;
+}
+
+.item.leaf {
+  cursor: pointer;
 }
 
 @media (hover: hover) {
@@ -139,6 +145,12 @@ const submenuWidth = ref('140px')
 const submenuHeight = ref('0px')
 const bodyEl = ref(null)
 
+function isLeaf(item) {
+  return !item?.children?.length
+}
+
+const isFlat = computed(() => props.items.items.every(isLeaf))
+
 const currentChildren = computed(
   () => props.items.items[lastIndex.value]?.children ?? [],
 )
@@ -179,13 +191,30 @@ function collapse(index) {
   if (openIndex.value !== index) open(index)
 }
 
+function onItemEnter(index) {
+  if (isFlat.value || isLeaf(props.items.items[index])) {
+    if (!hoverLocked.value) openIndex.value = -1
+    return
+  }
+  activate(index)
+}
+
+function onItemClick(index) {
+  const item = props.items.items[index]
+  if (isLeaf(item)) {
+    run(item)
+    return
+  }
+  collapse(index)
+}
+
 function onMouseLeave() {
   if (hoverLocked.value) return
   openIndex.value = -1
 }
 
-function run(child) {
-  child.action?.()
+function run(item) {
+  item.action?.()
   openIndex.value = -1
   hoverLocked.value = false
   emit('action')

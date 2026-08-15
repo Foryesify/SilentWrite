@@ -11,7 +11,7 @@ const cmVars = {
   '--cm-selection': '#e9e9e9',
   '--cm-caret': '#222',
   '--cm-placeholder': '#444',
-  '--cm-hash-gutter': '5.5rem',
+  '--cm-hash-gutter': '5.5em',
 }
 
 const cmVarsDark = {
@@ -39,10 +39,15 @@ export const theme = () => EditorView.theme({
   '@media (prefers-color-scheme: dark)': {
     '.cm-scroller': cmVarsDark,
   },
+  '@media (max-width: 599px)': {
+    '.cm-scroller': {
+      '--cm-hash-gutter': '8px',
+    },
+  },
   '.cm-content': {
-    maxWidth: '42em',
+    maxWidth: '46em',
     flex: '1 1 auto',
-    padding: '0 var(--cm-hash-gutter) 90dvh',
+    padding: '32px 8px 30dvh var(--cm-hash-gutter)',
   },
 
   // Line
@@ -74,6 +79,16 @@ export const theme = () => EditorView.theme({
   '.cm-selectionBackground': {
     backgroundColor: 'var(--cm-selection) !important',
     transition: `all 0.1s ease-out`,
+  },
+  // iOS Safari still paints native contenteditable selection
+  // on top of drawSelection; Chromium honors transparent ::selection.
+  '.cm-line::selection, .cm-line ::selection': {
+    backgroundColor: 'transparent !important',
+    color: 'inherit !important',
+  },
+  '.cm-content::selection, .cm-content ::selection': {
+    backgroundColor: 'transparent !important',
+    color: 'inherit !important',
   },
 
   // Heading extension

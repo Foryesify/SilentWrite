@@ -3,6 +3,11 @@ import { EditorSelection, StateEffect } from '@codemirror/state'
 import { syntaxTree } from '@codemirror/language'
 
 const ATX_HEADING_RE = /^ATXHeading([1-6])$/
+const NARROW_QUERY = '(max-width: 599px)'
+
+function hangDisabled() {
+  return matchMedia(NARROW_QUERY).matches
+}
 
 const hangTickEffect = StateEffect.define()
 
@@ -67,7 +72,15 @@ function mapPosSet(set, changes) {
   return next
 }
 
-function buildDecorations(view, settled) {
+function buildDecorations(view, settled, forceSettled = false) {
+  if (hangDisabled()) {
+    return {
+      decorations: Decoration.none,
+      present: new Set(),
+      priming: [],
+    }
+  }
+
   const ranges = []
   const present = new Set()
   const priming = []
@@ -85,7 +98,7 @@ function buildDecorations(view, settled) {
         const lineFrom = view.state.doc.lineAt(node.from).from
         present.add(lineFrom)
 
-        const primed = !settled.has(lineFrom)
+        const primed = !forceSettled && !settled.has(lineFrom)
         ranges.push((primed ? linePreDecos : lineDecos)[level].range(lineFrom))
 
         const mark = findHeaderMark(node.node)
@@ -139,6 +152,7 @@ function posFromPointer(view, event) {
 }
 
 function hashMouseSelection(view, event) {
+  if (hangDisabled()) return null
   if (event.button !== 0) return null
   if (!(event.target instanceof Element)) return null
   const hashEl = event.target.closest('.cm-heading-hash')
@@ -183,6 +197,14 @@ export const headingHang = () =>
       constructor(view) {
         this.settled = new Set()
         this.raf = 0
+        this.mq = matchMedia(NARROW_QUERY)
+        this.forceSettled = false
+        this.onMq = () => {
+          if (!view.dom.isConnected) return
+          this.forceSettled = !hangDisabled()
+          view.dispatch({ effects: hangTickEffect.of(null) })
+        }
+        this.mq.addEventListener('change', this.onMq)
         const built = buildDecorations(view, this.settled)
         this.decorations = built.decorations
         this.queuePrime(view, built.priming)
@@ -212,18 +234,28 @@ export const headingHang = () =>
         }
 
         if (update.docChanged || update.viewportChanged || tick) {
-          const built = buildDecorations(update.view, this.settled)
+          const forceSettled = this.forceSettled
+          this.forceSettled = false
+          const built = buildDecorations(
+            update.view,
+            this.settled,
+            forceSettled,
+          )
           this.decorations = built.decorations
 
+          if (forceSettled) {
+            for (const pos of built.present) this.settled.add(pos)
+          }
           for (const pos of [...this.settled]) {
             if (!built.present.has(pos)) this.settled.delete(pos)
           }
 
-          if (!tick) this.queuePrime(update.view, built.priming)
+          this.queuePrime(update.view, built.priming)
         }
       }
 
       destroy() {
+        this.mq.removeEventListener('change', this.onMq)
         if (this.raf) cancelAnimationFrame(this.raf)
       }
     },

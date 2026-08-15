@@ -1,8 +1,7 @@
 <template>
   <div class="home">
-    <div class="title">{{ i18n['home-title'] }}</div>
     <div class="buttons">
-      <div class="button-primary" @click="newEssay">
+      <div class="button-primary" @click="() => newEssay()">
         {{ i18n['home-new-essay'] }}
       </div>
       <div class="button-secondary" @click="openLibrary">

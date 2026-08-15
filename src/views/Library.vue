@@ -1,9 +1,9 @@
 <template>
   <div class="library">
     <div class="header">
-      <div class="title" :class="{ link: trail.length }" @click="goBack">
-        <span v-if="trail.length" class="back">‹</span>
-        {{ currentTitle }}
+      <div class="title link" @click="goBack">
+        <span class="back">‹</span>
+        {{ i18n['library-title'] }}
       </div>
       <div class="side-buttons">
         <div class="button-primary" @click="createEssay">
@@ -19,7 +19,7 @@
     </div>
     <div class="main">
       <div
-        v-for="item in current.children"
+        v-for="item in library.children"
         :key="itemKey(item)"
         class="item"
         :class="{ folder: isFolder(item) }"
@@ -31,7 +31,7 @@
         </div>
         <div v-if="item.password" class="item-lock" aria-hidden="true"></div>
       </div>
-      <div v-if="!current.children.length" class="placeholder">
+      <div v-if="!library.children.length" class="placeholder">
         <div class="placeholder-title">{{ i18n['library-empty'] }}</div>
         <div class="placeholder-subtitle"></div>
       </div>
@@ -205,20 +205,12 @@
 </style>
 
 <script setup>
-import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import i18n from '@/i18n'
 import { library, File, Folder, settings } from '@/userdata'
 import { newEssay, createFolder as addFolder } from '@/userfunc'
 
 const router = useRouter()
-const trail = ref([])
-
-const current = computed(() => trail.value.at(-1) ?? library)
-
-const currentTitle = computed(() =>
-  trail.value.length ? folderName(current.value) : i18n.value['library-title'],
-)
 
 function isFolder(item) {
   return item instanceof Folder
@@ -269,26 +261,21 @@ function itemMeta(item) {
 }
 
 function openItem(item) {
-  if (isFolder(item)) {
-    trail.value = [...trail.value, item]
-    return
-  }
   if (item instanceof File) {
     router.push({ name: 'Editor', params: { id: item.id } })
   }
 }
 
 function goBack() {
-  if (!trail.value.length) return
-  trail.value = trail.value.slice(0, -1)
+  router.push({ name: 'Home' })
 }
 
 function createEssay() {
-  newEssay(current.value)
+  newEssay()
 }
 
 function createFolder() {
-  addFolder('', current.value)
+  addFolder()
 }
 
 function batchItems() {}
