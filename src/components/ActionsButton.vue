@@ -1,30 +1,25 @@
 <template>
-  <div
-    class="actions-backdrop"
-    :class="{ hidden: menuHidden }"
-    @click="menuHidden = true"
-  />
-  <div
-    class="actions-button"
-    :style="menuHidden ? {} : { opacity: 1 }"
-    @click="menuHidden = !menuHidden"
-  >
+  <div class="backdrop" :class="{ hidden: menuHidden }" @click="toggle" />
+  <div class="button" :style="menuHidden ? {} : { opacity: 1 }" @click="toggle">
     <span></span>
     <span></span>
     <span></span>
   </div>
-  <div class="actions-menu" :class="{ hidden: menuHidden }">
+  <div class="menu" :class="{ hidden: menuHidden }">
     <Menu v-if="!menuHidden" :items="appMenu" @action="menuHidden = true" />
   </div>
 </template>
 
 <style scoped>
-.actions-backdrop {
+.backdrop {
   position: fixed;
-  inset: 0;
-  z-index: 110;
+  top: -10vw;
+  height: -10vh;
+  width: 120vw;
+  height: 120vh;
+  z-index: 101;
   background: #0008;
-  transition: opacity 0.2s ease-out, visibility 0.2s ease-out;
+  transition: all 0.2s ease-out;
 
   &.hidden {
     opacity: 0;
@@ -33,21 +28,17 @@
   }
 }
 
-.actions-button {
+.button {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 3px;
-  width: 40px;
-  height: 40px;
+  width: 48px;
+  height: 32px;
   cursor: pointer;
-  z-index: 111;
+  z-index: 100;
   transition: all 0.2s ease;
-  border-radius: 100%;
-  opacity: 0;
   position: fixed;
-  margin-top: 10px;
-  margin-left: 10px;
 
   span {
     display: block;
@@ -61,17 +52,13 @@
     background-color: var(--color-hover);
     opacity: 1;
   }
-
-  &:active {
-    background-color: var(--color-hover-darker);
-  }
 }
 
-.actions-menu {
+.menu {
   position: fixed;
-  margin-top: 55px;
+  margin-top: 15px;
   margin-left: 10px;
-  z-index: 111;
+  z-index: 102;
   transition: all 0.2s ease-out;
 
   &.hidden {
@@ -87,11 +74,20 @@ import { computed, ref } from 'vue'
 import Menu from '@/basic/Menu.vue'
 import { Menu as MenuModel, MenuItem, MenuItemChild } from '@/basic/Menu'
 import i18n from '@/i18n'
-import { newEssay, openLibrary, saveEssay, saveEssayAs, appwindow } from '@/userfunc'
+import {
+  newEssay,
+  openLibrary,
+  saveEssay,
+  saveEssayAs,
+  appwindow,
+} from '@/userfunc'
 import { router } from '@/router'
 
 const menuHidden = ref(true)
 
+function toggle() {
+  menuHidden.value = !menuHidden.value
+}
 const appMenu = computed(
   () =>
     new MenuModel([

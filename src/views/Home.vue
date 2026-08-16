@@ -1,7 +1,7 @@
 <template>
   <div class="home">
-    <div class="buttons">
-      <div class="button-primary" @click="() => newEssay()">
+    <div class="main">
+      <div class="button-primary" @click="newEssay">
         {{ i18n['home-new-essay'] }}
       </div>
       <div class="button-secondary" @click="openLibrary">
@@ -12,8 +12,16 @@
 </template>
 
 <script setup>
-import i18n from '@/i18n';
-import { newEssay, openLibrary } from '@/userfunc'
+import i18n from '@/i18n'
+import { router } from '@/router';
+
+function newEssay() {
+  router.push('/editor')
+}
+
+function openLibrary() {
+  router.push("/library")
+}
 </script>
 
 <style scoped>
@@ -31,20 +39,21 @@ import { newEssay, openLibrary } from '@/userfunc'
   color: var(--color-bold);
 }
 
-.buttons {
+.main {
+  width: 350px;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  width: 14rem;
-  margin-bottom: 15dvh;
+  gap: 16px;
+  margin-bottom: 15vh;
 }
 
 .button-primary,
 .button-secondary {
-  padding: 0.4rem 0.75rem;
+  padding: 10px 0;
   text-align: center;
   border-radius: 4px;
-  cursor: pointer;transition: all 0.2s ease;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .button-primary {
@@ -53,7 +62,7 @@ import { newEssay, openLibrary } from '@/userfunc'
 }
 
 .button-primary:hover {
-  opacity: 0.7;
+  opacity: 0.8;
 }
 
 .button-secondary {

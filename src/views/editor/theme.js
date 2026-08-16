@@ -1,7 +1,9 @@
 import { EditorView } from "@codemirror/view"
 
+/** @typedef {Object} PostCSS */
 const isTouch = matchMedia('(pointer: coarse)').matches
 
+/** @type {int}  */
 const cmVars = {
   '--cm-font': "system-ui, sans-serif",
   '--cm-mono': "monospace",
@@ -11,7 +13,7 @@ const cmVars = {
   '--cm-selection': '#e9e9e9',
   '--cm-caret': '#222',
   '--cm-placeholder': '#444',
-  '--cm-hash-gutter': '5.5em',
+  '--cm-hash-gutter': '40px',
 }
 
 const cmVarsDark = {
@@ -47,7 +49,7 @@ export const theme = () => EditorView.theme({
   '.cm-content': {
     maxWidth: '46em',
     flex: '1 1 auto',
-    padding: '32px 8px 30dvh var(--cm-hash-gutter)',
+    padding: '32px var(--cm-hash-gutter) 30svh',
   },
 
   // Line

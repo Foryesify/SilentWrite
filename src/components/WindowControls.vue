@@ -24,7 +24,6 @@
   position: fixed;
   right: 0;
   z-index: 100;
-  opacity: 0;
   transition: all 0.2s ease;
 
   div {
