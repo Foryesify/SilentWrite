@@ -1,6 +1,5 @@
 <template>
   <WindowControls />
-  <ActionsButton />
   <main>
     <RouterView />
   </main>
@@ -20,5 +19,4 @@ main {
 <script setup>
 import { RouterView } from 'vue-router'
 import WindowControls from './components/WindowControls.vue'
-import ActionsButton from './components/ActionsButton.vue';
 </script>

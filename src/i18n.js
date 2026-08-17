@@ -1,5 +1,6 @@
 import { settings } from './userdata.js'
 import { computed } from 'vue'
+
 const translations =
 {
   "en-US": {

@@ -1,5 +1,5 @@
 <template>
-  <div class="window-controls">
+  <div class="window-controls" v-if="showWindowControls">
     <div @click="appwindow.minimize">
       <svg viewBox="0 0 10 10">
         <path stroke="currentColor" d="M1 5h8" />
@@ -24,7 +24,6 @@
   position: fixed;
   right: 0;
   z-index: 100;
-  transition: all 0.2s ease;
 
   div {
     display: flex;
@@ -46,21 +45,17 @@
       background: #c22;
       color: #fff;
     }
-
-    div {
-      position: fixed;
-      top: 34px;
-      width: 48px;
-      height: 32px;
-    }
-  }
-
-  &:hover {
-    opacity: 1;
   }
 }
 </style>
 
 <script setup>
 import { appwindow } from '@/userfunc.js'
+
+const showWindowControls = (
+  window.__TAURI_INTERNALS__ ||
+  navigator.userAgent.includes('Electron') ||
+  window.__FORYES_APP__
+)
+
 </script>

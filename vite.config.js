@@ -14,11 +14,9 @@ export default defineConfig({
       manifest: {
         name: 'SilentWrite',
         short_name: 'SilentWrite',
-        description: 'A silent writing tool',
-        theme_color: '#ffffff',
-        background_color: '#ffffff',
         display: 'standalone',
-        orientation: 'any',
+        description: 'Quiet, pure and costomizable Markdown editor.',
+        display: 'standalone',
         start_url: './',
         scope: './',
         lang: 'zh-CN',
