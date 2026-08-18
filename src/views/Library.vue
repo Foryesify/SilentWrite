@@ -1,5 +1,6 @@
 <template>
   <div class="library">
+    <div class="main">
     <div class="header">
       <div class="title link" @click="goBack">
         <span class="back">‹</span>
@@ -17,7 +18,7 @@
         </div>
       </div>
     </div>
-    <div class="main">
+    <div class="content">
       <div
         v-for="item in library.children"
         :key="itemKey(item)"
@@ -36,6 +37,7 @@
         <div class="placeholder-subtitle"></div>
       </div>
     </div>
+    </div>
   </div>
 </template>
 
@@ -44,9 +46,11 @@
   display: flex;
   flex-direction: column;
   width: 100%;
+}
+
+.main {
   max-width: 42em;
-  margin: 0 auto;
-  padding: 3.5rem 1.5rem 2rem;
+  margin: 48px auto;
 }
 
 .header {
@@ -113,7 +117,7 @@
   background: var(--color-hover);
 }
 
-.main {
+.content {
   display: flex;
   flex-direction: column;
   gap: 0.15rem;

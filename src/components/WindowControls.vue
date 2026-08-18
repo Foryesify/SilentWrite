@@ -26,23 +26,22 @@
   z-index: 100;
 
   div {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 48px;
-    height: 32px;
-    transition: all 0.15s ease-in;
+    display: grid;
+    place-items: center;
+    height: var(--control-height);
+    aspect-ratio: 1.5;
+    transition: background-color var(--duration-fast) var(--ease-accelerate);
 
     svg {
       width: 12px;
     }
 
     &:hover {
-      background: var(--color-hover);
+      background-color: var(--color-hover);
     }
 
     &:last-child:hover {
-      background: #c22;
+      background-color: var(--color-danger);
       color: #fff;
     }
   }
@@ -55,7 +54,7 @@ import { appwindow } from '@/userfunc.js'
 const showWindowControls = (
   window.__TAURI_INTERNALS__ ||
   navigator.userAgent.includes('Electron') ||
-  window.__FORYES_APP__
+  window.__FORYES_APP__ || true
 )
 
 </script>

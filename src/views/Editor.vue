@@ -9,6 +9,7 @@
   height: 100%;
   padding-top: 48px;
 }
+
 </style>
 
 <script setup>
