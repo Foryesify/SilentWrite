@@ -44,12 +44,12 @@
 <style scoped>
 .library {
   display: flex;
-  flex-direction: column;
-  width: 100%;
+  justify-content: center;
 }
 
 .main {
   max-width: 42em;
+  width: 100%;
   margin: 48px auto;
 }
 
