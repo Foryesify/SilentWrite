@@ -54,7 +54,7 @@ import { appwindow } from '@/userfunc.js'
 const showWindowControls = (
   window.__TAURI_INTERNALS__ ||
   navigator.userAgent.includes('Electron') ||
-  window.__FORYES_APP__ || true
+  window.__FORYES_APP__
 )
 
 </script>
