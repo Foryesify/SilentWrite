@@ -3,7 +3,7 @@ import { EditorSelection, StateEffect } from '@codemirror/state'
 import { syntaxTree } from '@codemirror/language'
 
 const ATX_HEADING_RE = /^ATXHeading([1-6])$/
-const NARROW_QUERY = '(max-width: 599px)'
+const NARROW_QUERY = '(max-width: 700px)'
 
 function hangDisabled() {
   return matchMedia(NARROW_QUERY).matches

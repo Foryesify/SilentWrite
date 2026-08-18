@@ -41,15 +41,18 @@ export const theme = () => EditorView.theme({
   '@media (prefers-color-scheme: dark)': {
     '.cm-scroller': cmVarsDark,
   },
-  '@media (max-width: 599px)': {
+  '.cm-content': {
+    maxWidth: 'min(36em, 80vw)',
+    flex: '1 1 auto',
+    padding: '0 var(--cm-hash-gutter) 30svh',
+  },
+  '@media (max-width: 700px)': {
     '.cm-scroller': {
       '--cm-hash-gutter': '8px',
     },
-  },
-  '.cm-content': {
-    maxWidth: '40em',
-    flex: '1 1 auto',
-    padding: '0 var(--cm-hash-gutter) 30svh',
+    '.cm-content': {
+      'maxWidth': '95vw',
+    }
   },
 
   // Line

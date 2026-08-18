@@ -1,5 +1,5 @@
 <template>
-  <div class="editor"></div>
+  <div class="editor" @click="onEditorClick"></div>
 </template>
 
 <style scoped>
@@ -27,10 +27,28 @@ import { cm6ThemeSilent } from './editor/cm6ThemeSilent'
 import { library, editorSession } from '@/userdata'
 import { createEssay, saveEssay } from '@/userfunc'
 
+const HOME_TAP_COUNT = 5
+const HOME_TAP_GAP = 450
+
 const route = useRoute()
 const router = useRouter()
 
 let view = null
+let homeTapCount = 0
+let homeTapTimer = 0
+
+function onEditorClick() {
+  homeTapCount += 1
+  clearTimeout(homeTapTimer)
+  if (homeTapCount >= HOME_TAP_COUNT) {
+    homeTapCount = 0
+    router.push({ name: 'Home' })
+    return
+  }
+  homeTapTimer = window.setTimeout(() => {
+    homeTapCount = 0
+  }, HOME_TAP_GAP)
+}
 
 function bindFile() {
   const id = route.params.id
@@ -77,6 +95,7 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
+  clearTimeout(homeTapTimer)
   window.removeEventListener('pagehide', saveEssay)
   saveEssay()
   editorSession.file = null

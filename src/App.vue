@@ -23,6 +23,7 @@ main {
   inset: 0;
   display: flex;
   background: var(--color-background);
+  transform-origin: center;
 
   & > * {
     flex: 1;
@@ -37,9 +38,15 @@ main {
   pointer-events: none;
 }
 
+.route-open-enter-active,
+.route-close-leave-active {
+  overflow: hidden;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
 .route-open-enter-active {
   z-index: 2;
-  box-shadow: inset 0 0 0 1px var(--color-border-strong);
   animation: route-window-expand 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
@@ -53,14 +60,16 @@ main {
 
 .route-close-leave-active {
   z-index: 2;
-  box-shadow: inset 0 0 0 1px var(--color-border-strong);
   animation: route-window-shrink 300ms cubic-bezier(0.4, 0, 1, 1) both;
 }
 
 @keyframes route-window-expand {
   from {
-    clip-path: inset(30% 26% 30% 26% round 8px);
+    transform: translateZ(0) scale(0.48, 0.4);
+    border-radius: 8px;
     opacity: 0;
+    background-color: var(--color-window-loading);
+    box-shadow: 0 0 0 1px var(--color-border-strong);
   }
 
   14% {
@@ -68,15 +77,21 @@ main {
   }
 
   to {
-    clip-path: inset(0 0 0 0 round 0);
+    transform: translateZ(0) scale(1);
+    border-radius: 0;
     opacity: 1;
+    background-color: var(--color-background);
+    box-shadow: 0 0 0 1px transparent;
   }
 }
 
 @keyframes route-window-shrink {
   from {
-    clip-path: inset(0 0 0 0 round 0);
+    transform: translateZ(0) scale(1);
+    border-radius: 0;
     opacity: 1;
+    background-color: var(--color-background);
+    box-shadow: 0 0 0 1px var(--color-border-strong);
   }
 
   72% {
@@ -84,8 +99,11 @@ main {
   }
 
   to {
-    clip-path: inset(30% 26% 30% 26% round 8px);
+    transform: translateZ(0) scale(0.48, 0.4);
+    border-radius: 8px;
     opacity: 0;
+    background-color: var(--color-window-loading);
+    box-shadow: 0 0 0 1px var(--color-border-strong);
   }
 }
 

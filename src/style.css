@@ -67,7 +67,7 @@
     --color-text-bold: #fff;
     --color-text-muted: #c5c5c5;
     --color-text-muted: #5d5d5d;
-  --color-text-on-accent: #202020;
+    --color-text-on-accent: #202020;
 
     --color-background: #202020;
     --color-foreground: #2c2c2c;
@@ -93,6 +93,7 @@ body {
   font: --system-ui, sans-serif;
   font-size: 16px;
   scrollbar-width: none;
+  user-select: none;
 }
 
 #app {
