@@ -100,7 +100,6 @@ onBeforeUnmount(() => {
   saveEssay()
   editorSession.file = null
   editorSession.getContent = () => ''
-  view?.destroy()
   view = null
 })
 </script>

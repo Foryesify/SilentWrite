@@ -47,7 +47,8 @@ main {
 
 .route-open-enter-active {
   z-index: 2;
-  animation: route-window-expand 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: route-window-expand var(--duration-slow) var(--ease-accelerate)
+    both;
 }
 
 .route-open-leave-active {
@@ -60,12 +61,12 @@ main {
 
 .route-close-leave-active {
   z-index: 2;
-  animation: route-window-shrink 300ms cubic-bezier(0.4, 0, 1, 1) both;
+  animation: route-window-shrink var(--duration-normal) var(--ease-accelerate);
 }
 
 @keyframes route-window-expand {
   from {
-    transform: translateZ(0) scale(0.48, 0.4);
+    transform: translateZ(0) scale(0.6, 0.6);
     border-radius: 8px;
     opacity: 0;
     background-color: var(--color-window-loading);
@@ -99,7 +100,7 @@ main {
   }
 
   to {
-    transform: translateZ(0) scale(0.48, 0.4);
+    transform: translateZ(0) scale(0.6, 0.6);
     border-radius: 8px;
     opacity: 0;
     background-color: var(--color-window-loading);
