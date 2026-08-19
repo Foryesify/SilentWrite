@@ -1,4 +1,5 @@
 <template>
+  <WindowControls />
   <div class="app">
     <div class="stack" :class="{ revealing: page !== 'Home' }">
       <Editor :class="{ inactive: under !== 'Editor' }" />
@@ -70,6 +71,7 @@ import { page } from './router.js'
 import Editor from './views/Editor.vue'
 import Home from './views/Home.vue'
 import Library from './views/Library.vue'
+import WindowControls from './components/WindowControls.vue'
 
 const under = ref('')
 

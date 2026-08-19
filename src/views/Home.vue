@@ -1,6 +1,5 @@
 <template>
   <div class="home">
-    <WindowControls />
     <div class="main">
       <button class="btn-primary" @click="newEssay">
         {{ i18n['home-new-essay'] }}
@@ -13,7 +12,6 @@
 </template>
 
 <script setup>
-import WindowControls from '@/components/WindowControls.vue'
 import i18n from '@/i18n'
 import { changePage } from '@/router';
 
