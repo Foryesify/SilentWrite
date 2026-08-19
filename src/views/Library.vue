@@ -2,7 +2,7 @@
   <div class="library">
     <div class="main">
       <div class="header">
-        <div class="title">‹ {{ i18n['library-title'] }}</div>
+        <div class="title" @click="goBack">‹ {{ i18n['library-title'] }}</div>
         <div class="side-buttons">
           <button class="btn-primary">
             {{ i18n['library-new'] }}
@@ -68,7 +68,7 @@
         gap: 0.5rem;
 
         button {
-          padding: 2px 5px;
+          padding: 3px 6px;
         }
       }
     }
@@ -166,6 +166,7 @@
 
 <script setup>
 import i18n from '@/i18n'
+import { changePage } from '@/router'
 import { library, File, Folder, settings, editorSession } from '@/userdata'
 
 function isFolder(item) {
@@ -222,7 +223,9 @@ function openItem(item) {
   }
 }
 
-function goBack() {}
+function goBack() {
+  changePage('Home')
+}
 
 function batchItems() {}
 </script>

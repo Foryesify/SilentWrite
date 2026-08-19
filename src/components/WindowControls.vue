@@ -23,7 +23,6 @@
   display: flex;
   position: fixed;
   right: 0;
-  z-index: 100;
 }
 
 .window-button {

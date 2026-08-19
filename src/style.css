@@ -21,8 +21,9 @@
   --stroke-width: 1px;
   --focus-stroke-width: 2px;
   --blur-acrylic: 12px;
-  --blur: 6px;
+  --blur: 8px;
   --duration-fast: 167ms;
+  --duration-normal: 240ms;
   --duration-slow: 333ms;
   --ease-standard: ease;
   --ease-accelerate: ease-out;

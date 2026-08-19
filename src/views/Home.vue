@@ -1,10 +1,11 @@
 <template>
   <div class="home">
+    <WindowControls />
     <div class="main">
-      <button class="btn-primary">
+      <button class="btn-primary" @click="newEssay">
         {{ i18n['home-new-essay'] }}
       </button>
-      <button class="btn-secondary">
+      <button class="btn-secondary" @click="openLibrary">
         {{ i18n['home-open-library'] }}
       </button>
     </div>
@@ -12,13 +13,24 @@
 </template>
 
 <script setup>
+import WindowControls from '@/components/WindowControls.vue'
 import i18n from '@/i18n'
+import { changePage } from '@/router';
+
+function newEssay() {
+  changePage('Editor')
+}
+
+function openLibrary() {
+  changePage('Library')
+}
 </script>
 
 <style scoped>
 .home {
   display: grid;
   place-items: center;
+  background-color: var(--color-foreground);
 }
 
 .main {
@@ -32,5 +44,4 @@ import i18n from '@/i18n'
     margin-bottom: 20px;
   }
 }
-
 </style>

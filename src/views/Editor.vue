@@ -1,10 +1,53 @@
 <template>
-  <div class="editor"></div>
+  <div class="editor">
+    <div
+      class="back"
+      :class="{ hint: page === 'Editor' }"
+      @click="changePage('Home')"
+    >
+      ‹
+    </div>
+  </div>
 </template>
 
 <style scoped>
 .editor {
   padding: 48px 0;
+
+  .back {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 15vw;
+    height: 15vh;
+    padding: 12px 16px;
+    opacity: 0;
+    font-size: 22px;
+    font-weight: bold;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition: opacity var(--duration-fast) var(--ease-accelerate);
+
+    &.hint {
+      animation: back-show 1.5s var(--ease-standard);
+    }
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+}
+
+@keyframes back-show {
+  0% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 </style>
 
@@ -20,15 +63,13 @@ import { markdown } from '@codemirror/lang-markdown'
 import { yamlFrontmatter } from '@codemirror/lang-yaml'
 import { cm6ThemeSilent } from './editor/cm6ThemeSilent'
 import { editorSession } from '@/userdata'
+import { changePage, page } from '@/router'
 
 let view = null
 
-function onEditorFocus() {
-  
-}
+function onEditorFocused() {}
 
-function onEditorBlur() {
-}
+function onEditorUnfocused() {}
 
 onMounted(() => {
   view = new EditorView({
@@ -49,8 +90,8 @@ onMounted(() => {
         ...cm6ThemeSilent,
         EditorView.updateListener.of((update) => {
           if (!update.focusChanged) return
-          if (update.view.hasFocus) onEditorFocus()
-          else onEditorBlur()
+          if (update.view.hasFocus) onEditorFocused()
+          else onEditorUnfocused()
         }),
       ],
     }),
