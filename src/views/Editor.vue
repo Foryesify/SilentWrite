@@ -6,7 +6,6 @@
 .editor {
   padding: 48px 0;
 }
-
 </style>
 
 <script setup>
@@ -41,6 +40,13 @@ function onEditorClick() {
   }, HOME_TAP_GAP)
 }
 
+function onEditorFocus() {
+  
+}
+
+function onEditorBlur() {
+}
+
 onMounted(() => {
   view = new EditorView({
     parent: document.querySelector('.editor'),
@@ -58,6 +64,11 @@ onMounted(() => {
         ]),
         yamlFrontmatter({ content: markdown() }),
         ...cm6ThemeSilent,
+        EditorView.updateListener.of((update) => {
+          if (!update.focusChanged) return
+          if (update.view.hasFocus) onEditorFocus()
+          else onEditorBlur()
+        }),
       ],
     }),
   })

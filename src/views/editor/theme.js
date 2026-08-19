@@ -27,6 +27,7 @@ export const theme = () => EditorView.theme({
   // Editor
   '&': {
     outline: 'none !important',
+    height: '100%'
   },
   '.cm-scroller': {
     ...cmVars,
