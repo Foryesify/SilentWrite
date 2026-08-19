@@ -23,10 +23,8 @@
   --blur-acrylic: 12px;
   --blur: 6px;
   --duration-fast: 167ms;
-  --duration-normal: 250ms;
   --duration-slow: 333ms;
   --ease-standard: ease;
-  --ease-decelerate: ease-in;
   --ease-accelerate: ease-out;
 }
 
@@ -46,7 +44,6 @@
   --color-overlay: #f9f9f9;
   --color-control: #fff;
   --color-hover: #eee;
-  --color-window-loading: #ccc;
   --color-pressed: #e6e6e6;
   --color-hover-darker: var(--color-pressed);
   --color-border: #ebebeb;
@@ -75,7 +72,6 @@
     --color-overlay: #2c2c2c;
     --color-control: #2b2b2b;
     --color-hover: #333;
-    --color-window-loading: #555;
     --color-pressed: #3a3a3a;
     --color-border: #3a3a3a;
     --color-border-strong: #4a4a4a;
@@ -96,20 +92,11 @@ body {
   user-select: none;
 }
 
-#app {
+#root {
   flex: 1;
   display: flex;
   flex-direction: column;
   min-height: 100dvh;
-}
-
-@keyframes window-open {
-  from {
-    background-color: var(--color-window-loading);
-  }
-  to {
-    background-color: transparent;
-  }
 }
 
 button {

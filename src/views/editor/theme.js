@@ -1,9 +1,7 @@
 import { EditorView } from "@codemirror/view"
 
-/** @typedef {Object} PostCSS */
 const isTouch = matchMedia('(pointer: coarse)').matches
 
-/** @type {int}  */
 const cmVars = {
   '--cm-font': "system-ui, sans-serif",
   '--cm-mono': "monospace",
@@ -44,11 +42,11 @@ export const theme = () => EditorView.theme({
   '.cm-content': {
     maxWidth: 'min(36em, 80vw)',
     flex: '1 1 auto',
-    padding: '0 var(--cm-hash-gutter) 30svh',
+    padding: '0 var(--cm-hash-gutter)',
   },
   '@media (max-width: 700px)': {
     '.cm-scroller': {
-      '--cm-hash-gutter': '8px',
+      '--cm-hash-gutter': '0',
     },
     '.cm-content': {
       'maxWidth': '95vw',
@@ -96,27 +94,15 @@ export const theme = () => EditorView.theme({
     color: 'inherit !important',
   },
 
-  // Heading extension
+  // Heading hang: hashes stay in flow; text-indent pulls them into the gutter.
   '.cm-heading-line': {
-    position: 'relative',
-    paddingLeft: '0',
-  },
-  '.cm-heading-line-pre': {
-    paddingLeft: '1.6em',
+    textIndent: 'calc(-1 * var(--cm-hang, 0px))',
   },
   '.cm-heading-hash': {
-    position: 'absolute',
-    right: '100%',
-    top: '0',
-    paddingRight: '0.4em',
     whiteSpace: 'pre',
     fontSize: '1em !important',
+    fontWeight: '400',
     color: 'var(--cm-heading)',
-    opacity: '1',
-  },
-  '.cm-heading-hash-pre': {
-    opacity: '0.4',
-    transition: 'none',
   },
   '.cm-heading-line-6 .cm-heading-hash': {
     color: 'var(--cm-muted)',

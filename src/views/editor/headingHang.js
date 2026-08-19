@@ -1,47 +1,25 @@
 import { Decoration, EditorView, ViewPlugin } from '@codemirror/view'
-import { EditorSelection, StateEffect } from '@codemirror/state'
+import { EditorState, StateEffect, Transaction } from '@codemirror/state'
 import { syntaxTree } from '@codemirror/language'
+import { markdown } from '@codemirror/lang-markdown'
+import { yamlFrontmatter } from '@codemirror/lang-yaml'
+import { frontmatterYamlStyle, highlightStyle } from './highlightStyle'
+import { theme } from './theme'
 
 const ATX_HEADING_RE = /^ATXHeading([1-6])$/
 const NARROW_QUERY = '(max-width: 700px)'
+const hangTickEffect = StateEffect.define()
+const hashMark = Decoration.mark({ class: 'cm-heading-hash' })
+const lineDecoCache = new Map()
+
+const SAMPLE_DOC = Array.from({ length: 6 }, (_, i) => {
+  const hashes = '#'.repeat(i + 1)
+  return `${hashes}\n${hashes} x`
+}).join('\n')
 
 function hangDisabled() {
   return matchMedia(NARROW_QUERY).matches
 }
-
-const hangTickEffect = StateEffect.define()
-
-const hashMark = Decoration.mark({ class: 'cm-heading-hash' })
-/** Instant start pose; next tick swaps to hashMark so CSS transition runs. */
-const hashMarkPre = Decoration.mark({
-  class: 'cm-heading-hash cm-heading-hash-pre',
-})
-
-const lineDecos = Object.fromEntries(
-  Array.from({ length: 6 }, (_, i) => {
-    const level = i + 1
-    return [
-      level,
-      Decoration.line({
-        attributes: { class: `cm-heading-line cm-heading-line-${level}` },
-      }),
-    ]
-  }),
-)
-
-const linePreDecos = Object.fromEntries(
-  Array.from({ length: 6 }, (_, i) => {
-    const level = i + 1
-    return [
-      level,
-      Decoration.line({
-        attributes: {
-          class: `cm-heading-line cm-heading-line-${level} cm-heading-line-pre`,
-        },
-      }),
-    ]
-  }),
-)
 
 function findHeaderMark(node) {
   const cursor = node.cursor()
@@ -49,218 +27,263 @@ function findHeaderMark(node) {
   return { from: cursor.from, to: Math.min(cursor.to + 1, node.to) }
 }
 
-function headingAtLine(state, lineFrom) {
-  let found = null
-  syntaxTree(state).iterate({
-    from: lineFrom,
-    to: lineFrom + 1,
+function markKey(level, text) {
+  return `${level}:${text}`
+}
+
+function lineDeco(level, hang) {
+  const key = hang ? `${level}:${hang.toFixed(2)}` : `${level}`
+  let deco = lineDecoCache.get(key)
+  if (!deco) {
+    const attributes = {
+      class: `cm-heading-line cm-heading-line-${level}`,
+    }
+    if (hang) attributes.style = `--cm-hang:${hang}px`
+    deco = Decoration.line({ attributes })
+    lineDecoCache.set(key, deco)
+  }
+  return deco
+}
+
+function hashWidth(view, from, to) {
+  const start = view.coordsAtPos(from, 1)
+  const end = view.coordsAtPos(to, -1)
+  if (!start || !end) return 0
+  return Math.max(0, end.left - start.left)
+}
+
+function editorFontKey(view) {
+  return getComputedStyle(view.contentDOM).font
+}
+
+function collectHeadingMarks(view, range) {
+  const marks = []
+  syntaxTree(view.state).iterate({
+    from: range?.from,
+    to: range?.to,
     enter(node) {
       const match = ATX_HEADING_RE.exec(node.name)
       if (!match) return
-      found = { level: Number(match[1]), node: node.node }
+      const level = Number(match[1])
+      const mark = findHeaderMark(node.node)
+      if (!mark) return false
+      marks.push({
+        level,
+        text: view.state.doc.sliceString(mark.from, mark.to),
+        from: mark.from,
+        to: mark.to,
+        lineFrom: view.state.doc.lineAt(node.from).from,
+      })
       return false
     },
   })
-  return found
+  return marks
 }
 
-function mapPosSet(set, changes) {
-  const next = new Set()
-  for (const pos of set) {
-    next.add(changes.mapPos(pos, 1))
+function hashDecorations(view) {
+  const ranges = []
+  for (const mark of collectHeadingMarks(view)) {
+    ranges.push(lineDeco(mark.level).range(mark.lineFrom))
+    ranges.push(hashMark.range(mark.from, mark.to))
   }
-  return next
+  return Decoration.set(ranges, true)
 }
 
-function buildDecorations(view, settled, forceSettled = false) {
-  if (hangDisabled()) {
-    return {
-      decorations: Decoration.none,
-      present: new Set(),
-      priming: [],
+const probeHashMarks = ViewPlugin.fromClass(
+  class {
+    constructor(view) {
+      this.decorations = hashDecorations(view)
     }
+
+    update(update) {
+      if (update.docChanged || update.viewportChanged) {
+        this.decorations = hashDecorations(update.view)
+      }
+    }
+  },
+  { decorations: (v) => v.decorations },
+)
+
+function measureViewCache(view) {
+  const cache = new Map()
+  for (const mark of collectHeadingMarks(view)) {
+    const width = hashWidth(view, mark.from, mark.to)
+    if (width > 0) cache.set(markKey(mark.level, mark.text), width)
   }
+  return cache
+}
+
+function warmHangCache(hostView) {
+  return new Promise((resolve) => {
+    const host = document.createElement('div')
+    host.setAttribute('aria-hidden', 'true')
+    host.style.cssText =
+      'position:absolute;left:0;top:0;width:100%;visibility:hidden;pointer-events:none'
+    hostView.scrollDOM.appendChild(host)
+
+    const probe = new EditorView({
+      parent: host,
+      state: EditorState.create({
+        doc: SAMPLE_DOC,
+        extensions: [
+          EditorView.lineWrapping,
+          yamlFrontmatter({ content: markdown() }),
+          theme(),
+          highlightStyle(),
+          frontmatterYamlStyle(),
+          probeHashMarks,
+        ],
+      }),
+    })
+
+    let tries = 0
+    const job = {
+      read: () => measureViewCache(probe),
+      write: (cache) => {
+        if (cache.size < 6 && tries < 2) {
+          tries += 1
+          requestAnimationFrame(() => probe.requestMeasure(job))
+          return
+        }
+        probe.destroy()
+        host.remove()
+        resolve(cache)
+      },
+    }
+    probe.requestMeasure(job)
+  })
+}
+
+function buildDecorations(view, cache) {
+  if (hangDisabled()) return { decorations: Decoration.none, marks: [] }
 
   const ranges = []
-  const present = new Set()
-  const priming = []
-  const tree = syntaxTree(view.state)
+  const marks = []
 
-  for (const { from, to } of view.visibleRanges) {
-    tree.iterate({
-      from,
-      to,
-      enter(node) {
-        const match = ATX_HEADING_RE.exec(node.name)
-        if (!match) return
-
-        const level = Number(match[1])
-        const lineFrom = view.state.doc.lineAt(node.from).from
-        present.add(lineFrom)
-
-        const primed = !forceSettled && !settled.has(lineFrom)
-        ranges.push((primed ? linePreDecos : lineDecos)[level].range(lineFrom))
-
-        const mark = findHeaderMark(node.node)
-        if (mark) {
-          ranges.push(
-            (primed ? hashMarkPre : hashMark).range(mark.from, mark.to),
-          )
-        }
-        if (primed) priming.push(lineFrom)
-        return false
-      },
-    })
+  for (const visible of view.visibleRanges) {
+    for (const mark of collectHeadingMarks(view, visible)) {
+      const hang = mark.text
+        ? cache.get(markKey(mark.level, mark.text))
+        : undefined
+      ranges.push(lineDeco(mark.level, hang).range(mark.lineFrom))
+      ranges.push(hashMark.range(mark.from, mark.to))
+      marks.push(mark)
+    }
   }
 
   return {
     decorations: Decoration.set(ranges, true),
-    present,
-    priming,
+    marks,
   }
 }
 
-function resolveHashMark(view, hashEl, clientY) {
-  const probeX = hashEl.getBoundingClientRect().right + 2
-  const linePos = view.posAtCoords({ x: probeX, y: clientY })
-  if (linePos == null) return null
-  const lineFrom = view.state.doc.lineAt(linePos).from
-  const heading = headingAtLine(view.state, lineFrom)
-  if (!heading) return null
-  return findHeaderMark(heading.node)
-}
-
-function posInHashEl(event, hashEl, mark) {
-  const rect = hashEl.getBoundingClientRect()
-  const t =
-    rect.width > 0
-      ? Math.min(1, Math.max(0, (event.clientX - rect.left) / rect.width))
-      : 0
-  return mark.from + Math.round(t * (mark.to - mark.from))
-}
-
-function posFromPointer(view, event) {
-  const target = event.target
-  if (target instanceof Element) {
-    const hashEl = target.closest('.cm-heading-hash')
-    if (hashEl) {
-      const mark = resolveHashMark(view, hashEl, event.clientY)
-      if (mark) return posInHashEl(event, hashEl, mark)
-    }
-  }
-  return view.posAtCoords({ x: event.clientX, y: event.clientY })
-}
-
-function hashMouseSelection(view, event) {
-  if (hangDisabled()) return null
-  if (event.button !== 0) return null
-  if (!(event.target instanceof Element)) return null
-  const hashEl = event.target.closest('.cm-heading-hash')
-  if (!hashEl) return null
-
-  const mark = resolveHashMark(view, hashEl, event.clientY)
-  if (!mark) return null
-
-  let startPos = posInHashEl(event, hashEl, mark)
-  let startSel = view.state.selection
-
-  return {
-    update(update) {
-      if (update.docChanged) {
-        startPos = update.changes.mapPos(startPos)
-        startSel = startSel.map(update.changes)
-      }
-    },
-    get(curEvent, extend, multiple) {
-      let curPos = posFromPointer(view, curEvent)
-      if (curPos == null) curPos = startPos
-
-      const range =
-        startPos === curPos
-          ? EditorSelection.cursor(startPos)
-          : EditorSelection.range(startPos, curPos)
-
-      if (extend) {
-        return startSel.replaceRange(
-          startSel.main.extend(range.from, range.to, range.assoc),
-        )
-      }
-      if (multiple) return startSel.addRange(range)
-      return EditorSelection.create([range])
-    },
-  }
+function dispatchHangTick(view) {
+  view.dispatch({
+    effects: hangTickEffect.of(null),
+    annotations: Transaction.addToHistory.of(false),
+  })
 }
 
 export const headingHang = () =>
   ViewPlugin.fromClass(
     class {
       constructor(view) {
-        this.settled = new Set()
-        this.raf = 0
+        this.cache = new Map()
+        this.marks = []
+        this.cancelled = false
+        this.fontKey = editorFontKey(view)
         this.mq = matchMedia(NARROW_QUERY)
-        this.forceSettled = false
         this.onMq = () => {
           if (!view.dom.isConnected) return
-          this.forceSettled = !hangDisabled()
-          view.dispatch({ effects: hangTickEffect.of(null) })
+          if (!hangDisabled()) this.warm(view)
+          dispatchHangTick(view)
         }
         this.mq.addEventListener('change', this.onMq)
-        const built = buildDecorations(view, this.settled)
-        this.decorations = built.decorations
-        this.queuePrime(view, built.priming)
+        this.measure = {
+          read: (v) => this.readHangs(v),
+          write: (measured, v) => this.writeHangs(measured, v),
+        }
+        this.apply(view)
+        this.warm(view)
+        if (this.needsMeasure()) view.requestMeasure(this.measure)
       }
 
-      queuePrime(view, priming) {
-        if (!priming.length) return
-        if (this.raf) cancelAnimationFrame(this.raf)
-        const lines = [...priming]
-        this.raf = requestAnimationFrame(() => {
-          this.raf = requestAnimationFrame(() => {
-            this.raf = 0
-            if (!view.dom.isConnected) return
-            for (const pos of lines) this.settled.add(pos)
-            view.dispatch({ effects: hangTickEffect.of(null) })
-          })
+      apply(view) {
+        const built = buildDecorations(view, this.cache)
+        this.decorations = built.decorations
+        this.marks = built.marks
+      }
+
+      needsMeasure() {
+        return this.marks.some(
+          (mark) => !this.cache.has(markKey(mark.level, mark.text)),
+        )
+      }
+
+      warm(view) {
+        if (this.cancelled || hangDisabled()) return
+        warmHangCache(view).then((cache) => {
+          if (this.cancelled || !view.dom.isConnected) return
+          let changed = false
+          for (const [key, width] of cache) {
+            const prev = this.cache.get(key)
+            if (prev == null || Math.abs(prev - width) > 0.5) {
+              this.cache.set(key, width)
+              changed = true
+            }
+          }
+          if (changed) dispatchHangTick(view)
         })
+      }
+
+      readHangs(view) {
+        return this.marks.map((mark) => ({
+          key: markKey(mark.level, mark.text),
+          width: hashWidth(view, mark.from, mark.to),
+        }))
+      }
+
+      writeHangs(measured, view) {
+        if (!view.dom.isConnected) return
+        let changed = false
+        for (const { key, width } of measured) {
+          if (width <= 0) continue
+          const prev = this.cache.get(key)
+          if (prev == null || Math.abs(prev - width) > 0.5) {
+            this.cache.set(key, width)
+            changed = true
+          }
+        }
+        if (changed) dispatchHangTick(view)
       }
 
       update(update) {
         const tick = update.transactions.some((tr) =>
           tr.effects.some((e) => e.is(hangTickEffect)),
         )
-
-        if (update.docChanged) {
-          this.settled = mapPosSet(this.settled, update.changes)
+        const fontKey = editorFontKey(update.view)
+        if (fontKey !== this.fontKey) {
+          this.fontKey = fontKey
+          this.cache.clear()
+          this.warm(update.view)
         }
-
-        if (update.docChanged || update.viewportChanged || tick) {
-          const forceSettled = this.forceSettled
-          this.forceSettled = false
-          const built = buildDecorations(
-            update.view,
-            this.settled,
-            forceSettled,
-          )
-          this.decorations = built.decorations
-
-          if (forceSettled) {
-            for (const pos of built.present) this.settled.add(pos)
+        if (
+          update.docChanged ||
+          update.viewportChanged ||
+          update.geometryChanged ||
+          tick
+        ) {
+          this.apply(update.view)
+          if (!tick && this.needsMeasure()) {
+            update.view.requestMeasure(this.measure)
           }
-          for (const pos of [...this.settled]) {
-            if (!built.present.has(pos)) this.settled.delete(pos)
-          }
-
-          this.queuePrime(update.view, built.priming)
         }
       }
 
       destroy() {
+        this.cancelled = true
         this.mq.removeEventListener('change', this.onMq)
-        if (this.raf) cancelAnimationFrame(this.raf)
       }
     },
-    {
-      decorations: (v) => v.decorations,
-      provide: () => EditorView.mouseSelectionStyle.of(hashMouseSelection),
-    },
+    { decorations: (v) => v.decorations },
   )

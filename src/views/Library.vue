@@ -1,42 +1,39 @@
 <template>
   <div class="library">
     <div class="main">
-    <div class="header">
-      <div class="title link" @click="goBack">
-        <span class="back">‹</span>
-        {{ i18n['library-title'] }}
-      </div>
-      <div class="side-buttons">
-        <div class="button-primary" @click="createEssay">
-          {{ i18n['library-new'] }}
-        </div>
-        <div class="button-secondary" @click="createFolder">
-          {{ i18n['library-new-folder'] }}
-        </div>
-        <div class="button-secondary" @click="batchItems">
-          {{ i18n['library-batch'] }}
+      <div class="header">
+        <div class="title">‹ {{ i18n['library-title'] }}</div>
+        <div class="side-buttons">
+          <button class="btn-primary">
+            {{ i18n['library-new'] }}
+          </button>
+          <button class="btn-secondary">
+            {{ i18n['library-new-folder'] }}
+          </button>
+          <button class="btn-secondary" @click="batchItems">
+            {{ i18n['library-batch'] }}
+          </button>
         </div>
       </div>
-    </div>
-    <div class="content">
-      <div
-        v-for="item in library.children"
-        :key="itemKey(item)"
-        class="item"
-        :class="{ folder: isFolder(item) }"
-        @click="openItem(item)"
-      >
-        <div class="item-body">
-          <div class="item-title">{{ itemTitle(item) }}</div>
-          <div class="item-meta">{{ itemMeta(item) }}</div>
+      <div class="content">
+        <div
+          v-for="item in library.children"
+          :key="itemKey(item)"
+          class="item"
+          :class="{ folder: isFolder(item) }"
+          @click="openItem(item)"
+        >
+          <div class="item-body">
+            <div class="item-title">{{ itemTitle(item) }}</div>
+            <div class="item-meta">{{ itemMeta(item) }}</div>
+          </div>
+          <div v-if="item.password" class="item-lock" aria-hidden="true"></div>
         </div>
-        <div v-if="item.password" class="item-lock" aria-hidden="true"></div>
+        <div v-if="!library.children.length" class="placeholder">
+          <div class="placeholder-title">{{ i18n['library-empty'] }}</div>
+          <div class="placeholder-subtitle"></div>
+        </div>
       </div>
-      <div v-if="!library.children.length" class="placeholder">
-        <div class="placeholder-title">{{ i18n['library-empty'] }}</div>
-        <div class="placeholder-subtitle"></div>
-      </div>
-    </div>
     </div>
   </div>
 </template>
@@ -45,176 +42,131 @@
 .library {
   display: flex;
   justify-content: center;
-}
 
-.main {
-  max-width: 42em;
-  width: 100%;
-  margin: 48px auto;
-}
+  .main {
+    max-width: 42em;
+    width: 100%;
+    margin: 48px auto;
 
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  flex-wrap: wrap;
-  margin-bottom: 1.25rem;
-}
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.25rem;
 
-.title {
-  font-size: 1.5rem;
-  color: var(--color-bold);
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
-}
+      .title {
+        font-size: 22px;
+        font-weight: bold;
+        color: var(--color-bold);
+        cursor: pointer;
+      }
 
-.title.link {
-  cursor: pointer;
-}
+      .side-buttons {
+        display: flex;
+        gap: 0.5rem;
 
-.title.link:hover {
-  opacity: 0.7;
-}
+        button {
+          padding: 2px 5px;
+        }
+      }
+    }
 
-.back {
-  font-size: 1.6rem;
-  line-height: 1;
-  margin-top: -0.15em;
-}
+    .content {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+      flex: 1;
 
-.side-buttons {
-  display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-}
+      .item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 10px 14px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background 0.15s ease;
 
-.button-primary,
-.button-secondary {
-  padding: 0.3rem 0.7rem;
-  text-align: center;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-size: 0.875rem;
-}
+        .item-body {
+          min-width: 0;
+          display: flex;
+          flex-direction: column;
+          gap: 0.1rem;
+          .item-title {
+            color: var(--color-bold);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
 
-.button-primary {
-  background: var(--color-bold);
-  color: var(--color-background);
-}
+          .item-meta {
+            font-size: 0.8rem;
+            opacity: 0.55;
+          }
 
-.button-primary:hover {
-  opacity: 0.7;
-}
+          .item-lock {
+            width: 0.7rem;
+            height: 0.85rem;
+            flex-shrink: 0;
+            border: 1.5px solid currentColor;
+            border-radius: 3px 3px 2px 2px;
+            opacity: 0.4;
+            position: relative;
+          }
 
-.button-secondary {
-  border: 1px solid #7775;
-}
+          .item-lock::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: -0.35rem;
+            width: 0.38rem;
+            height: 0.35rem;
+            border: 1.5px solid currentColor;
+            border-bottom: none;
+            border-radius: 4px 4px 0 0;
+            transform: translateX(-50%);
+          }
+        }
+      }
 
-.button-secondary:hover {
-  background: var(--color-hover);
-}
+      .item:hover {
+        background: var(--color-hover);
+      }
+      .item.folder .item-title::before {
+        content: '';
+        display: inline-block;
+        width: 0.7rem;
+        height: 0.5rem;
+        margin-right: 0.45rem;
+        border: 1.5px solid currentColor;
+        border-radius: 1px 2px 1px 1px;
+        opacity: 0.45;
+        vertical-align: 0.1em;
+      }
+    }
 
-.content {
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-  flex: 1;
-}
+    .placeholder {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 12rem;
+      opacity: 0.5;
+    }
 
-.item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 0.7rem 0.8rem;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background 0.15s ease;
-}
-
-.item:hover {
-  background: var(--color-hover);
-}
-
-.item.folder .item-title::before {
-  content: '';
-  display: inline-block;
-  width: 0.7rem;
-  height: 0.5rem;
-  margin-right: 0.45rem;
-  border: 1.5px solid currentColor;
-  border-radius: 1px 2px 1px 1px;
-  opacity: 0.45;
-  vertical-align: 0.1em;
-}
-
-.item-body {
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.1rem;
-}
-
-.item-title {
-  color: var(--color-bold);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.item-meta {
-  font-size: 0.8rem;
-  opacity: 0.55;
-}
-
-.item-lock {
-  width: 0.7rem;
-  height: 0.85rem;
-  flex-shrink: 0;
-  border: 1.5px solid currentColor;
-  border-radius: 3px 3px 2px 2px;
-  opacity: 0.4;
-  position: relative;
-}
-
-.item-lock::before {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: -0.35rem;
-  width: 0.38rem;
-  height: 0.35rem;
-  border: 1.5px solid currentColor;
-  border-bottom: none;
-  border-radius: 4px 4px 0 0;
-  transform: translateX(-50%);
-}
-
-.placeholder {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 12rem;
-  opacity: 0.5;
-}
-
-.placeholder-title {
-  font-size: 1rem;
+    .placeholder-title {
+      font-size: 1rem;
+    }
+  }
 }
 </style>
 
 <script setup>
-import { useRouter } from 'vue-router'
 import i18n from '@/i18n'
-import { library, File, Folder, settings } from '@/userdata'
-import { newEssay, createFolder as addFolder } from '@/userfunc'
-
-const router = useRouter()
+import { library, File, Folder, settings, editorSession } from '@/userdata'
 
 function isFolder(item) {
   return item instanceof Folder
@@ -266,21 +218,11 @@ function itemMeta(item) {
 
 function openItem(item) {
   if (item instanceof File) {
-    router.push({ name: 'Editor', params: { id: item.id } })
+    editorSession.file = item
   }
 }
 
-function goBack() {
-  router.push({ name: 'Home' })
-}
-
-function createEssay() {
-  newEssay()
-}
-
-function createFolder() {
-  addFolder()
-}
+function goBack() {}
 
 function batchItems() {}
 </script>

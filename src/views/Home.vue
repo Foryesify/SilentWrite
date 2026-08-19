@@ -1,10 +1,10 @@
 <template>
   <div class="home">
     <div class="main">
-      <button class="btn-primary" @click="newEssay">
+      <button class="btn-primary">
         {{ i18n['home-new-essay'] }}
       </button>
-      <button class="btn-secondary" @click="openLibrary">
+      <button class="btn-secondary">
         {{ i18n['home-open-library'] }}
       </button>
     </div>
@@ -13,34 +13,17 @@
 
 <script setup>
 import i18n from '@/i18n'
-import { router } from '@/router';
-
-function newEssay() {
-  router.push('/editor')
-}
-
-function openLibrary() {
-  router.push("/library")
-}
 </script>
 
 <style scoped>
 .home {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 1.25rem;
-}
-
-.title {
-  font-size: 1.5rem;
-  color: var(--color-bold);
+  display: grid;
+  place-items: center;
 }
 
 .main {
-  width: min(350px, 90%);
-  padding-bottom: 100px;
+  width: min(380px, 100%);
+  margin-bottom: 8dvh;
 
   button {
     width: 100%;
