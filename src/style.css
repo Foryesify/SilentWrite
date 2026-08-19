@@ -56,8 +56,8 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-primary: #f0eee6;
-    --color-primary-hover: #fffdf1;
+    --color-primary: #e3e1d9;
+    --color-primary-hover: #a2a19c;
     --color-danger: #c42b1c;
 
     --color-text: #f0eee6;
@@ -101,6 +101,7 @@ body {
 
 button {
   box-shadow: 0 0 0 transparent;
+  border: none;
   border-radius: var(--border-radius-standard);
   font-weight: bold;
   display: grid;
@@ -113,22 +114,18 @@ button {
 .btn-primary {
   background-color: var(--color-primary);
   color: var(--color-text-on-accent);
-  border: 2px solid var(--color-primary);
 
   &:hover {
-    box-shadow: var(--shadow-standard);
     background-color: var(--color-primary-hover);
   }
 }
 
 .btn-secondary {
-  background-color: transparent;
+  background-color: var(--color-hover);
   color: var(--color-text);
-  border: 2px solid var(--color-primary);
 
   &:hover {
-    box-shadow: var(--shadow-standard);
-    background-color: var(--color-hover);
+    background-color: var(--color-hover-darker);
   }
 }
 

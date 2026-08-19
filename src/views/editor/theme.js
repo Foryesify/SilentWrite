@@ -1,6 +1,7 @@
 import { EditorView } from "@codemirror/view"
 
 const isTouch = matchMedia('(pointer: coarse)').matches
+export const NARROW_QUERY = '(max-width: 750px)'
 
 const cmVars = {
   '--cm-font': "system-ui, sans-serif",
@@ -11,7 +12,7 @@ const cmVars = {
   '--cm-selection': '#e9e9e9',
   '--cm-caret': '#222',
   '--cm-placeholder': '#444',
-  '--cm-hash-gutter': '40px',
+  '--cm-hash-gutter': '5em',
 }
 
 const cmVarsDark = {
@@ -41,17 +42,20 @@ export const theme = () => EditorView.theme({
     '.cm-scroller': cmVarsDark,
   },
   '.cm-content': {
-    maxWidth: 'min(36em, 80vw)',
+    maxWidth: 'min(48em, 80vw)',
     flex: '1 1 auto',
     padding: '0 var(--cm-hash-gutter)',
   },
-  '@media (max-width: 700px)': {
+  [`@media ${NARROW_QUERY}`]: {
     '.cm-scroller': {
       '--cm-hash-gutter': '0',
     },
     '.cm-content': {
       'maxWidth': '95vw',
-    }
+    },
+    '.cm-heading-line': {
+      textIndent: '0',
+    },
   },
 
   // Line
@@ -95,13 +99,12 @@ export const theme = () => EditorView.theme({
     color: 'inherit !important',
   },
 
-  // Heading hang: hashes stay in flow; text-indent pulls them into the gutter.
+  // Heading hang: hashes stay in flow (selectable); text-indent hangs them.
   '.cm-heading-line': {
     textIndent: 'calc(-1 * var(--cm-hang, 0px))',
   },
   '.cm-heading-hash': {
     whiteSpace: 'pre',
-    fontSize: '1em !important',
     fontWeight: '400',
     color: 'var(--cm-heading)',
   },

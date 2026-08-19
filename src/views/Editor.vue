@@ -1,5 +1,5 @@
 <template>
-  <div class="editor" @click="onEditorClick"></div>
+  <div class="editor"></div>
 </template>
 
 <style scoped>
@@ -21,24 +21,7 @@ import { yamlFrontmatter } from '@codemirror/lang-yaml'
 import { cm6ThemeSilent } from './editor/cm6ThemeSilent'
 import { editorSession } from '@/userdata'
 
-const HOME_TAP_COUNT = 5
-const HOME_TAP_GAP = 450
-
 let view = null
-let homeTapCount = 0
-let homeTapTimer = 0
-
-function onEditorClick() {
-  homeTapCount += 1
-  clearTimeout(homeTapTimer)
-  if (homeTapCount >= HOME_TAP_COUNT) {
-    homeTapCount = 0
-    return
-  }
-  homeTapTimer = window.setTimeout(() => {
-    homeTapCount = 0
-  }, HOME_TAP_GAP)
-}
 
 function onEditorFocus() {
   
@@ -75,7 +58,6 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
-  clearTimeout(homeTapTimer)
   editorSession.file = null
   view = null
 })

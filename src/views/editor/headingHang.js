@@ -1,14 +1,12 @@
 import { Decoration, EditorView, ViewPlugin } from '@codemirror/view'
-import { EditorState, StateEffect, Transaction } from '@codemirror/state'
+import { EditorState, StateEffect, StateField, Transaction } from '@codemirror/state'
 import { syntaxTree } from '@codemirror/language'
 import { markdown } from '@codemirror/lang-markdown'
 import { yamlFrontmatter } from '@codemirror/lang-yaml'
-import { frontmatterYamlStyle, highlightStyle } from './highlightStyle'
-import { theme } from './theme'
+import { highlightStyle } from './highlightStyle'
+import { NARROW_QUERY, theme } from './theme'
 
 const ATX_HEADING_RE = /^ATXHeading([1-6])$/
-const NARROW_QUERY = '(max-width: 700px)'
-const hangTickEffect = StateEffect.define()
 const hashMark = Decoration.mark({ class: 'cm-heading-hash' })
 const lineDecoCache = new Map()
 
@@ -16,6 +14,25 @@ const SAMPLE_DOC = Array.from({ length: 6 }, (_, i) => {
   const hashes = '#'.repeat(i + 1)
   return `${hashes}\n${hashes} x`
 }).join('\n')
+
+const setHangsEffect = StateEffect.define()
+const hangModeEffect = StateEffect.define()
+
+const hangField = StateField.define({
+  create() {
+    return new Map()
+  },
+  update(value, tr) {
+    for (const effect of tr.effects) {
+      if (!effect.is(setHangsEffect)) continue
+      if (effect.value === null) return new Map()
+      const next = new Map(value)
+      for (const [key, width] of effect.value) next.set(key, width)
+      return next
+    }
+    return value
+  },
+})
 
 function hangDisabled() {
   return matchMedia(NARROW_QUERY).matches
@@ -32,28 +49,21 @@ function markKey(level, text) {
 }
 
 function lineDeco(level, hang) {
-  const key = hang ? `${level}:${hang.toFixed(2)}` : `${level}`
+  const key = hang != null ? `${level}:${hang.toFixed(2)}` : `${level}`
   let deco = lineDecoCache.get(key)
   if (!deco) {
     const attributes = {
       class: `cm-heading-line cm-heading-line-${level}`,
     }
-    if (hang) attributes.style = `--cm-hang:${hang}px`
+    if (hang != null) attributes.style = `--cm-hang:${hang.toFixed(2)}px`
     deco = Decoration.line({ attributes })
     lineDecoCache.set(key, deco)
   }
   return deco
 }
 
-function hashWidth(view, from, to) {
-  const start = view.coordsAtPos(from, 1)
-  const end = view.coordsAtPos(to, -1)
-  if (!start || !end) return 0
-  return Math.max(0, end.left - start.left)
-}
-
 function editorFontKey(view) {
-  return getComputedStyle(view.contentDOM).font
+  return getComputedStyle(view.scrollDOM).font
 }
 
 function collectHeadingMarks(view, range) {
@@ -64,11 +74,10 @@ function collectHeadingMarks(view, range) {
     enter(node) {
       const match = ATX_HEADING_RE.exec(node.name)
       if (!match) return
-      const level = Number(match[1])
       const mark = findHeaderMark(node.node)
       if (!mark) return false
       marks.push({
-        level,
+        level: Number(match[1]),
         text: view.state.doc.sliceString(mark.from, mark.to),
         from: mark.from,
         to: mark.to,
@@ -78,6 +87,43 @@ function collectHeadingMarks(view, range) {
     },
   })
   return marks
+}
+
+function hashSpanAt(view, from) {
+  const found = view.domAtPos(from)
+  if (!found?.node) return null
+  const el =
+    found.node.nodeType === Node.TEXT_NODE
+      ? found.node.parentElement
+      : found.node
+  return el?.closest?.('.cm-heading-hash') ?? null
+}
+
+function measureHashWidth(view, from, to) {
+  const span = hashSpanAt(view, from)
+  if (span) {
+    const width = span.getBoundingClientRect().width
+    if (width > 0) return width
+  }
+
+  const start = view.domAtPos(from)
+  const end = view.domAtPos(to)
+  if (!start?.node || !end?.node) return 0
+  try {
+    const range = document.createRange()
+    range.setStart(start.node, start.offset)
+    range.setEnd(end.node, end.offset)
+    const rects = range.getClientRects()
+    if (!rects.length) return 0
+    let width = 0
+    const top = rects[0].top
+    for (const rect of rects) {
+      if (Math.abs(rect.top - top) < 1) width += rect.width
+    }
+    return width
+  } catch {
+    return 0
+  }
 }
 
 function hashDecorations(view) {
@@ -104,22 +150,23 @@ const probeHashMarks = ViewPlugin.fromClass(
   { decorations: (v) => v.decorations },
 )
 
-function measureViewCache(view) {
-  const cache = new Map()
-  for (const mark of collectHeadingMarks(view)) {
-    const width = hashWidth(view, mark.from, mark.to)
-    if (width > 0) cache.set(markKey(mark.level, mark.text), width)
+function measureProbeCache(probe) {
+  const updates = []
+  for (const mark of collectHeadingMarks(probe)) {
+    const width = measureHashWidth(probe, mark.from, mark.to)
+    if (width > 0) updates.push([markKey(mark.level, mark.text), width])
   }
-  return cache
+  return updates
 }
 
-function warmHangCache(hostView) {
+function warmHangCache(hostView, isCancelled) {
   return new Promise((resolve) => {
     const host = document.createElement('div')
     host.setAttribute('aria-hidden', 'true')
     host.style.cssText =
-      'position:absolute;left:0;top:0;width:100%;visibility:hidden;pointer-events:none'
-    hostView.scrollDOM.appendChild(host)
+      'position:absolute;left:0;top:0;width:40em;visibility:hidden;pointer-events:none'
+    const parent = hostView.dom.parentNode || document.body
+    parent.appendChild(host)
 
     const probe = new EditorView({
       parent: host,
@@ -130,41 +177,55 @@ function warmHangCache(hostView) {
           yamlFrontmatter({ content: markdown() }),
           theme(),
           highlightStyle(),
-          frontmatterYamlStyle(),
           probeHashMarks,
         ],
       }),
     })
 
+    const finish = (updates) => {
+      probe.destroy()
+      host.remove()
+      resolve(updates)
+    }
+
     let tries = 0
     const job = {
-      read: () => measureViewCache(probe),
-      write: (cache) => {
-        if (cache.size < 6 && tries < 2) {
+      read: () => (isCancelled() ? [] : measureProbeCache(probe)),
+      write: (updates) => {
+        if (isCancelled()) {
+          finish([])
+          return
+        }
+        if (updates.length < 12 && tries < 4) {
           tries += 1
           requestAnimationFrame(() => probe.requestMeasure(job))
           return
         }
-        probe.destroy()
-        host.remove()
-        resolve(cache)
+        finish(updates)
       },
+    }
+    probe.contentDOM.getBoundingClientRect()
+    const immediate = isCancelled() ? [] : measureProbeCache(probe)
+    if (immediate.length >= 12) {
+      finish(immediate)
+      return
     }
     probe.requestMeasure(job)
   })
 }
 
-function buildDecorations(view, cache) {
-  if (hangDisabled()) return { decorations: Decoration.none, marks: [] }
+function buildDecorations(view) {
+  if (hangDisabled()) {
+    return { decorations: Decoration.none, marks: [] }
+  }
 
   const ranges = []
   const marks = []
+  const measured = view.state.field(hangField)
 
   for (const visible of view.visibleRanges) {
     for (const mark of collectHeadingMarks(view, visible)) {
-      const hang = mark.text
-        ? cache.get(markKey(mark.level, mark.text))
-        : undefined
+      const hang = measured.get(markKey(mark.level, mark.text))
       ranges.push(lineDeco(mark.level, hang).range(mark.lineFrom))
       ranges.push(hashMark.range(mark.from, mark.to))
       marks.push(mark)
@@ -177,113 +238,210 @@ function buildDecorations(view, cache) {
   }
 }
 
-function dispatchHangTick(view) {
+function paintHang(view, mark, width) {
+  const span = hashSpanAt(view, mark.from)
+  const line = span?.closest('.cm-line')
+  if (line) line.style.setProperty('--cm-hang', `${width.toFixed(2)}px`)
+}
+
+function later(fn) {
+  setTimeout(fn, 0)
+}
+
+function commitHangs(view, updates) {
+  if (!updates.length || !view.dom.isConnected) return
   view.dispatch({
-    effects: hangTickEffect.of(null),
+    effects: setHangsEffect.of(updates),
     annotations: Transaction.addToHistory.of(false),
   })
 }
 
-export const headingHang = () =>
-  ViewPlugin.fromClass(
-    class {
-      constructor(view) {
-        this.cache = new Map()
-        this.marks = []
-        this.cancelled = false
-        this.fontKey = editorFontKey(view)
-        this.mq = matchMedia(NARROW_QUERY)
-        this.onMq = () => {
-          if (!view.dom.isConnected) return
-          if (!hangDisabled()) this.warm(view)
-          dispatchHangTick(view)
-        }
-        this.mq.addEventListener('change', this.onMq)
-        this.measure = {
-          read: (v) => this.readHangs(v),
-          write: (measured, v) => this.writeHangs(measured, v),
-        }
-        this.apply(view)
-        this.warm(view)
-        if (this.needsMeasure()) view.requestMeasure(this.measure)
-      }
-
-      apply(view) {
-        const built = buildDecorations(view, this.cache)
-        this.decorations = built.decorations
-        this.marks = built.marks
-      }
-
-      needsMeasure() {
-        return this.marks.some(
-          (mark) => !this.cache.has(markKey(mark.level, mark.text)),
-        )
-      }
-
-      warm(view) {
-        if (this.cancelled || hangDisabled()) return
-        warmHangCache(view).then((cache) => {
-          if (this.cancelled || !view.dom.isConnected) return
-          let changed = false
-          for (const [key, width] of cache) {
-            const prev = this.cache.get(key)
-            if (prev == null || Math.abs(prev - width) > 0.5) {
-              this.cache.set(key, width)
-              changed = true
-            }
-          }
-          if (changed) dispatchHangTick(view)
+const hangPlugin = ViewPlugin.fromClass(
+  class {
+    constructor(view) {
+      this.marks = []
+      this.retries = 0
+      this.cancelled = false
+      this.disabled = hangDisabled()
+      this.warmGen = 0
+      this.fontKey = editorFontKey(view)
+      this.mq = matchMedia(NARROW_QUERY)
+      this.onMq = () => {
+        if (!view.dom.isConnected || this.cancelled) return
+        later(() => {
+          if (!view.dom.isConnected || this.cancelled) return
+          if (hangDisabled() === this.disabled) return
+          view.dispatch({
+            effects: hangModeEffect.of(null),
+            annotations: Transaction.addToHistory.of(false),
+          })
         })
       }
-
-      readHangs(view) {
-        return this.marks.map((mark) => ({
-          key: markKey(mark.level, mark.text),
-          width: hashWidth(view, mark.from, mark.to),
-        }))
+      this.mq.addEventListener('change', this.onMq)
+      this.measure = {
+        read: (v) => this.readHangs(v),
+        write: (measured, v) => this.writeHangs(measured, v),
       }
-
-      writeHangs(measured, view) {
-        if (!view.dom.isConnected) return
-        let changed = false
-        for (const { key, width } of measured) {
-          if (width <= 0) continue
-          const prev = this.cache.get(key)
-          if (prev == null || Math.abs(prev - width) > 0.5) {
-            this.cache.set(key, width)
-            changed = true
+      this.apply(view)
+      if (!this.disabled) {
+        this.warm(view)
+        later(() => {
+          if (!this.cancelled && view.dom.isConnected && this.needsMeasure(view)) {
+            view.requestMeasure(this.measure)
           }
-        }
-        if (changed) dispatchHangTick(view)
+        })
       }
+    }
 
-      update(update) {
-        const tick = update.transactions.some((tr) =>
-          tr.effects.some((e) => e.is(hangTickEffect)),
-        )
-        const fontKey = editorFontKey(update.view)
-        if (fontKey !== this.fontKey) {
-          this.fontKey = fontKey
-          this.cache.clear()
+    warm(view) {
+      if (this.cancelled || hangDisabled()) return
+      this.warmGen += 1
+      const gen = this.warmGen
+      warmHangCache(view, () => this.cancelled || gen !== this.warmGen).then(
+        (updates) => {
+          if (gen !== this.warmGen || this.cancelled || !view.dom.isConnected) {
+            return
+          }
+          if (!updates.length || hangDisabled()) return
+          later(() => {
+            if (gen !== this.warmGen || this.cancelled || !view.dom.isConnected) {
+              return
+            }
+            if (hangDisabled()) return
+            const current = view.state.field(hangField)
+            const next = updates.filter(([key, width]) => {
+              const prev = current.get(key)
+              return prev == null || Math.abs(prev - width) > 0.5
+            })
+            commitHangs(view, next)
+          })
+        },
+      )
+    }
+
+    apply(view) {
+      const built = buildDecorations(view)
+      this.decorations = built.decorations
+      this.marks = built.marks
+    }
+
+    needsMeasure(view) {
+      if (hangDisabled()) return false
+      const measured = view.state.field(hangField)
+      return this.marks.some(
+        (mark) => !measured.has(markKey(mark.level, mark.text)),
+      )
+    }
+
+    readHangs(view) {
+      if (hangDisabled()) return []
+      return this.marks.map((mark) => ({
+        key: markKey(mark.level, mark.text),
+        mark,
+        width: measureHashWidth(view, mark.from, mark.to),
+      }))
+    }
+
+    writeHangs(measured, view) {
+      if (!view.dom.isConnected || this.cancelled || hangDisabled()) return
+      const current = view.state.field(hangField)
+      const updates = []
+      for (const { key, mark, width } of measured) {
+        if (width <= 0) continue
+        const prev = current.get(key)
+        if (prev == null) paintHang(view, mark, width)
+        if (prev == null || Math.abs(prev - width) > 0.5) {
+          updates.push([key, width])
+        }
+      }
+      if (updates.length) {
+        this.retries = 0
+        later(() => {
+          if (!this.cancelled && view.dom.isConnected && !hangDisabled()) {
+            commitHangs(view, updates)
+          }
+        })
+        return
+      }
+      if (this.needsMeasure(view) && this.retries < 4) {
+        this.retries += 1
+        later(() => {
+          if (!this.cancelled && view.dom.isConnected && !hangDisabled()) {
+            view.requestMeasure(this.measure)
+          }
+        })
+      }
+    }
+
+    update(update) {
+      const disabled = hangDisabled()
+      if (disabled !== this.disabled) {
+        this.disabled = disabled
+        this.apply(update.view)
+        if (!disabled) {
           this.warm(update.view)
+          later(() => {
+            if (this.cancelled || !update.view.dom.isConnected || hangDisabled()) {
+              return
+            }
+            if (this.needsMeasure(update.view)) {
+              update.view.requestMeasure(this.measure)
+            }
+          })
         }
-        if (
-          update.docChanged ||
-          update.viewportChanged ||
-          update.geometryChanged ||
-          tick
-        ) {
-          this.apply(update.view)
-          if (!tick && this.needsMeasure()) {
-            update.view.requestMeasure(this.measure)
-          }
-        }
+        return
       }
+      if (disabled) return
 
-      destroy() {
-        this.cancelled = true
-        this.mq.removeEventListener('change', this.onMq)
+      const hangsChanged = update.transactions.some((tr) =>
+        tr.effects.some((e) => e.is(setHangsEffect)),
+      )
+      const fontKey = editorFontKey(update.view)
+      const fontChanged = fontKey !== this.fontKey
+      if (fontChanged) {
+        this.fontKey = fontKey
+        later(() => {
+          if (this.cancelled || !update.view.dom.isConnected || hangDisabled()) {
+            return
+          }
+          update.view.dispatch({
+            effects: setHangsEffect.of(null),
+            annotations: Transaction.addToHistory.of(false),
+          })
+          this.warm(update.view)
+        })
       }
-    },
-    { decorations: (v) => v.decorations },
-  )
+      if (
+        update.docChanged ||
+        update.viewportChanged ||
+        hangsChanged ||
+        fontChanged
+      ) {
+        this.apply(update.view)
+      }
+      if (
+        !hangsChanged &&
+        (update.docChanged ||
+          update.viewportChanged ||
+          fontChanged ||
+          this.needsMeasure(update.view))
+      ) {
+        const view = update.view
+        later(() => {
+          if (!this.cancelled && view.dom.isConnected && !hangDisabled()) {
+            view.requestMeasure(this.measure)
+          }
+        })
+      }
+    }
+
+    destroy() {
+      this.cancelled = true
+      this.warmGen += 1
+      this.mq.removeEventListener('change', this.onMq)
+    }
+  },
+  { decorations: (v) => v.decorations },
+)
+
+export const headingHang = () => [hangField, hangPlugin]

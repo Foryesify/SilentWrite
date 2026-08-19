@@ -9,5 +9,5 @@ export const cm6ThemeSilent = [
   theme(),
   highlightStyle(),
   frontmatterYamlStyle(),
-  headingHang(),
+  ...headingHang(),
 ]
