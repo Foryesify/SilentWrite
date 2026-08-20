@@ -12,8 +12,8 @@
 </template>
 
 <script setup>
-import i18n from '@/i18n'
-import { changePage } from '@/router';
+import { i18n } from '@/user/i18n.js'
+import { changePage } from '@/user/session.js';
 
 function newEssay() {
   changePage('Editor')

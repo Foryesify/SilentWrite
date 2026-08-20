@@ -55,7 +55,7 @@
     gap: 0.5rem;
 
     button {
-      padding: 3px 6px;
+      padding: 5px 8px;
     }
   }
 }
@@ -152,8 +152,10 @@
 </style>
 
 <script setup>
-import i18n from '@/i18n'
-import { changePage } from '@/router'
+import { i18n } from '@/user/i18n.js'
+import { changePage } from '@/user/session.js'
 
-
+function goBack() {
+  changePage('Home')
+}
 </script>

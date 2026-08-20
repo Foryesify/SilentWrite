@@ -65,7 +65,7 @@
 
 <script setup>
 import { ref, watch } from 'vue'
-import { page } from './router.js'
+import { page } from './user/session.js'
 import Editor from './views/Editor.vue'
 import Home from './views/Home.vue'
 import Library from './views/Library.vue'

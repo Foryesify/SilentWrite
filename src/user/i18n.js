@@ -115,4 +115,4 @@ const translations =
   }
 }
 
-export default computed(() => translations[settings.lang])
+export const i18n = computed(() => translations[settings.lang])

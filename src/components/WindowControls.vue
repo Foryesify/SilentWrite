@@ -50,6 +50,6 @@
 </style>
 
 <script setup>
-import { Appwindow } from '@/api';
+import { Appwindow } from '@/user/api';
 
 </script>

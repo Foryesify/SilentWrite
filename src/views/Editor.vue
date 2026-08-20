@@ -1,8 +1,6 @@
 <template>
   <div class="editor">
-    <div class="back" @click="changePage('Home')">
-      ‹
-    </div>
+    <div class="back" @click="changePage('Home')">‹</div>
   </div>
 </template>
 
@@ -47,53 +45,35 @@
 </style>
 
 <script setup>
-import i18n from '@/i18n'
-import { Session } from '@/api'
+import { i18n } from '@/user/i18n.js'
 import { onMounted, onBeforeUnmount } from 'vue'
 import { EditorState } from '@codemirror/state'
 import { EditorView, placeholder, keymap } from '@codemirror/view'
 import { defaultKeymap, history, historyKeymap } from '@codemirror/commands'
 import { indentWithTab } from '@codemirror/commands'
-import { searchKeymap } from '@codemirror/search'
 import { markdown } from '@codemirror/lang-markdown'
 import { yamlFrontmatter } from '@codemirror/lang-yaml'
 import { cm6ThemeSilent } from './editor/cm6ThemeSilent'
-import { changePage, page } from '@/router'
-
-let view = null
-
-function onEditorFocused() {}
-
-function onEditorUnfocused() {}
+import { changePage, page } from '@/user/session.js'
 
 onMounted(() => {
-  view = new EditorView({
+  const view = new EditorView({
     parent: document.querySelector('.editor'),
     state: EditorState.create({
-      doc: Session.editor.file?.content ?? '',
+      doc: '',
       extensions: [
         history(),
         placeholder(i18n.value['editor-placeholder']),
         EditorView.lineWrapping,
+        ...cm6ThemeSilent,
         keymap.of([
           indentWithTab,
           ...defaultKeymap,
           ...historyKeymap,
-          ...searchKeymap,
         ]),
         yamlFrontmatter({ content: markdown() }),
-        ...cm6ThemeSilent,
-        EditorView.updateListener.of((update) => {
-          if (!update.focusChanged) return
-          if (update.view.hasFocus) onEditorFocused()
-          else onEditorUnfocused()
-        }),
       ],
     }),
   })
-})
-
-onBeforeUnmount(() => {
-  view = null
 })
 </script>
