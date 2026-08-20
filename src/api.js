@@ -12,8 +12,15 @@ export const Appwindow = {
   ),
 }
 
+export const Session = {
+  editor: {
+    file: null
+  }
+}
+
 export const Userdata = {
   newFile: (name) => {
+    library.appendChild(File("name"))
   },
   newFolder: (name) => {
   }

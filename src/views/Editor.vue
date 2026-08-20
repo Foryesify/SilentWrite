@@ -48,6 +48,7 @@
 
 <script setup>
 import i18n from '@/i18n'
+import { Session } from '@/api'
 import { onMounted, onBeforeUnmount } from 'vue'
 import { EditorState } from '@codemirror/state'
 import { EditorView, placeholder, keymap } from '@codemirror/view'
@@ -57,7 +58,6 @@ import { searchKeymap } from '@codemirror/search'
 import { markdown } from '@codemirror/lang-markdown'
 import { yamlFrontmatter } from '@codemirror/lang-yaml'
 import { cm6ThemeSilent } from './editor/cm6ThemeSilent'
-import { editorSession } from '@/userdata'
 import { changePage, page } from '@/router'
 
 let view = null
@@ -70,7 +70,7 @@ onMounted(() => {
   view = new EditorView({
     parent: document.querySelector('.editor'),
     state: EditorState.create({
-      doc: editorSession.file?.content ?? '',
+      doc: Session.editor.file?.content ?? '',
       extensions: [
         history(),
         placeholder(i18n.value['editor-placeholder']),
@@ -94,7 +94,6 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
-  editorSession.file = null
   view = null
 })
 </script>

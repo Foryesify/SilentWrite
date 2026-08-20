@@ -16,23 +16,7 @@
         </div>
       </div>
       <div class="content">
-        <div
-          v-for="item in library.children"
-          :key="itemKey(item)"
-          class="item"
-          :class="{ folder: isFolder(item) }"
-          @click="openItem(item)"
-        >
-          <div class="item-body">
-            <div class="item-title">{{ itemTitle(item) }}</div>
-            <div class="item-meta">{{ itemMeta(item) }}</div>
-          </div>
-          <div v-if="item.password" class="item-lock" aria-hidden="true"></div>
-        </div>
-        <div v-if="!library.children.length" class="placeholder">
-          <div class="placeholder-title">{{ i18n['library-empty'] }}</div>
-          <div class="placeholder-subtitle"></div>
-        </div>
+        
       </div>
     </div>
   </div>
@@ -43,124 +27,126 @@
   display: flex;
   justify-content: center;
   min-height: 100%;
+}
 
-  .main {
-    max-width: 42em;
-    width: 100%;
-    margin: 48px auto;
+.main {
+  max-width: 42em;
+  width: 100%;
+  margin: 48px auto;
+}
 
-    .header {
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.25rem;
+
+  .title {
+    font-size: 22px;
+    font-weight: bold;
+    color: var(--color-bold);
+    cursor: pointer;
+  }
+
+  .side-buttons {
+    display: flex;
+    gap: 0.5rem;
+
+    button {
+      padding: 3px 6px;
+    }
+  }
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  flex: 1;
+
+  .item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 10px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+
+    .item-body {
+      min-width: 0;
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-      flex-wrap: wrap;
-      margin-bottom: 1.25rem;
+      flex-direction: column;
+      gap: 0.1rem;
 
-      .title {
-        font-size: 22px;
-        font-weight: bold;
+      .item-title {
         color: var(--color-bold);
-        cursor: pointer;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
 
-      .side-buttons {
-        display: flex;
-        gap: 0.5rem;
-
-        button {
-          padding: 3px 6px;
-        }
-      }
-    }
-
-    .content {
-      display: flex;
-      flex-direction: column;
-      gap: 0.15rem;
-      flex: 1;
-
-      .item {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 1rem;
-        padding: 10px 14px;
-        border-radius: 6px;
-        cursor: pointer;
-        transition: background 0.15s ease;
-
-        .item-body {
-          min-width: 0;
-          display: flex;
-          flex-direction: column;
-          gap: 0.1rem;
-          .item-title {
-            color: var(--color-bold);
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-          }
-
-          .item-meta {
-            font-size: 0.8rem;
-            opacity: 0.55;
-          }
-
-          .item-lock {
-            width: 0.7rem;
-            height: 0.85rem;
-            flex-shrink: 0;
-            border: 1.5px solid currentColor;
-            border-radius: 3px 3px 2px 2px;
-            opacity: 0.4;
-            position: relative;
-          }
-
-          .item-lock::before {
-            content: '';
-            position: absolute;
-            left: 50%;
-            top: -0.35rem;
-            width: 0.38rem;
-            height: 0.35rem;
-            border: 1.5px solid currentColor;
-            border-bottom: none;
-            border-radius: 4px 4px 0 0;
-            transform: translateX(-50%);
-          }
-        }
+      .item-meta {
+        font-size: 0.8rem;
+        opacity: 0.55;
       }
 
-      .item:hover {
-        background: var(--color-hover);
-      }
-      .item.folder .item-title::before {
-        content: '';
-        display: inline-block;
+      .item-lock {
         width: 0.7rem;
-        height: 0.5rem;
-        margin-right: 0.45rem;
+        height: 0.85rem;
+        flex-shrink: 0;
         border: 1.5px solid currentColor;
-        border-radius: 1px 2px 1px 1px;
-        opacity: 0.45;
-        vertical-align: 0.1em;
+        border-radius: 3px 3px 2px 2px;
+        opacity: 0.4;
+        position: relative;
+      }
+
+      .item-lock::before {
+        content: '';
+        position: absolute;
+        left: 50%;
+        top: -0.35rem;
+        width: 0.38rem;
+        height: 0.35rem;
+        border: 1.5px solid currentColor;
+        border-bottom: none;
+        border-radius: 4px 4px 0 0;
+        transform: translateX(-50%);
       }
     }
+  }
 
-    .placeholder {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 12rem;
-      opacity: 0.5;
-    }
+  .item:hover {
+    background: var(--color-hover);
+  }
 
-    .placeholder-title {
-      font-size: 1rem;
-    }
+  .item.folder .item-title::before {
+    content: '';
+    display: inline-block;
+    width: 0.7rem;
+    height: 0.5rem;
+    margin-right: 0.45rem;
+    border: 1.5px solid currentColor;
+    border-radius: 1px 2px 1px 1px;
+    opacity: 0.45;
+    vertical-align: 0.1em;
+  }
+}
+
+.placeholder {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 12rem;
+  opacity: 0.5;
+
+  .placeholder-title {
+    font-size: 1rem;
   }
 }
 </style>
@@ -168,65 +154,6 @@
 <script setup>
 import i18n from '@/i18n'
 import { changePage } from '@/router'
-import { library, File, Folder, settings, editorSession } from '@/userdata'
 
-function isFolder(item) {
-  return item instanceof Folder
-}
 
-function itemKey(item) {
-  return item.id
-}
-
-function folderName(folder) {
-  return folder.name?.trim() || i18n.value['library-untitled-folder']
-}
-
-function fileTitle(file) {
-  return (
-    file.title?.trim() ||
-    file.content
-      ?.split(/\r?\n/)
-      .find((line) => line.trim())
-      ?.trim() ||
-    i18n.value['library-untitled']
-  )
-}
-
-function itemTitle(item) {
-  return isFolder(item) ? folderName(item) : fileTitle(item)
-}
-
-function formatDate(iso) {
-  if (!iso) return ''
-  const date = new Date(iso)
-  if (Number.isNaN(date.getTime())) return ''
-  return date.toLocaleDateString(settings.lang, {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  })
-}
-
-function itemMeta(item) {
-  if (isFolder(item)) {
-    return i18n.value['library-folder-count'].replace(
-      '{n}',
-      String(item.children.length),
-    )
-  }
-  return formatDate(item.updated || item.date)
-}
-
-function openItem(item) {
-  if (item instanceof File) {
-    editorSession.file = item
-  }
-}
-
-function goBack() {
-  changePage('Home')
-}
-
-function batchItems() {}
 </script>
