@@ -1,5 +1,5 @@
 <template>
-  <div class="editor">
+  <div class="editor" :class="{ focused }">
     <div
       class="back"
       :class="{ hint: page === 'Editor' }"
@@ -12,7 +12,11 @@
 
 <style scoped>
 .editor {
-  padding: 48px 0;
+  min-height: 100%;
+
+  &.focused {
+    min-height: 0;
+  }
 
   .back {
     position: absolute;
@@ -53,7 +57,7 @@
 
 <script setup>
 import i18n from '@/i18n'
-import { onMounted, onBeforeUnmount } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { EditorState } from '@codemirror/state'
 import { EditorView, placeholder, keymap } from '@codemirror/view'
 import { defaultKeymap, history, historyKeymap } from '@codemirror/commands'
@@ -66,10 +70,15 @@ import { editorSession } from '@/userdata'
 import { changePage, page } from '@/router'
 
 let view = null
+const focused = ref(false)
 
-function onEditorFocused() {}
+function onEditorFocused() {
+  focused.value = true
+}
 
-function onEditorUnfocused() {}
+function onEditorUnfocused() {
+  focused.value = false
+}
 
 onMounted(() => {
   view = new EditorView({

@@ -2,9 +2,9 @@
   <WindowControls />
   <div class="app">
     <div class="stack" :class="{ revealing: page !== 'Home' }">
+      <Home class="home-layer" :class="{ sunk: page !== 'Home' }" />
       <Editor :class="{ inactive: under !== 'Editor' }" />
       <Library :class="{ inactive: under !== 'Library' }" />
-      <Home class="home-layer" :class="{ sunk: page !== 'Home' }" />
     </div>
   </div>
 </template>
@@ -13,43 +13,41 @@
 .app {
   display: flex;
   flex: 1;
-  min-height: 0;
   padding: 0 12px;
+}
 
-  .stack {
-    position: relative;
-    flex: 1;
-    overflow: hidden;
+.stack {
+  flex: 1;
+  min-height: 100dvh;
 
-    &.revealing > div:not(.home-layer):not(.inactive) {
-      animation: page-reveal var(--duration-slow) var(--ease-standard);
+  &.revealing > div:not(.home-layer):not(.inactive) {
+    animation: page-reveal var(--duration-slow) var(--ease-standard);
+  }
+
+  & > div {
+    background-color: var(--color-background);
+
+    &.inactive {
+      display: none;
     }
+  }
 
-    & > div {
-      position: absolute;
-      inset: 0;
-      background-color: var(--color-background);
+  .home-layer {
+    position: fixed;
+    inset: 0 12px;
+    z-index: 2;
+    transform-origin: center;
+    transition:
+      transform var(--duration-slow) var(--ease-standard),
+      opacity var(--duration-slow) var(--ease-standard),
+      filter var(--duration-slow) var(--ease-standard);
 
-      &.inactive {
-        display: none;
-      }
-    }
-
-    .home-layer {
-      z-index: 2;
-      transform-origin: center center;
-      transition:
-        transform var(--duration-slow) var(--ease-standard),
-        opacity var(--duration-slow) var(--ease-standard),
-        filter var(--duration-slow) var(--ease-standard);
-
-      &.sunk {
-        opacity: 0;
-        transform: scale(0.84);
-        filter: brightness(0.55);
-        pointer-events: none;
-        transition-timing-function: var(--ease-accelerate);
-      }
+    &.sunk {
+      opacity: 0;
+      transform: scale(0.84);
+      filter: brightness(0.55);
+      pointer-events: none;
+      transition-timing-function: var(--ease-accelerate);
     }
   }
 }

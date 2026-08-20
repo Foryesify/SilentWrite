@@ -28,7 +28,10 @@ export const theme = () => EditorView.theme({
   // Editor
   '&': {
     outline: 'none !important',
-    height: '100%'
+    minHeight: '100%',
+  },
+  '&.cm-focused': {
+    minHeight: '0',
   },
   '.cm-scroller': {
     ...cmVars,
@@ -37,6 +40,7 @@ export const theme = () => EditorView.theme({
     fontFamily: 'var(--cm-font)',
     fontWeight: '400',
     justifyContent: 'center',
+    overflow: 'visible',
   },
   '@media (prefers-color-scheme: dark)': {
     '.cm-scroller': cmVarsDark,
@@ -44,7 +48,8 @@ export const theme = () => EditorView.theme({
   '.cm-content': {
     maxWidth: 'min(48em, 80vw)',
     flex: '1 1 auto',
-    padding: '0 var(--cm-hash-gutter)',
+    minHeight: '0',
+    padding: '50px var(--cm-hash-gutter)',
   },
   [`@media ${NARROW_QUERY}`]: {
     '.cm-scroller': {

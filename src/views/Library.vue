@@ -42,6 +42,7 @@
 .library {
   display: flex;
   justify-content: center;
+  min-height: 100%;
 
   .main {
     max-width: 42em;

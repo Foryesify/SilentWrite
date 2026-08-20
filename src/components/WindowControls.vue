@@ -1,16 +1,16 @@
 <template>
-  <div class="window-controls" v-if="showWindowControls">
-    <div class="window-button">
+  <div class="window-controls" v-if="!Appwindow.isWebsite()">
+    <div class="window-button" @click="Appwindow.minimize">
       <svg viewBox="0 0 10 10">
         <path stroke="currentColor" d="M1 5h8" />
       </svg>
     </div>
-    <div class="window-button">
+    <div class="window-button" @click="Appwindow.toggleMaximize">
       <svg viewBox="0 0 10 10">
         <path d="M1.5 1.5h7v7h-7z" fill="none" stroke="currentColor" />
       </svg>
     </div>
-    <div class="window-button">
+    <div class="window-button" @click="Appwindow.close">
       <svg viewBox="0 0 10 10">
         <path stroke="currentColor" d="M1.5 1.5l7 7M8.5 1.5l-7 7" />
       </svg>
@@ -50,10 +50,6 @@
 </style>
 
 <script setup>
-const showWindowControls =
-  window.__TAURI_INTERNALS__ ||
-  navigator.userAgent.includes('Electron') ||
-  window.__FORYES_APP__
-
+import { Appwindow } from '@/api';
 
 </script>
