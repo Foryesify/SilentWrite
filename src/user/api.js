@@ -14,9 +14,8 @@ export const Appwindow = {
 
 export const Session = {
   editor: {
-    file: null,
+    fileid: null,
     save: () => {},
-    
   }
 }
 
