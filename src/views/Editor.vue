@@ -1,10 +1,6 @@
 <template>
-  <div class="editor" :class="{ focused }">
-    <div
-      class="back"
-      :class="{ hint: page === 'Editor' }"
-      @click="changePage('Home')"
-    >
+  <div class="editor">
+    <div class="back" @click="changePage('Home')">
       ‹
     </div>
   </div>
@@ -12,16 +8,15 @@
 
 <style scoped>
 .editor {
-  min-height: 100%;
-
-  &.focused {
-    min-height: 0;
-  }
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
 
   .back {
     position: absolute;
     top: 0;
     left: 0;
+    z-index: 1;
     width: 15vw;
     height: 15vh;
     padding: 12px 16px;
@@ -31,10 +26,6 @@
     color: var(--color-text-muted);
     cursor: pointer;
     transition: opacity var(--duration-fast) var(--ease-accelerate);
-
-    &.hint {
-      animation: back-show 1.5s var(--ease-standard);
-    }
 
     &:hover {
       opacity: 1;
@@ -57,7 +48,7 @@
 
 <script setup>
 import i18n from '@/i18n'
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { onMounted, onBeforeUnmount } from 'vue'
 import { EditorState } from '@codemirror/state'
 import { EditorView, placeholder, keymap } from '@codemirror/view'
 import { defaultKeymap, history, historyKeymap } from '@codemirror/commands'
@@ -70,15 +61,10 @@ import { editorSession } from '@/userdata'
 import { changePage, page } from '@/router'
 
 let view = null
-const focused = ref(false)
 
-function onEditorFocused() {
-  focused.value = true
-}
+function onEditorFocused() {}
 
-function onEditorUnfocused() {
-  focused.value = false
-}
+function onEditorUnfocused() {}
 
 onMounted(() => {
   view = new EditorView({

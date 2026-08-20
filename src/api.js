@@ -1,3 +1,5 @@
+import { library } from "./userdata"
+
 export const Appwindow = {
   minimize: () => { },
   toggleMaximize: () => { },
@@ -11,7 +13,8 @@ export const Appwindow = {
 }
 
 export const Userdata = {
-  newEssay: (name) => {
-    
+  newFile: (name) => {
+  },
+  newFolder: (name) => {
   }
 }

@@ -28,10 +28,8 @@ export const theme = () => EditorView.theme({
   // Editor
   '&': {
     outline: 'none !important',
-    minHeight: '100%',
-  },
-  '&.cm-focused': {
-    minHeight: '0',
+    flex: '1',
+    minHeight: '100dvh',
   },
   '.cm-scroller': {
     ...cmVars,
@@ -41,14 +39,17 @@ export const theme = () => EditorView.theme({
     fontWeight: '400',
     justifyContent: 'center',
     overflow: 'visible',
+    minHeight: '100%',
   },
   '@media (prefers-color-scheme: dark)': {
     '.cm-scroller': cmVarsDark,
   },
   '.cm-content': {
+    display: 'flex',
+    flexDirection: 'column',
     maxWidth: 'min(48em, 80vw)',
     flex: '1 1 auto',
-    minHeight: '0',
+    minHeight: '100dvh',
     padding: '50px var(--cm-hash-gutter)',
   },
   [`@media ${NARROW_QUERY}`]: {
@@ -65,10 +66,14 @@ export const theme = () => EditorView.theme({
 
   // Line
   '.cm-line': {
+    width: '100%',
     padding: '0',
     position: 'relative',
     opacity: '0.5',
     transition: 'opacity 0.1s ease-out',
+  },
+  '.cm-line:last-child': {
+    flex: '1 0 auto',
   },
   '.cm-activeLine': {
     opacity: '1',
