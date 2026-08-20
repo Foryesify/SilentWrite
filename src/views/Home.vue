@@ -33,7 +33,7 @@ function openLibrary() {
 
 .main {
   width: min(380px, 100%);
-  margin-bottom: 8dvh;
+  margin-bottom: 5dvh;
 
   button {
     width: 100%;

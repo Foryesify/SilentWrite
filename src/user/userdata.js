@@ -1,61 +1,61 @@
 import { reactive } from 'vue'
-export class Folder {
-  id = crypto.randomUUID()
-  name = ''
-  children = []
-  password = ''
 
-  constructor(name = '') {
+class Folder {
+  name = ''
+  password = ''
+  children = []
+
+  constructor(name) {
     this.name = name
   }
 
-  appendChild(item) {
-    this.children.push(item)
+  setPassword(password) {
+    this.password = password
   }
 
-  findFile(id) {
-    for (const child of this.children) {
-      if (child instanceof File && child.id === id) return child
-      if (child instanceof Folder) {
-        const found = child.findFile(id)
-        if (found) return found
-      }
-    }
-    return null
+  appendChild(name, isFolder) {
+    this.children.push(new (isFolder ? Folder : File)(name))
   }
 
-  deleteChild() {}
-  adjustOrder() {}
-  setPassword() {}
+  deleteChild(i) {
+    this.children.splice(i, 1)
+  }
+
+  adjustOrder(i1, i2) {
+    const _ = this.children[i1]
+    this.children[i1] = this.children[i2]
+    this.children[i2] = 0
+  }
+
+  findFile(index_arr, i = 0) {
+    return (this.children[index_arr[i]].children) ?
+      this.findFile(index_arr, i + 1) :
+      this.children[index_arr[i]]
+  }
 }
 
-export class File {
-  id = crypto.randomUUID()
+class File {
   title = ''
   content = ''
   password = ''
-  date = ''
-  updated = ''
-  lang = ''
 
-  constructor(title = '') {
+  constructor(title) {
     this.title = title
-    const now = new Date().toISOString()
-    this.date = now
-    this.updated = now
   }
 
-  saveContent(content = '') {
+  setPassword(password) {
+    this.password = password
+  }
+
+  setContent(content) {
     this.content = content
-    this.updated = new Date().toISOString()
   }
 
-  analyzeFrontMatter() {}
-  setDate() {}
-  setUpdated() {}
-  setLang() {}
-  setPassword() {}
+  getContent() {
+    return this.content
+  }
 }
+
 export const settings = reactive({
   autohideDistraction: true,
   cursorBlinking: true,
@@ -63,4 +63,4 @@ export const settings = reactive({
   lang: 'zh-CN',
 })
 
-export const library = {}
+export const library = new Folder('library')
