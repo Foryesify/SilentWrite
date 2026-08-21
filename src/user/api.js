@@ -34,6 +34,7 @@ export const Userdata = {
 }
 
 export function newEssay(parent = library) {
+  if (!parent?.appendChild) parent = library
   Session.editor.fileid = Userdata.newFile('', parent)
   changePage('Editor')
 }
