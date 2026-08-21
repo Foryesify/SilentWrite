@@ -1,28 +1,48 @@
-import { library } from "./userdata"
+import { reactive } from 'vue'
+import { library } from './userdata.js'
+import { changePage } from './session.js'
 
 export const Appwindow = {
-  minimize: () => { },
-  toggleMaximize: () => { },
-  close: () => { },
-  toggleFullscreen: () => { },
-  isWebsite: () => !(
-    window.__TAURI_INTERNALS__ ||
-    navigator.userAgent.includes('Electron') ||
-    window.__FORYES_APP__
-  ),
+  minimize: () => {},
+  toggleMaximize: () => {},
+  close: () => {},
+  toggleFullscreen: () => {},
+  isWebsite: () =>
+    !(
+      window.__TAURI_INTERNALS__ ||
+      navigator.userAgent.includes('Electron') ||
+      window.__FORYES_APP__
+    ),
 }
 
-export const Session = {
+export const Session = reactive({
   editor: {
     fileid: null,
-    save: () => {},
-  }
-}
+    save(content) {
+      this.fileid?.setContent?.(content)
+    },
+  },
+})
 
 export const Userdata = {
-  newFile: (name) => {
-    library.appendChild(File("name"))
+  newFile(name = '', parent = library) {
+    return parent.appendChild(name, false)
   },
-  newFolder: (name) => {
-  }
+  newFolder(name = '', parent = library) {
+    return parent.appendChild(name, true)
+  },
+}
+
+export function newEssay(parent = library) {
+  Session.editor.fileid = Userdata.newFile('', parent)
+  changePage('Editor')
+}
+
+export function newFolder(name = '', parent = library) {
+  return Userdata.newFolder(name, parent)
+}
+
+export function openEssay(file) {
+  Session.editor.fileid = file
+  changePage('Editor')
 }

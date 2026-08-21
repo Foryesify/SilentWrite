@@ -13,11 +13,8 @@
 
 <script setup>
 import { i18n } from '@/user/i18n.js'
-import { changePage } from '@/user/session.js';
-
-function newEssay() {
-  changePage('Editor')
-}
+import { newEssay } from '@/user/api.js'
+import { changePage } from '@/user/session.js'
 
 function openLibrary() {
   changePage('Library')

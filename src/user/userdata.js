@@ -15,6 +15,7 @@ class Folder {
 
   appendChild(name, isFolder) {
     this.children.push(new (isFolder ? Folder : File)(name))
+    return this.children.at(-1)
   }
 
   deleteChild(i) {
@@ -63,4 +64,4 @@ export const settings = reactive({
   lang: 'zh-CN',
 })
 
-export const library = new Folder('library')
+export const library = reactive(new Folder('library'))
