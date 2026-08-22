@@ -15,8 +15,6 @@
 
   & > * {
     flex: 1;
-    min-height: 100dvh;
-    background-color: var(--color-background);
   }
 }
 </style>

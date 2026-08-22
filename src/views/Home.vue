@@ -26,7 +26,6 @@ function openLibrary() {
   display: grid;
   place-items: center;
   min-height: 100dvh;
-  background-color: var(--color-foreground);
 }
 
 .main {
