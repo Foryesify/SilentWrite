@@ -30,18 +30,6 @@
     }
   }
 }
-
-@keyframes back-show {
-  0% {
-    opacity: 1;
-  }
-  80% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
-}
 </style>
 
 <script setup>
