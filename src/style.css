@@ -28,7 +28,7 @@
 
 :root {
   --color-primary: #000;
-  --color-primary-hover: #333;
+  --color-primary-hover: #3f3f3f;
   --color-danger: #c42b1c;
 
   --color-text: #1a1a1a;
@@ -43,7 +43,6 @@
   --color-control: #fff;
   --color-hover: #e8eaef;
   --color-pressed: #e1e3e5;
-  --color-hover-darker: var(--color-pressed);
   --color-border: #ebebeb;
   --color-border-strong: #d1d1d1;
 
@@ -70,7 +69,7 @@
     --color-overlay: #2c2c2c;
     --color-control: #2b2b2b;
     --color-hover: #333;
-    --color-pressed: #3a3a3a;
+    --color-pressed: #3b3b3b;
     --color-border: #3a3a3a;
     --color-border-strong: #4a4a4a;
 
@@ -122,7 +121,7 @@ button {
   color: var(--color-text);
 
   &:hover {
-    background-color: var(--color-hover-darker);
+    background-color: var(--color-pressed);
   }
 }
 
