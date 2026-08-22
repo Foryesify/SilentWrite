@@ -47,6 +47,8 @@ function extensions() {
     placeholder(i18n.value['editor-placeholder']), // placeholder
     EditorView.lineWrapping, // line autowrap
     keymap.of([indentWithTab, ...defaultKeymap, ...historyKeymap]), // keymap
+
+    // focus update
     EditorView.updateListener.of((update) => {
       if (update.docChanged) queueSave()
       if (update.focusChanged) syncChrome(update.view)
