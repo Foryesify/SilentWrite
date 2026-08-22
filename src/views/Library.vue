@@ -97,6 +97,7 @@
       v-model:open="box.open"
       v-model="box.value"
       :title="box.title"
+      :message="box.message"
       :input="box.input"
       :type="box.type"
       :placeholder="box.placeholder"
@@ -308,9 +309,11 @@ const trail = ref([])
 const listEl = ref(null)
 const drag = reactive({ active: false, from: -1, over: -1, moved: false })
 const menu = reactive({ index: -1, item: null, top: 0, left: 0 })
+const unlocked = new WeakSet()
 const box = reactive({
   open: false,
   title: '',
+  message: '',
   input: false,
   type: 'text',
   placeholder: '',
@@ -355,8 +358,11 @@ function onItemClick(item) {
     drag.moved = false
     return
   }
-  if (isFolder(item)) trail.value.push(item)
-  else openEssay(item)
+  unlock(item).then((ok) => {
+    if (!ok) return
+    if (isFolder(item)) trail.value.push(item)
+    else openEssay(item)
+  })
 }
 
 function goBack() {
@@ -395,6 +401,7 @@ function ask(options) {
   Object.assign(box, {
     open: true,
     title: '',
+    message: '',
     input: false,
     type: 'text',
     placeholder: '',
@@ -404,6 +411,26 @@ function ask(options) {
   return new Promise((resolve) => {
     boxResolve = resolve
   })
+}
+
+async function unlock(item) {
+  if (!item.password || unlocked.has(item)) return true
+  let wrong = false
+  while (true) {
+    const input = await ask({
+      title: i18n.value['library-password-unlock'],
+      message: wrong ? i18n.value['library-password-wrong'] : '',
+      input: true,
+      type: 'password',
+      placeholder: i18n.value['library-password-placeholder'],
+    })
+    if (input == null) return false
+    if (input === item.password) {
+      unlocked.add(item)
+      return true
+    }
+    wrong = true
+  }
 }
 
 function onBoxConfirm() {
@@ -417,6 +444,7 @@ function onBoxCancel() {
 }
 
 async function renameItem(item) {
+  if (!(await unlock(item))) return
   const next = await ask({
     title:
       i18n.value[
@@ -433,17 +461,23 @@ async function renameItem(item) {
 }
 
 async function passwordItem(item) {
+  if (!(await unlock(item))) return
   const next = await ask({
     title: i18n.value['library-password-prompt'],
+    message: item.password ? i18n.value['library-password-hint'] : '',
     input: true,
     type: 'password',
     placeholder: i18n.value['library-password-placeholder'],
   })
   if (next == null) return
+  item.setPassword?.(next)
   item.password = next
+  if (next) unlocked.add(item)
+  else unlocked.delete(item)
 }
 
 async function removeItem(item, index) {
+  if (!(await unlock(item))) return
   const ok = await ask({
     title: i18n.value['library-delete-confirm'].replace(
       '{title}',
