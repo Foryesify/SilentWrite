@@ -10,9 +10,6 @@
           <button class="btn-secondary" @click="createFolder">
             {{ i18n['library-new-folder'] }}
           </button>
-          <button class="btn-secondary">
-            {{ i18n['library-batch'] }}
-          </button>
         </div>
       </div>
       <div ref="listEl" class="content">

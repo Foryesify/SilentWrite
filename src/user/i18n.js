@@ -10,7 +10,6 @@ const translations =
     "library-title": "Library",
     "library-new": "New Essay",
     "library-new-folder": "New Folder",
-    "library-batch": "Select",
     "library-search": "Search",
     "library-rename": "Rename",
     "library-delete": "Delete",
@@ -63,7 +62,8 @@ const translations =
     "titlebar-help4": "GitHub",
     "titlebar-help5": "Feedback",
     "titlebar-help6": "Open Console",
-    "editor-placeholder": "Write here..."
+    "editor-placeholder": "Write here...",
+    "editor-return-home": "Return Home"
   },
   "zh-CN": {
     "home-title": "✧",
@@ -72,7 +72,6 @@ const translations =
     "library-title": "我的文章",
     "library-new": "新建随笔",
     "library-new-folder": "新建文件夹",
-    "library-batch": "批量",
     "library-search": "搜索",
     "library-rename": "重命名",
     "library-delete": "删除",
@@ -125,7 +124,8 @@ const translations =
     "titlebar-help4": "GitHub",
     "titlebar-help5": "反馈",
     "titlebar-help6": "打开控制台",
-    "editor-placeholder": "在这里写作..."
+    "editor-placeholder": "在这里写作...",
+    "editor-return-home": "返回首页"
   }
 }
 

@@ -1,34 +1,12 @@
 <template>
   <div class="editor">
-    <div class="back" @click="goBack">‹</div>
+    <ActionsButton />
   </div>
 </template>
 
 <style scoped>
 .editor {
   display: flex;
-  flex-direction: column;
-  min-height: 100dvh;
-
-  .back {
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 1;
-    width: 15vw;
-    height: 15vh;
-    padding: 12px 16px;
-    opacity: 0;
-    font-size: 22px;
-    font-weight: bold;
-    color: var(--color-text-muted);
-    cursor: pointer;
-    transition: opacity var(--duration-fast) var(--ease-accelerate);
-
-    &:hover {
-      opacity: 1;
-    }
-  }
 }
 </style>
 
@@ -43,7 +21,16 @@ import { yamlFrontmatter } from '@codemirror/lang-yaml'
 import { cm6ThemeSilent } from './editor/cm6ThemeSilent'
 import { Session } from '@/user/api.js'
 import { i18n } from '@/user/i18n.js'
-import { changePage, page } from '@/user/session.js'
+import { page } from '@/user/session.js'
+import ActionsButton from '@/components/ActionsButton.vue'
+import {
+  hideActionsButton,
+  showActionsButton,
+} from '@/components/ActionsButton.js'
+import {
+  hideWindowControls,
+  showWindowControls,
+} from '@/components/WindowControls.js'
 
 const SAVE_WAIT = 400
 
@@ -53,14 +40,16 @@ let saveTimer = 0
 
 function extensions() {
   return [
-    history(),
-    placeholder(i18n.value['editor-placeholder']),
-    EditorView.lineWrapping,
-    ...cm6ThemeSilent,
-    keymap.of([indentWithTab, ...defaultKeymap, ...historyKeymap]),
-    yamlFrontmatter({ content: markdown() }),
+    ...cm6ThemeSilent, // my theme
+    yamlFrontmatter({ content: markdown() }),  // language
+
+    history(), // history undos
+    placeholder(i18n.value['editor-placeholder']), // placeholder
+    EditorView.lineWrapping, // line autowrap
+    keymap.of([indentWithTab, ...defaultKeymap, ...historyKeymap]), // keymap
     EditorView.updateListener.of((update) => {
       if (update.docChanged) queueSave()
+      if (update.focusChanged) syncChrome(update.view)
     }),
   ]
 }
@@ -93,9 +82,14 @@ function flushSave() {
   }
 }
 
-function goBack() {
-  flushSave()
-  changePage('Home')
+function syncChrome(editor = view) {
+  if (editor?.hasFocus) {
+    hideActionsButton()
+    hideWindowControls()
+  } else {
+    showActionsButton()
+    showWindowControls()
+  }
 }
 
 function onHidden() {
@@ -111,12 +105,19 @@ onMounted(() => {
     }),
   })
   loaded = Session.editor.fileid
+  syncChrome()
   document.addEventListener('visibilitychange', onHidden)
 })
 
 watch([page, () => Session.editor.fileid], () => {
-  if (page.value === 'Editor') loadCurrent()
-  else flushSave()
+  if (page.value === 'Editor') {
+    loadCurrent()
+    syncChrome()
+  } else {
+    flushSave()
+    showActionsButton()
+    showWindowControls()
+  }
 })
 
 onBeforeUnmount(() => {

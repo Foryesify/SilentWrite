@@ -1,5 +1,9 @@
 <template>
-  <div class="window-controls" v-if="!Appwindow.isWebsite()">
+  <div
+    class="window-controls"
+    v-if="!Appwindow.isWebsite()"
+    :class="{ hidden: windowControlsHidden }"
+  >
     <div class="window-button" @click="Appwindow.minimize">
       <svg viewBox="0 0 10 10">
         <path stroke="currentColor" d="M1 5h8" />
@@ -25,6 +29,16 @@
   top: 0;
   right: 0;
   z-index: 100;
+  opacity: 1;
+  transition: opacity 0.2s ease;
+
+  &.hidden {
+    opacity: 0;
+  }
+
+  &:hover {
+    opacity: 1;
+  }
 }
 
 .window-button {
@@ -50,6 +64,7 @@
 </style>
 
 <script setup>
-import { Appwindow } from '@/user/api';
+import { Appwindow } from '@/user/api'
+import { windowControlsHidden } from './WindowControls.js'
 
 </script>
