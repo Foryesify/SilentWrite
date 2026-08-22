@@ -4,21 +4,13 @@
     v-if="!Appwindow.isWebsite()"
     :class="{ hidden: windowControlsHidden }"
   >
-    <div class="window-button" @click="Appwindow.minimize">
-      <svg viewBox="0 0 10 10">
-        <path stroke="currentColor" d="M1 5h8" />
-      </svg>
-    </div>
-    <div class="window-button" @click="Appwindow.toggleMaximize">
-      <svg viewBox="0 0 10 10">
-        <path d="M1.5 1.5h7v7h-7z" fill="none" stroke="currentColor" />
-      </svg>
-    </div>
-    <div class="window-button" @click="Appwindow.close">
-      <svg viewBox="0 0 10 10">
-        <path stroke="currentColor" d="M1.5 1.5l7 7M8.5 1.5l-7 7" />
-      </svg>
-    </div>
+    <div class="window-button" v-html="iconMin" @click="Appwindow.minimize" />
+    <div
+      class="window-button"
+      v-html="iconMax"
+      @click="Appwindow.toggleMaximize"
+    />
+    <div class="window-button" v-html="iconClose" @click="Appwindow.close" />
   </div>
 </template>
 
@@ -48,7 +40,7 @@
   aspect-ratio: 1.5;
   transition: background-color var(--duration-fast) var(--ease-accelerate);
 
-  svg {
+  :deep(svg) {
     width: 12px;
   }
 
@@ -66,5 +58,8 @@
 <script setup>
 import { Appwindow } from '@/user/api'
 import { windowControlsHidden } from './WindowControls.js'
+import iconMin from '@/assets/window-min.svg?raw'
+import iconMax from '@/assets/window-max.svg?raw'
+import iconClose from '@/assets/window-close.svg?raw'
 
 </script>

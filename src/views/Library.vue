@@ -12,67 +12,18 @@
           </button>
         </div>
       </div>
-      <div ref="listEl" class="content">
-        <div
-          v-for="(item, index) in items"
-          :key="itemKey(item)"
-          class="item"
-          :class="{
-            dragging: drag.from === index,
-            'drag-over':
-              drag.active && drag.over === index && drag.from !== index,
-            'menu-open': menu.index === index,
-          }"
-          @click="onItemClick(item)"
-        >
-          <div class="item-main">
-            <div class="item-text">
-              <div class="item-title">{{ itemTitle(item) }}</div>
-              <svg
-                v-if="isFolder(item)"
-                class="item-folder"
-                viewBox="1.15 3.15 13.1 11.2"
-              >
-                <path
-                  d="M3.5 3.75h2.38c.28 0 .54.12.72.33l.82 1.02H12.5c.97 0 1.75.78 1.75 1.75v5.4c0 .97-.78 1.75-1.75 1.75h-9A1.75 1.75 0 0 1 1.75 12.25v-6.75c0-.97.78-1.75 1.75-1.75z"
-                />
-              </svg>
-              <svg
-                v-if="item.password"
-                class="item-lock"
-                viewBox="2.8 2.6 10.4 11.2"
-              >
-                <rect x="3.4" y="7.15" width="9.2" height="6.35" rx="1.55" />
-                <path d="M5.4 7.15V5.4a2.6 2.6 0 0 1 5.2 0v1.75" />
-              </svg>
-            </div>
+      <div class="content">
+        <div v-for="(v, i) in items" class="item" @click="onItemClick(v)">
+          <div class="item-text">
+            <div class="item-title">{{ itemTitle(v) }}</div>
+            <span v-if="itemIcon(v)" v-html="itemIcon(v)" />
           </div>
           <div
-            class="item-handle"
-            @pointerdown.stop="onPointerDown($event, index)"
-            @click.stop
-          >
-            <svg viewBox="0 0 16 16">
-              <circle cx="6" cy="4" r="1.05" />
-              <circle cx="10" cy="4" r="1.05" />
-              <circle cx="6" cy="8" r="1.05" />
-              <circle cx="10" cy="8" r="1.05" />
-              <circle cx="6" cy="12" r="1.05" />
-              <circle cx="10" cy="12" r="1.05" />
-            </svg>
-          </div>
-          <button
             class="item-more"
-            type="button"
+            v-html="iconMore"
             @pointerdown.stop
-            @click.stop="openActions($event, item, index)"
-          >
-            <svg viewBox="0 0 16 16">
-              <circle cx="4" cy="8" r="1.15" />
-              <circle cx="8" cy="8" r="1.15" />
-              <circle cx="12" cy="8" r="1.15" />
-            </svg>
-          </button>
+            @click.stop="openActions($event, v, i)"
+          />
         </div>
         <div v-if="!items.length" class="placeholder">
           {{ i18n['library-empty'] }}
@@ -159,16 +110,11 @@
     cursor: pointer;
     transition: background 0.15s ease;
 
-    .item-main {
+    .item-text {
       flex: 1;
       overflow: hidden;
-    }
-
-    .item-text {
       display: flex;
       align-items: center;
-      width: fit-content;
-      max-width: 100%;
     }
 
     .item-title {
@@ -179,90 +125,47 @@
       margin-right: 4px;
     }
 
-    .item-folder,
-    .item-lock {
+    span {
       display: block;
-      flex-shrink: 0;
-      fill: none;
-      stroke: currentColor;
-      stroke-width: 1.2;
-      stroke-linejoin: round;
-      stroke-linecap: round;
-    }
-
-    .item-folder {
+      flex: none;
+      overflow: hidden;
+      line-height: 0;
       width: 16px;
       height: 16px;
       opacity: 0.5;
-    }
 
-    .item-lock {
-      width: 13px;
-      height: 13px;
-      opacity: 0.42;
-    }
-
-    .item-handle,
-    .item-more {
-      width: 28px;
-      height: 28px;
-      flex-shrink: 0;
-      display: grid;
-      place-items: center;
-      border: none;
-      border-radius: 6px;
-      background: transparent;
-      color: inherit;
-      opacity: 0;
-      transition:
-        background 0.15s ease,
-        opacity 0.15s ease;
-
-      svg {
-        width: 16px;
-        height: 16px;
-        fill: currentColor;
+      :deep(svg) {
+        display: block;
+        width: 100%;
+        height: 100%;
       }
     }
 
-    .item-handle {
-      cursor: grab;
-    }
-
-    .item-handle:hover,
-    .item-more:hover,
-    &.menu-open .item-more {
-      background: var(--color-pressed);
-    }
-  }
-
-  .item:hover,
-  .item.menu-open,
-  .item.drag-over {
-    background: var(--color-hover);
-  }
-
-  .item.dragging {
-    opacity: 0.38;
-
-    .item-handle {
-      cursor: grabbing;
-    }
-  }
-
-  @media (hover: hover) {
-    .item:hover .item-handle,
-    .item:hover .item-more,
-    .item.menu-open .item-more {
-      opacity: 0.55;
-    }
-  }
-
-  @media (hover: none) {
-    .item .item-handle,
-    .item .item-more {
+    .item-more {
+      width: 28px;
+      height: 28px;
+      flex: none;
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+      border-radius: 6px;
       opacity: 0.45;
+      transition: background 0.15s ease;
+
+      :deep(svg) {
+        display: block;
+        width: 16px;
+        height: 16px;
+      }
+
+      &:hover {
+        background: var(--color-pressed);
+      }
     }
+  }
+
+  .item:hover {
+    background: var(--color-hover);
   }
 }
 
@@ -285,7 +188,7 @@
 </style>
 
 <script setup>
-import { computed, onBeforeUnmount, reactive, ref } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import { i18n } from '@/user/i18n.js'
 import { newEssay, newFolder, openEssay } from '@/user/api.js'
 import { library } from '@/user/userdata.js'
@@ -293,18 +196,12 @@ import { changePage } from '@/user/session.js'
 import ActionMenu from '@/basic/Menu.vue'
 import { Menu, MenuItem } from '@/basic/Menu.js'
 import MessageBox from '@/basic/MessageBox.vue'
-
-const keys = new WeakMap()
-let keySeq = 0
-function itemKey(item) {
-  let key = keys.get(item)
-  if (!key) keys.set(item, (key = ++keySeq))
-  return key
-}
+import iconFolder from '@/assets/folder.svg?raw'
+import iconFolderLock from '@/assets/folder-lock.svg?raw'
+import iconLock from '@/assets/lock.svg?raw'
+import iconMore from '@/assets/more.svg?raw'
 
 const trail = ref([])
-const listEl = ref(null)
-const drag = reactive({ active: false, from: -1, over: -1, moved: false })
 const menu = reactive({ index: -1, item: null, top: 0, left: 0 })
 const unlocked = new WeakSet()
 const box = reactive({
@@ -318,7 +215,6 @@ const box = reactive({
 })
 
 let boxResolve = null
-let startY = 0
 
 const current = computed(() => trail.value.at(-1) ?? library)
 const items = computed(() => current.value.children)
@@ -342,6 +238,13 @@ function isFolder(item) {
   return Boolean(item?.children)
 }
 
+function itemIcon(item) {
+  if (isFolder(item) && item.password) return iconFolderLock
+  if (isFolder(item)) return iconFolder
+  if (item.password) return iconLock
+  return ''
+}
+
 function itemTitle(item) {
   const raw = isFolder(item) ? item.name : item.title
   return (
@@ -351,10 +254,6 @@ function itemTitle(item) {
 }
 
 function onItemClick(item) {
-  if (drag.moved) {
-    drag.moved = false
-    return
-  }
   unlock(item).then((ok) => {
     if (!ok) return
     if (isFolder(item)) trail.value.push(item)
@@ -483,55 +382,4 @@ async function removeItem(item, index) {
   })
   if (ok) items.value.splice(index, 1)
 }
-
-function indexFromY(y) {
-  const nodes = listEl.value?.querySelectorAll('.item')
-  if (!nodes?.length) return -1
-  for (let i = 0; i < nodes.length; i++) {
-    const rect = nodes[i].getBoundingClientRect()
-    if (y < rect.top + rect.height / 2) return i
-  }
-  return nodes.length - 1
-}
-
-function listenDrag(on) {
-  const fn = on ? 'addEventListener' : 'removeEventListener'
-  window[fn]('pointermove', onPointerMove, on ? { passive: false } : undefined)
-  window[fn]('pointerup', onPointerUp)
-}
-
-function onPointerDown(event, index) {
-  if (event.pointerType === 'mouse' && event.button !== 0) return
-  drag.from = index
-  startY = event.clientY
-  listenDrag(true)
-}
-
-function onPointerMove(event) {
-  if (drag.from < 0) return
-  if (!drag.active) {
-    if (Math.abs(event.clientY - startY) < 8) return
-    drag.active = true
-    drag.over = drag.from
-    drag.moved = true
-    closeMenu()
-  }
-  event.preventDefault()
-  const over = indexFromY(event.clientY)
-  if (over >= 0) drag.over = over
-}
-
-function onPointerUp() {
-  if (drag.active && drag.over >= 0 && drag.over !== drag.from) {
-    const list = items.value
-    const [moved] = list.splice(drag.from, 1)
-    list.splice(drag.over, 0, moved)
-  }
-  drag.active = false
-  drag.from = -1
-  drag.over = -1
-  listenDrag(false)
-}
-
-onBeforeUnmount(() => listenDrag(false))
 </script>
