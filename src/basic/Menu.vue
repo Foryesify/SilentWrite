@@ -1,222 +1,98 @@
 <template>
-  <div class="menu" :class="{ flat: isFlat }" @mouseleave="onMouseLeave">
+  <Overlay :show="show" @close="emit('action')">
     <div
-      v-for="(item, index) in items.items"
-      :key="index"
-      class="item"
-      :class="{ leaf: isLeaf(item) }"
-      @click="onItemClick(index)"
-      @mouseenter="onItemEnter(index)"
+      ref="el"
+      class="menu"
+      :style="{ top: `${pos.top}px`, left: `${pos.left}px` }"
     >
-      {{ item.name }}
-    </div>
-    <div
-      v-if="!isFlat"
-      class="submenu"
-      :class="{ hidden: openIndex < 0 }"
-      :style="{
-        marginTop: submenuTop,
-        width: submenuWidth,
-        height: submenuHeight,
-      }"
-    >
-      <div class="submenu-clip">
-        <div ref="bodyEl" class="submenu-body">
-          <div
-            v-for="(child, cIndex) in currentChildren"
-            :key="cIndex"
-            class="subitem"
-            @click.stop="run(child)"
-          >
-            {{ child.name }}
-          </div>
-        </div>
+      <div v-for="v in items.items" class="item" @click="run(v)">
+        {{ v.name }}
       </div>
     </div>
-  </div>
+  </Overlay>
 </template>
 
 <style scoped>
-.menu,
-.submenu {
+.menu {
+  position: fixed;
   min-width: 140px;
+  padding: 4px;
   background: var(--color-background);
   border: 1px solid #8885;
   border-radius: 6px;
   font-size: 13px;
-}
-
-.menu {
-  position: relative;
-  padding: 4px;
   box-shadow: 0 4px 16px #0002;
 }
 
-.item,
-.subitem {
+.item {
   display: flex;
   align-items: center;
   height: 32px;
   padding: 0 12px;
   border-radius: 4px;
-  cursor: default;
-  white-space: nowrap;
-  transition: background 0.15s ease;
-}
-
-.item.leaf {
   cursor: pointer;
+  white-space: nowrap;
+  transition: background var(--duration-fast) var(--ease-accelerate);
 }
 
 @media (hover: hover) {
-  .item:hover,
-  .subitem:hover {
+  .item:hover {
     background: var(--color-hover);
   }
 }
 
-.submenu {
-  position: absolute;
-  box-sizing: content-box;
-  left: calc(100% - 2px);
-  top: 0;
-  box-shadow: 0 8px 24px #0003;
-  transition:
-    margin-top 0.2s ease,
-    width 0.2s ease,
-    height 0.2s ease,
-    opacity 0.2s ease,
-    transform 0.2s ease;
-}
-
-.submenu-clip {
-  overflow: hidden;
-  width: 100%;
-  height: 100%;
-  border-radius: inherit;
-}
-
-.submenu-body {
-  padding: 4px;
-  width: max-content;
-  min-width: 140px;
-}
-
-.submenu.hidden {
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  transform: translateY(-6px);
-  transition:
-    opacity 0.2s ease,
-    visibility 0.2s ease,
-    transform 0.2s ease;
-}
-
 @media (prefers-color-scheme: dark) {
-  .menu,
-  .submenu {
-    border-color: #fff2;
-  }
-
   .menu {
+    border-color: #fff2;
     box-shadow: 0 6px 20px #0005;
-  }
-
-  .submenu {
-    box-shadow: 0 10px 32px #0008;
   }
 }
 </style>
 
 <script setup>
-import { computed, nextTick, ref } from 'vue'
+import { nextTick, reactive, ref, watch } from 'vue'
+import Overlay from './Overlay.vue'
 import { Menu } from './Menu'
 
-const props = defineProps({ items: Menu })
+const props = defineProps({
+  items: Menu,
+  show: { type: Boolean, default: true },
+  top: Number,
+  left: Number,
+})
 const emit = defineEmits(['action'])
+const el = ref(null)
+const pos = reactive({ top: props.top ?? 0, left: props.left ?? 0 })
 
-const ITEM_HEIGHT = 32
-const openIndex = ref(-1)
-const lastIndex = ref(0)
-const hoverLocked = ref(false)
-const submenuTop = ref('0px')
-const submenuWidth = ref('140px')
-const submenuHeight = ref('0px')
-const bodyEl = ref(null)
+const PAD = 8
 
-function isLeaf(item) {
-  return !item?.children?.length
+function fit() {
+  const box = el.value
+  if (!box) return
+  const w = box.offsetWidth
+  const h = box.offsetHeight
+  const maxL = window.innerWidth - PAD - w
+  const maxT = window.innerHeight - PAD - h
+  let left = props.left
+  let top = props.top
+  if (left > maxL) left = props.left - w
+  if (top > maxT) top = props.top - h
+  pos.left = Math.min(Math.max(left, PAD), Math.max(PAD, maxL))
+  pos.top = Math.min(Math.max(top, PAD), Math.max(PAD, maxT))
 }
 
-const isFlat = computed(() => props.items.items.every(isLeaf))
-
-const currentChildren = computed(
-  () => props.items.items[lastIndex.value]?.children ?? [],
+watch(
+  () => [props.show, props.top, props.left],
+  () => {
+    pos.top = props.top ?? 0
+    pos.left = props.left ?? 0
+    if (props.show) nextTick(fit)
+  },
+  { immediate: true },
 )
-
-function follow(index) {
-  submenuTop.value = `${index * ITEM_HEIGHT}px`
-}
-
-function measure() {
-  const el = bodyEl.value
-  if (!el) return
-  submenuWidth.value = `${el.offsetWidth}px`
-  submenuHeight.value = `${el.offsetHeight}px`
-}
-
-async function open(index) {
-  const wasClosed = openIndex.value < 0
-  follow(index)
-  lastIndex.value = index
-  await nextTick()
-  measure()
-  if (wasClosed) await nextTick()
-  openIndex.value = index
-}
-
-function activate(index) {
-  if (hoverLocked.value) return
-  open(index)
-}
-
-function collapse(index) {
-  if (openIndex.value === index && hoverLocked.value) {
-    openIndex.value = -1
-    hoverLocked.value = false
-    return
-  }
-  hoverLocked.value = true
-  if (openIndex.value !== index) open(index)
-}
-
-function onItemEnter(index) {
-  if (isFlat.value || isLeaf(props.items.items[index])) {
-    if (!hoverLocked.value) openIndex.value = -1
-    return
-  }
-  activate(index)
-}
-
-function onItemClick(index) {
-  const item = props.items.items[index]
-  if (isLeaf(item)) {
-    run(item)
-    return
-  }
-  collapse(index)
-}
-
-function onMouseLeave() {
-  if (hoverLocked.value) return
-  openIndex.value = -1
-}
 
 function run(item) {
   item.action?.()
-  openIndex.value = -1
-  hoverLocked.value = false
   emit('action')
 }
 </script>

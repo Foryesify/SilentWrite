@@ -1,5 +1,4 @@
 <template>
-  <div class="actions-backdrop" :class="{ hidden: menuHidden }" @click="toggle" />
   <div
     class="actions-button"
     :class="{ hidden: actionsButtonHidden, open: !menuHidden }"
@@ -9,26 +8,16 @@
     <span></span>
     <span></span>
   </div>
-  <div class="actions-menu" :class="{ hidden: menuHidden }">
-    <Menu v-if="!menuHidden" :items="appMenu" @action="menuHidden = true" />
-  </div>
+  <Menu
+    :show="!menuHidden"
+    :top="at.top"
+    :left="at.left"
+    :items="appMenu"
+    @action="menuHidden = true"
+  />
 </template>
 
 <style scoped>
-.actions-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 110;
-  background: #0008;
-  transition: all var(--duration-normal) var(--ease-accelerate);
-
-  &.hidden {
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-  }
-}
-
 .actions-button {
   display: flex;
   justify-content: center;
@@ -66,24 +55,10 @@
     background-color: var(--color-hover-darker);
   }
 }
-
-.actions-menu {
-  position: fixed;
-  margin-top: 55px;
-  margin-left: 10px;
-  z-index: 111;
-  transition: all 0.2s ease-out;
-
-  &.hidden {
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-  }
-}
 </style>
 
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import Menu from '@/basic/Menu.vue'
 import { Menu as MenuModel, MenuItem } from '@/basic/Menu.js'
 import { i18n } from '@/user/i18n.js'
@@ -91,8 +66,13 @@ import { changePage } from '@/user/session.js'
 import { actionsButtonHidden } from './ActionsButton.js'
 
 const menuHidden = ref(true)
+const at = reactive({ top: 0, left: 0 })
 
-function toggle() {
+function toggle(event) {
+  if (menuHidden.value) {
+    at.top = event.clientY
+    at.left = event.clientX
+  }
   menuHidden.value = !menuHidden.value
 }
 

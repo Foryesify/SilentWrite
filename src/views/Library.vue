@@ -18,29 +18,24 @@
             <div class="item-title">{{ itemTitle(v) }}</div>
             <span v-if="itemIcon(v)" v-html="itemIcon(v)" />
           </div>
-          <div
-            class="item-more"
-            v-html="iconMore"
-            @pointerdown.stop
-            @click.stop="openActions($event, v, i)"
-          />
+          <div class="item-more" @click.stop="openActions($event, v, i)">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
         </div>
         <div v-if="!items.length" class="placeholder">
           {{ i18n['library-empty'] }}
         </div>
       </div>
     </div>
-    <Teleport to="body">
-      <div v-if="menu.index >= 0" class="menu-layer" @mousedown="closeMenu">
-        <div
-          class="menu-anchor"
-          :style="{ top: `${menu.top}px`, left: `${menu.left}px` }"
-          @mousedown.stop
-        >
-          <ActionMenu :items="actionMenu" @action="closeMenu" />
-        </div>
-      </div>
-    </Teleport>
+    <ActionMenu
+      :show="menu.index >= 0"
+      :top="menu.top"
+      :left="menu.left"
+      :items="actionMenu"
+      @action="closeMenu"
+    />
     <MessageBox
       v-model:open="box.open"
       v-model="box.value"
@@ -125,7 +120,7 @@
       margin-right: 4px;
     }
 
-    span {
+    .item-text span {
       display: block;
       flex: none;
       overflow: hidden;
@@ -145,17 +140,19 @@
       width: 28px;
       height: 28px;
       flex: none;
-      overflow: hidden;
-      display: grid;
-      place-items: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
       border-radius: 6px;
       opacity: 0.45;
       transition: background 0.15s ease;
 
-      :deep(svg) {
-        display: block;
-        width: 16px;
-        height: 16px;
+      span {
+        width: 3px;
+        height: 3px;
+        border-radius: 50%;
+        background: currentColor;
       }
 
       &:hover {
@@ -175,16 +172,6 @@
   place-items: center;
   opacity: 0.5;
 }
-
-.menu-layer {
-  position: fixed;
-  inset: 0;
-  z-index: 30;
-}
-
-.menu-anchor {
-  position: fixed;
-}
 </style>
 
 <script setup>
@@ -199,7 +186,6 @@ import MessageBox from '@/basic/MessageBox.vue'
 import iconFolder from '@/assets/folder.svg?raw'
 import iconFolderLock from '@/assets/folder-lock.svg?raw'
 import iconLock from '@/assets/lock.svg?raw'
-import iconMore from '@/assets/more.svg?raw'
 
 const trail = ref([])
 const menu = reactive({ index: -1, item: null, top: 0, left: 0 })
@@ -275,11 +261,10 @@ function createFolder() {
 }
 
 function openActions(event, item, index) {
-  const rect = event.currentTarget.getBoundingClientRect()
   menu.index = index
   menu.item = item
-  menu.top = rect.bottom + 4
-  menu.left = Math.min(rect.right - 148, window.innerWidth - 156)
+  menu.top = event.clientY
+  menu.left = event.clientX
 }
 
 function closeMenu() {
