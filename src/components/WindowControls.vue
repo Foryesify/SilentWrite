@@ -1,15 +1,7 @@
 <template>
-  <div
-    class="window-controls"
-    v-if="!Appwindow.isWebsite()"
-    :class="{ hidden: windowControlsHidden }"
-  >
+  <div class="window-controls" v-if="!Appwindow.isWebsite()" :class="{ hidden }">
     <div class="window-button" v-html="iconMin" @click="Appwindow.minimize" />
-    <div
-      class="window-button"
-      v-html="iconMax"
-      @click="Appwindow.toggleMaximize"
-    />
+    <div class="window-button" v-html="iconMax" @click="Appwindow.toggleMaximize" />
     <div class="window-button" v-html="iconClose" @click="Appwindow.close" />
   </div>
 </template>
@@ -21,15 +13,10 @@
   top: 0;
   right: 0;
   z-index: 100;
-  opacity: 1;
   transition: opacity 0.2s ease;
 
   &.hidden {
     opacity: 0;
-  }
-
-  &:hover {
-    opacity: 1;
   }
 }
 
@@ -38,7 +25,7 @@
   place-items: center;
   height: var(--control-height);
   aspect-ratio: 1.5;
-  transition: background-color var(--duration-fast) var(--ease-accelerate);
+  transition: all var(--duration-fast) var(--ease-accelerate);
 
   :deep(svg) {
     width: 12px;
@@ -57,9 +44,10 @@
 
 <script setup>
 import { Appwindow } from '@/user/api'
-import { windowControlsHidden } from './WindowControls.js'
+import { windowControls } from './WindowControls.js'
 import iconMin from '@/assets/window-min.svg?raw'
 import iconMax from '@/assets/window-max.svg?raw'
 import iconClose from '@/assets/window-close.svg?raw'
 
+const hidden = windowControls.hidden
 </script>

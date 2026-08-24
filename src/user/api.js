@@ -18,9 +18,6 @@ export const Appwindow = {
 export const Session = reactive({
   editor: {
     fileid: null,
-    save(content) {
-      this.fileid?.setContent?.(content)
-    },
   },
 })
 

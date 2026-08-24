@@ -1,11 +1,7 @@
 import { ref } from 'vue'
 
-export const actionsButtonHidden = ref(false)
-
-export function hideActionsButton() {
-  actionsButtonHidden.value = true
-}
-
-export function showActionsButton() {
-  actionsButtonHidden.value = false
+export const actionsButton = {
+  hidden: ref(false),
+  hide() { this.hidden.value = true },
+  show() { this.hidden.value = false },
 }

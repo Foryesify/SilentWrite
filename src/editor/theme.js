@@ -48,7 +48,7 @@ export const theme = () => EditorView.theme({
     maxWidth: 'min(48em, 80vw)',
     flex: '1 1 auto',
     minHeight: '100%',
-    padding: '50px var(--cm-hash-gutter) 50dvh',
+    padding: '0 var(--cm-hash-gutter) 50dvh',
   },
   [`@media ${NARROW_QUERY}`]: {
     '.cm-scroller': {

@@ -13,7 +13,12 @@
         </div>
       </div>
       <div class="content">
-        <div v-for="(v, i) in items" class="item" @click="onItemClick(v)">
+        <div
+          v-for="(v, i) in items"
+          class="item"
+          @click="onItemClick(v)"
+          @contextmenu.prevent.stop="openActions($event, v, i)"
+        >
           <div class="item-text">
             <div class="item-title">{{ itemTitle(v) }}</div>
             <span v-if="itemIcon(v)" v-html="itemIcon(v)" />
@@ -29,22 +34,27 @@
         </div>
       </div>
     </div>
-    <ActionMenu
-      :show="menu.index >= 0"
-      :top="menu.top"
-      :left="menu.left"
-      :items="actionMenu"
-      @action="closeMenu"
+    <LibraryActionMenu
+      ref="actionMenu"
+      @delete="removeItem"
+      @rename="renameItem"
+      @password="passwordItem"
     />
-    <MessageBox
-      v-model:open="box.open"
-      v-model="box.value"
-      :title="box.title"
-      :message="box.message"
-      :input="box.input"
-      :type="box.type"
-      :placeholder="box.placeholder"
-      @confirm="onBoxConfirm"
+    <ConfirmBox
+      v-model:open="confirmBox.open"
+      :title="confirmBox.title"
+      :message="confirmBox.message"
+      @confirm="onConfirmOk"
+      @cancel="onBoxCancel"
+    />
+    <InputBox
+      v-model:open="inputBox.open"
+      v-model="inputBox.value"
+      :title="inputBox.title"
+      :message="inputBox.message"
+      :type="inputBox.type"
+      :placeholder="inputBox.placeholder"
+      @confirm="onInputOk"
       @cancel="onBoxCancel"
     />
   </div>
@@ -180,21 +190,25 @@ import { i18n } from '@/user/i18n.js'
 import { newEssay, newFolder, openEssay } from '@/user/api.js'
 import { library } from '@/user/userdata.js'
 import { changePage } from '@/user/session.js'
-import ActionMenu from '@/basic/Menu.vue'
-import { Menu, MenuItem } from '@/basic/Menu.js'
-import MessageBox from '@/basic/MessageBox.vue'
+import ConfirmBox from '@/components/MessageBox/ConfirmBox.vue'
+import LibraryActionMenu from '@/components/Menu/LibraryActionMenu.vue'
+import InputBox from '@/components/MessageBox/InputBox.vue'
 import iconFolder from '@/assets/folder.svg?raw'
 import iconFolderLock from '@/assets/folder-lock.svg?raw'
 import iconLock from '@/assets/lock.svg?raw'
 
 const trail = ref([])
-const menu = reactive({ index: -1, item: null, top: 0, left: 0 })
+const actionMenu = ref(null)
 const unlocked = new WeakSet()
-const box = reactive({
+const confirmBox = reactive({
   open: false,
   title: '',
   message: '',
-  input: false,
+})
+const inputBox = reactive({
+  open: false,
+  title: '',
+  message: '',
   type: 'text',
   placeholder: '',
   value: '',
@@ -208,16 +222,6 @@ const currentTitle = computed(() =>
   trail.value.length
     ? itemTitle(trail.value.at(-1))
     : i18n.value['library-title'],
-)
-const actionMenu = computed(
-  () =>
-    new Menu([
-      new MenuItem(i18n.value['library-delete'], () => runAction(removeItem)),
-      new MenuItem(i18n.value['library-rename'], () => runAction(renameItem)),
-      new MenuItem(i18n.value['library-password'], () =>
-        runAction(passwordItem),
-      ),
-    ]),
 )
 
 function isFolder(item) {
@@ -261,29 +265,26 @@ function createFolder() {
 }
 
 function openActions(event, item, index) {
-  menu.index = index
-  menu.item = item
-  menu.top = event.clientY
-  menu.left = event.clientX
+  actionMenu.value?.openAt(event, item, index)
 }
 
-function closeMenu() {
-  menu.index = -1
-  menu.item = null
-}
-
-function runAction(fn) {
-  const { item, index } = menu
-  closeMenu()
-  if (item) fn(item, index)
-}
-
-function ask(options) {
-  Object.assign(box, {
+function askConfirm(options) {
+  Object.assign(confirmBox, {
     open: true,
     title: '',
     message: '',
-    input: false,
+    ...options,
+  })
+  return new Promise((resolve) => {
+    boxResolve = resolve
+  })
+}
+
+function askInput(options) {
+  Object.assign(inputBox, {
+    open: true,
+    title: '',
+    message: '',
     type: 'text',
     placeholder: '',
     value: '',
@@ -298,10 +299,9 @@ async function unlock(item) {
   if (!item.password || unlocked.has(item)) return true
   let wrong = false
   while (true) {
-    const input = await ask({
+    const input = await askInput({
       title: i18n.value['library-password-unlock'],
       message: wrong ? i18n.value['library-password-wrong'] : '',
-      input: true,
       type: 'password',
       placeholder: i18n.value['library-password-placeholder'],
     })
@@ -314,8 +314,13 @@ async function unlock(item) {
   }
 }
 
-function onBoxConfirm() {
-  boxResolve?.(box.input ? box.value : true)
+function onConfirmOk() {
+  boxResolve?.(true)
+  boxResolve = null
+}
+
+function onInputOk() {
+  boxResolve?.(inputBox.value)
   boxResolve = null
 }
 
@@ -326,14 +331,13 @@ function onBoxCancel() {
 
 async function renameItem(item) {
   if (!(await unlock(item))) return
-  const next = await ask({
+  const next = await askInput({
     title:
       i18n.value[
         isFolder(item)
           ? 'library-rename-folder-prompt'
           : 'library-rename-prompt'
       ],
-    input: true,
     value: (isFolder(item) ? item.name : item.title) ?? '',
   })
   if (next == null) return
@@ -343,10 +347,9 @@ async function renameItem(item) {
 
 async function passwordItem(item) {
   if (!(await unlock(item))) return
-  const next = await ask({
+  const next = await askInput({
     title: i18n.value['library-password-prompt'],
     message: item.password ? i18n.value['library-password-hint'] : '',
-    input: true,
     type: 'password',
     placeholder: i18n.value['library-password-placeholder'],
   })
@@ -359,7 +362,7 @@ async function passwordItem(item) {
 
 async function removeItem(item, index) {
   if (!(await unlock(item))) return
-  const ok = await ask({
+  const ok = await askConfirm({
     title: i18n.value['library-delete-confirm'].replace(
       '{title}',
       itemTitle(item),

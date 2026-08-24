@@ -1,5 +1,6 @@
 <template>
   <WindowControls />
+  <ActionsButton />
   <div class="app">
     <Home v-show="page === 'Home'" />
     <Editor v-show="page === 'Editor'" />
@@ -25,4 +26,5 @@ import Editor from './views/Editor.vue'
 import Home from './views/Home.vue'
 import Library from './views/Library.vue'
 import WindowControls from './components/WindowControls.vue'
+import ActionsButton from './components/ActionsButton.vue'
 </script>
