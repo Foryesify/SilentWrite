@@ -34,29 +34,8 @@
         </div>
       </div>
     </div>
-    <LibraryActionMenu
-      ref="actionMenu"
-      @delete="removeItem"
-      @rename="renameItem"
-      @password="passwordItem"
-    />
-    <ConfirmBox
-      v-model:open="confirmBox.open"
-      :title="confirmBox.title"
-      :message="confirmBox.message"
-      @confirm="onConfirmOk"
-      @cancel="onBoxCancel"
-    />
-    <InputBox
-      v-model:open="inputBox.open"
-      v-model="inputBox.value"
-      :title="inputBox.title"
-      :message="inputBox.message"
-      :type="inputBox.type"
-      :placeholder="inputBox.placeholder"
-      @confirm="onInputOk"
-      @cancel="onBoxCancel"
-    />
+    <Actions ref="actions" :folder="current" :unlock="unlock" />
+    <Password ref="passwordBox" />
   </div>
 </template>
 
@@ -185,36 +164,21 @@
 </style>
 
 <script setup>
-import { computed, reactive, ref } from 'vue'
+import { computed, ref } from 'vue'
+import iconFolder from '@/assets/folder.svg?raw'
+import iconFolderLock from '@/assets/folder-lock.svg?raw'
+import iconLock from '@/assets/lock.svg?raw'
 import { i18n } from '@/user/i18n.js'
 import { newEssay, newFolder, openEssay } from '@/user/api.js'
 import { library } from '@/user/userdata.js'
 import { changePage } from '@/user/session.js'
-import ConfirmBox from '@/components/MessageBox/ConfirmBox.vue'
-import LibraryActionMenu from '@/components/Menu/LibraryActionMenu.vue'
-import InputBox from '@/components/MessageBox/InputBox.vue'
-import iconFolder from '@/assets/folder.svg?raw'
-import iconFolderLock from '@/assets/folder-lock.svg?raw'
-import iconLock from '@/assets/lock.svg?raw'
+import Actions from './Library/Actions.vue'
+import Password from './Library/Password.vue'
 
 const trail = ref([])
-const actionMenu = ref(null)
+const actions = ref(null)
+const passwordBox = ref(null)
 const unlocked = new WeakSet()
-const confirmBox = reactive({
-  open: false,
-  title: '',
-  message: '',
-})
-const inputBox = reactive({
-  open: false,
-  title: '',
-  message: '',
-  type: 'text',
-  placeholder: '',
-  value: '',
-})
-
-let boxResolve = null
 
 const current = computed(() => trail.value.at(-1) ?? library)
 const items = computed(() => current.value.children)
@@ -265,45 +229,16 @@ function createFolder() {
 }
 
 function openActions(event, item, index) {
-  actionMenu.value?.openAt(event, item, index)
-}
-
-function askConfirm(options) {
-  Object.assign(confirmBox, {
-    open: true,
-    title: '',
-    message: '',
-    ...options,
-  })
-  return new Promise((resolve) => {
-    boxResolve = resolve
-  })
-}
-
-function askInput(options) {
-  Object.assign(inputBox, {
-    open: true,
-    title: '',
-    message: '',
-    type: 'text',
-    placeholder: '',
-    value: '',
-    ...options,
-  })
-  return new Promise((resolve) => {
-    boxResolve = resolve
-  })
+  actions.value?.open(event, item, index)
 }
 
 async function unlock(item) {
   if (!item.password || unlocked.has(item)) return true
   let wrong = false
   while (true) {
-    const input = await askInput({
+    const input = await passwordBox.value.ask({
       title: i18n.value['library-password-unlock'],
-      message: wrong ? i18n.value['library-password-wrong'] : '',
-      type: 'password',
-      placeholder: i18n.value['library-password-placeholder'],
+      hint: wrong ? i18n.value['library-password-wrong'] : '',
     })
     if (input == null) return false
     if (input === item.password) {
@@ -312,62 +247,5 @@ async function unlock(item) {
     }
     wrong = true
   }
-}
-
-function onConfirmOk() {
-  boxResolve?.(true)
-  boxResolve = null
-}
-
-function onInputOk() {
-  boxResolve?.(inputBox.value)
-  boxResolve = null
-}
-
-function onBoxCancel() {
-  boxResolve?.(null)
-  boxResolve = null
-}
-
-async function renameItem(item) {
-  if (!(await unlock(item))) return
-  const next = await askInput({
-    title:
-      i18n.value[
-        isFolder(item)
-          ? 'library-rename-folder-prompt'
-          : 'library-rename-prompt'
-      ],
-    value: (isFolder(item) ? item.name : item.title) ?? '',
-  })
-  if (next == null) return
-  if (isFolder(item)) item.name = next
-  else item.title = next
-}
-
-async function passwordItem(item) {
-  if (!(await unlock(item))) return
-  const next = await askInput({
-    title: i18n.value['library-password-prompt'],
-    message: item.password ? i18n.value['library-password-hint'] : '',
-    type: 'password',
-    placeholder: i18n.value['library-password-placeholder'],
-  })
-  if (next == null) return
-  item.setPassword?.(next)
-  item.password = next
-  if (next) unlocked.add(item)
-  else unlocked.delete(item)
-}
-
-async function removeItem(item, index) {
-  if (!(await unlock(item))) return
-  const ok = await askConfirm({
-    title: i18n.value['library-delete-confirm'].replace(
-      '{title}',
-      itemTitle(item),
-    ),
-  })
-  if (ok) items.value.splice(index, 1)
 }
 </script>

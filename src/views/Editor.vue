@@ -1,5 +1,7 @@
 <template>
-  <div class="editor"></div>
+  <div class="editor">
+    <ActionsButton :hidden />
+  </div>
 </template>
 
 <style scoped>
@@ -10,18 +12,21 @@
 </style>
 
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import { EditorState } from '@codemirror/state'
 import { EditorView } from '@codemirror/view'
 import { codemirror } from '@/editor/codemirror.js'
 import { editor } from './Editor.js'
-import { actionsButton } from '@/components/ActionsButton.js'
 import { windowControls } from '@/components/WindowControls.js'
+import ActionsButton from './Editor/ActionsButton.vue'
+
+const hidden = ref(false)
 
 function main() {
   const immersive = (view) => {
-    if (view.hasFocus) (actionsButton.hide(), windowControls.hide())
-    else (actionsButton.show(), windowControls.show())
+    hidden.value = view.hasFocus
+    if (view.hasFocus) windowControls.hide()
+    else windowControls.show()
   }
   const view = new EditorView({
     parent: document.querySelector('.editor'),

@@ -1,14 +1,14 @@
 <template>
-  <div :class="{ hidden }" @click="actionsMenu.show">
+  <Commands :hidden="!showCommands" @hide="showCommands = false" />
+  <div class="actions-button" :class="{ hidden }" @click="showCommands = !showCommands">
     <span></span>
     <span></span>
     <span></span>
   </div>
-  <ActionsMenu />
 </template>
 
 <style scoped>
-div {
+.actions-button {
   z-index: 100;
   display: flex;
   justify-content: center;
@@ -19,8 +19,8 @@ div {
   border-radius: 100%;
   transition: all 0.2s ease;
   position: absolute;
-  margin-left: 10px;
-  margin-top: 10px;
+  top: 10px;
+  left: 10px;
 
   &.hidden {
     opacity: 0;
@@ -42,9 +42,12 @@ span {
 </style>
 
 <script setup>
-import { actionsButton } from './ActionsButton.js'
-import ActionsMenu from './Menu/ActionsMenu.vue'
-import { actionsMenu } from './Menu/ActionsMenu.js'
+import { ref } from 'vue'
+import Commands from '@/components/Commands.vue'
 
-const hidden = actionsButton.hidden
+defineProps({
+  hidden: Boolean,
+})
+
+const showCommands = ref(false)
 </script>
