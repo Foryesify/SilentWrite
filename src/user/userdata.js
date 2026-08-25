@@ -1,6 +1,7 @@
 import { reactive, watch } from 'vue'
 
-const STORAGE_KEY = 'silentwrite.userdata'
+const DB_NAME = 'silentwrite'
+const STORE = 'userdata'
 
 class Folder {
   name = ''
@@ -30,9 +31,9 @@ class Folder {
     this.children[i2] = 0
   }
 
-  findFile(index_arr, i = 0) {
+  getFile(index_arr, i = 0) {
     return (this.children[index_arr[i]].children) ?
-      this.findFile(index_arr, i + 1) :
+      this.getFile(index_arr, i + 1) :
       this.children[index_arr[i]]
   }
 }
@@ -61,8 +62,8 @@ class File {
 
 export const settings = reactive({
   autohideDistraction: true,
-  cursorBlinking: true,
   cursorMoveAnimation: true,
+  cursorBlinking: true,
   lang: 'zh-CN',
 })
 
@@ -105,15 +106,35 @@ function snapshot() {
   }
 }
 
-function persist() {
+function openDb() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, 1)
+    req.onupgradeneeded = () => req.result.createObjectStore(STORE)
+    req.onsuccess = () => resolve(req.result)
+    req.onerror = () => reject(req.error)
+  })
+}
+
+async function persist() {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot()))
+    const db = await openDb()
+    await new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE, 'readwrite')
+      tx.objectStore(STORE).put(snapshot(), 'current')
+      tx.oncomplete = resolve
+      tx.onerror = () => reject(tx.error)
+    })
   } catch {}
 }
 
-function restore() {
+async function restore() {
   try {
-    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null')
+    const db = await openDb()
+    const saved = await new Promise((resolve, reject) => {
+      const req = db.transaction(STORE).objectStore(STORE).get('current')
+      req.onsuccess = () => resolve(req.result)
+      req.onerror = () => reject(req.error)
+    })
     if (!saved) return
     if (saved.settings) Object.assign(settings, saved.settings)
     if (saved.library) {
@@ -125,8 +146,8 @@ function restore() {
   } catch {}
 }
 
-export function initUserdata() {
-  restore()
+export async function initUserdata() {
+  await restore()
   let timer = 0
   watch([library, settings], () => {
     clearTimeout(timer)

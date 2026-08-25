@@ -5,7 +5,7 @@ import { yamlFrontmatter } from '@codemirror/lang-yaml'
 import { cm6ThemeSilent } from './cm6ThemeSilent'
 import { i18n } from '@/user/i18n.js'
 
-export function codemirror(onFocusChanged) {
+export function codemirror(onFocus, onUpdate) {
   return [
     ...cm6ThemeSilent,
     yamlFrontmatter({ content: markdown() }),
@@ -14,7 +14,8 @@ export function codemirror(onFocusChanged) {
     EditorView.lineWrapping,
     keymap.of([indentWithTab, ...defaultKeymap, ...historyKeymap]),
     EditorView.updateListener.of((update) => {
-      if (update.focusChanged) onFocusChanged?.(update.view)
+      if (update.focusChanged) onFocus?.(update.view)
+      onUpdate?.(update)
     }),
   ]
 }

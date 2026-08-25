@@ -18,6 +18,7 @@ import { EditorView } from '@codemirror/view'
 import { codemirror } from '@/editor/codemirror.js'
 import { editor } from './Editor.js'
 import { windowControls } from '@/components/WindowControls.js'
+import { Session } from '@/user/api.js'
 import ActionsButton from './Editor/ActionsButton.vue'
 
 const hidden = ref(false)
@@ -28,11 +29,16 @@ function main() {
     if (view.hasFocus) windowControls.hide()
     else windowControls.show()
   }
+  const autosave = (update) => {
+    if (update.docChanged) {
+      Session.editor.fileid?.setContent(update.state.doc.toString())
+    }
+  }
   const view = new EditorView({
     parent: document.querySelector('.editor'),
     state: EditorState.create({
       doc: '',
-      extensions: codemirror(immersive),
+      extensions: codemirror(immersive, autosave),
     }),
   })
   editor.init(view)
