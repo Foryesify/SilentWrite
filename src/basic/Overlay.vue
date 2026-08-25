@@ -25,7 +25,8 @@
   place-items: center;
   width: 100%;
   height: 100%;
-  background-color: #7776;
+  background-color: #7774;
+  backdrop-filter: blur(var(--blur));
   transition: all var(--duration-fast) var(--ease-accelerate);
 
   &.hidden {

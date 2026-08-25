@@ -14,13 +14,16 @@
   height: fit-content;
   margin: auto;
   padding: 20px 20px 16px;
+  border: 1px solid var(--color-border-strong);
   border-radius: var(--border-radius-large);
   background: var(--color-foreground);
   box-shadow: var(--shadow-standard);
+  transition: all var(--duration-fast) var(--ease-accelerate);
 
   &.hidden {
     opacity: 0;
     pointer-events: none;
+    transform: translateY(10px);
   }
 }
 </style>

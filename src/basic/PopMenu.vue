@@ -19,6 +19,7 @@
   box-shadow: var(--shadow-flyout);
   font-size: 13px;
   font-weight: normal;
+  transition: opacity var(--duration-fast) var(--ease-accelerate);
 
   &.hidden {
     opacity: 0;

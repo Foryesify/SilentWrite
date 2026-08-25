@@ -225,7 +225,7 @@ function createEssay() {
 }
 
 function createFolder() {
-  newFolder('', current.value)
+  newFolder(current.value)
 }
 
 function openActions(event, item, index) {
