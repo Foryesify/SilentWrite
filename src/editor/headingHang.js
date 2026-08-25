@@ -7,7 +7,11 @@ import { highlightStyle } from './highlightStyle'
 import { NARROW_QUERY, theme } from './theme'
 
 const ATX_HEADING_RE = /^ATXHeading([1-6])$/
-const hashMark = Decoration.mark({ class: 'cm-heading-hash' })
+const hashMark = Decoration.mark({
+  class: 'cm-heading-hash',
+  inclusiveStart: false,
+  inclusiveEnd: false,
+})
 const lineDecoCache = new Map()
 
 const SAMPLE_DOC = Array.from({ length: 6 }, (_, i) => {
@@ -41,11 +45,22 @@ function hangDisabled() {
 function findHeaderMark(node) {
   const cursor = node.cursor()
   if (!cursor.firstChild() || cursor.name !== 'HeaderMark') return null
-  return { from: cursor.from, to: Math.min(cursor.to + 1, node.to) }
+  return { from: cursor.from, to: cursor.to }
 }
 
-function markKey(level, text) {
-  return `${level}:${text}`
+function markKey(level) {
+  return String(level)
+}
+
+function hangTo(view, mark) {
+  const lineTo = view.state.doc.lineAt(mark.from).to
+  let to = mark.to
+  if (to < lineTo && view.state.doc.sliceString(to, to + 1) === ' ') to += 1
+  return to
+}
+
+function imeBusy(view) {
+  return view.composing || view.dom.classList.contains('cm-ime')
 }
 
 function lineDeco(level, hang) {
@@ -78,7 +93,6 @@ function collectHeadingMarks(view, range) {
       if (!mark) return false
       marks.push({
         level: Number(match[1]),
-        text: view.state.doc.sliceString(mark.from, mark.to),
         from: mark.from,
         to: mark.to,
         lineFrom: view.state.doc.lineAt(node.from).from,
@@ -100,30 +114,28 @@ function hashSpanAt(view, from) {
 }
 
 function measureHashWidth(view, from, to) {
-  const span = hashSpanAt(view, from)
-  if (span) {
-    const width = span.getBoundingClientRect().width
-    if (width > 0) return width
-  }
-
   const start = view.domAtPos(from)
   const end = view.domAtPos(to)
-  if (!start?.node || !end?.node) return 0
-  try {
-    const range = document.createRange()
-    range.setStart(start.node, start.offset)
-    range.setEnd(end.node, end.offset)
-    const rects = range.getClientRects()
-    if (!rects.length) return 0
-    let width = 0
-    const top = rects[0].top
-    for (const rect of rects) {
-      if (Math.abs(rect.top - top) < 1) width += rect.width
+  if (start?.node && end?.node) {
+    try {
+      const range = document.createRange()
+      range.setStart(start.node, start.offset)
+      range.setEnd(end.node, end.offset)
+      const rects = range.getClientRects()
+      if (rects.length) {
+        let width = 0
+        const top = rects[0].top
+        for (const rect of rects) {
+          if (Math.abs(rect.top - top) < 1) width += rect.width
+        }
+        if (width > 0) return width
+      }
+    } catch {
+      /* fall through to span */
     }
-    return width
-  } catch {
-    return 0
   }
+  const span = hashSpanAt(view, from)
+  return span?.getBoundingClientRect().width || 0
 }
 
 function hashDecorations(view) {
@@ -153,8 +165,8 @@ const probeHashMarks = ViewPlugin.fromClass(
 function measureProbeCache(probe) {
   const updates = []
   for (const mark of collectHeadingMarks(probe)) {
-    const width = measureHashWidth(probe, mark.from, mark.to)
-    if (width > 0) updates.push([markKey(mark.level, mark.text), width])
+    const width = measureHashWidth(probe, mark.from, hangTo(probe, mark))
+    if (width > 0) updates.push([markKey(mark.level), width])
   }
   return updates
 }
@@ -225,7 +237,7 @@ function buildDecorations(view) {
 
   for (const visible of view.visibleRanges) {
     for (const mark of collectHeadingMarks(view, visible)) {
-      const hang = measured.get(markKey(mark.level, mark.text))
+      const hang = measured.get(markKey(mark.level))
       ranges.push(lineDeco(mark.level, hang).range(mark.lineFrom))
       ranges.push(hashMark.range(mark.from, mark.to))
       marks.push(mark)
@@ -265,7 +277,18 @@ const hangPlugin = ViewPlugin.fromClass(
       this.disabled = hangDisabled()
       this.warmGen = 0
       this.fontKey = editorFontKey(view)
+      this.contentDOM = view.contentDOM
       this.mq = matchMedia(NARROW_QUERY)
+      this.onImeEnd = () => {
+        later(() => {
+          if (this.cancelled || !view.dom.isConnected || hangDisabled() || imeBusy(view)) {
+            return
+          }
+          this.apply(view)
+          if (this.needsMeasure(view)) view.requestMeasure(this.measure)
+        })
+      }
+      this.contentDOM.addEventListener('compositionend', this.onImeEnd)
       this.onMq = () => {
         if (!view.dom.isConnected || this.cancelled) return
         later(() => {
@@ -329,26 +352,32 @@ const hangPlugin = ViewPlugin.fromClass(
       if (hangDisabled()) return false
       const measured = view.state.field(hangField)
       return this.marks.some(
-        (mark) => !measured.has(markKey(mark.level, mark.text)),
+        (mark) => !measured.has(markKey(mark.level)),
       )
     }
 
     readHangs(view) {
       if (hangDisabled()) return []
-      return this.marks.map((mark) => ({
-        key: markKey(mark.level, mark.text),
-        mark,
-        width: measureHashWidth(view, mark.from, mark.to),
-      }))
+      return this.marks.map((mark) => {
+        const to = hangTo(view, mark)
+        return {
+          key: markKey(mark.level),
+          mark,
+          complete: to > mark.to,
+          width: measureHashWidth(view, mark.from, to),
+        }
+      })
     }
 
     writeHangs(measured, view) {
-      if (!view.dom.isConnected || this.cancelled || hangDisabled()) return
+      if (!view.dom.isConnected || this.cancelled || hangDisabled() || imeBusy(view)) return
       const current = view.state.field(hangField)
       const updates = []
-      for (const { key, mark, width } of measured) {
+      for (const { key, mark, width, complete } of measured) {
         if (width <= 0) continue
         const prev = current.get(key)
+        // A lone `#` is shorter than `# `; don't let it overwrite a real heading hang.
+        if (!complete && prev != null) continue
         if (prev == null) paintHang(view, mark, width)
         if (prev == null || Math.abs(prev - width) > 0.5) {
           updates.push([key, width])
@@ -366,7 +395,7 @@ const hangPlugin = ViewPlugin.fromClass(
       if (this.needsMeasure(view) && this.retries < 4) {
         this.retries += 1
         later(() => {
-          if (!this.cancelled && view.dom.isConnected && !hangDisabled()) {
+          if (!this.cancelled && view.dom.isConnected && !hangDisabled() && !imeBusy(view)) {
             view.requestMeasure(this.measure)
           }
         })
@@ -392,6 +421,13 @@ const hangPlugin = ViewPlugin.fromClass(
         return
       }
       if (disabled) return
+
+      // IME inserts into the hash text node if the mark covers `# `.
+      // Rebuilding/remeasuring then grows --cm-hang every compose tick.
+      if (imeBusy(update.view)) {
+        if (update.docChanged) this.decorations = this.decorations.map(update.changes)
+        return
+      }
 
       const hangsChanged = update.transactions.some((tr) =>
         tr.effects.some((e) => e.is(setHangsEffect)),
@@ -421,14 +457,13 @@ const hangPlugin = ViewPlugin.fromClass(
       }
       if (
         !hangsChanged &&
-        (update.docChanged ||
-          update.viewportChanged ||
+        (update.viewportChanged ||
           fontChanged ||
           this.needsMeasure(update.view))
       ) {
         const view = update.view
         later(() => {
-          if (!this.cancelled && view.dom.isConnected && !hangDisabled()) {
+          if (!this.cancelled && view.dom.isConnected && !hangDisabled() && !imeBusy(view)) {
             view.requestMeasure(this.measure)
           }
         })
@@ -439,6 +474,7 @@ const hangPlugin = ViewPlugin.fromClass(
       this.cancelled = true
       this.warmGen += 1
       this.mq.removeEventListener('change', this.onMq)
+      this.contentDOM.removeEventListener('compositionend', this.onImeEnd)
     }
   },
   { decorations: (v) => v.decorations },

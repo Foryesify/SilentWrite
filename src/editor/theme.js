@@ -24,6 +24,15 @@ const cmVarsDark = {
   '--cm-placeholder': 'rgba(232, 232, 232, 0.34)',
 }
 
+export const imeClass = () => EditorView.domEventHandlers({
+  compositionstart(_event, view) {
+    view.dom.classList.add('cm-ime')
+  },
+  compositionend(_event, view) {
+    view.dom.classList.remove('cm-ime')
+  },
+})
+
 export const theme = () => EditorView.theme({
   // Editor
   '&': {
@@ -77,7 +86,10 @@ export const theme = () => EditorView.theme({
   // Cursor
   '.cm-cursor, .cm-dropCursor': {
     borderLeft: '2px solid var(--cm-caret)',
-    transition: isTouch ? 'none' : 'all 0.08s ease-out',
+    transition: isTouch ? 'none' : 'left 0.08s ease-out, top 0.08s ease-out',
+  },
+  '&.cm-ime .cm-cursor, &.cm-ime .cm-dropCursor': {
+    transition: 'none',
   },
   '&.cm-focused > .cm-scroller > .cm-cursorLayer': {
     animation: 'cm-blink 1s ease-in-out infinite',
