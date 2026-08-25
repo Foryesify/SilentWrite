@@ -1,6 +1,5 @@
-import { reactive } from 'vue'
-import { library } from './userdata.js'
-import { changePage } from './session.js'
+import { library, pathOf } from './userdata.js'
+import { changePage, editor } from './session.js'
 
 export const Appwindow = {
   minimize: () => {},
@@ -15,32 +14,18 @@ export const Appwindow = {
     ),
 }
 
-export const Session = reactive({
-  editor: {
-    fileid: null,
-  },
-})
-
-export const Userdata = {
-  newFile(name = '', parent = library) {
-    return parent.appendChild(name, false)
-  },
-  newFolder(name = '', parent = library) {
-    return parent.appendChild(name, true)
-  },
-}
-
 export function newEssay(parent = library) {
   if (!parent?.appendChild) parent = library
-  Session.editor.fileid = Userdata.newFile('', parent)
+  const file = parent.appendChild('', false)
+  editor.file = pathOf(file)
   changePage('Editor')
 }
 
 export function newFolder(name = '', parent = library) {
-  return Userdata.newFolder(name, parent)
+  return parent.appendChild(name, true)
 }
 
 export function openEssay(file) {
-  Session.editor.fileid = file
+  editor.file = pathOf(file)
   changePage('Editor')
 }

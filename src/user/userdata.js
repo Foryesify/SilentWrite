@@ -32,9 +32,21 @@ class Folder {
   }
 
   getFile(index_arr, i = 0) {
-    return (this.children[index_arr[i]].children) ?
-      this.getFile(index_arr, i + 1) :
-      this.children[index_arr[i]]
+    if (!index_arr?.length) return null
+    const child = this.children[index_arr[i]]
+    if (!child) return null
+    return child.children ? child.getFile(index_arr, i + 1) : child
+  }
+}
+
+export function pathOf(item, folder = library, trail = []) {
+  const i = folder.children.indexOf(item)
+  if (i >= 0) return [...trail, i]
+  for (let j = 0; j < folder.children.length; j++) {
+    const child = folder.children[j]
+    if (!child.children) continue
+    const found = pathOf(item, child, [...trail, j])
+    if (found) return found
   }
 }
 
@@ -55,7 +67,7 @@ class File {
     this.content = content
   }
 
-  getContent() {
+  text() {
     return this.content
   }
 }
