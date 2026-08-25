@@ -1,5 +1,5 @@
 <template>
-  <PopMenu :top="50" :left="10" :hidden :items @hide="emit('hide')" />
+  <PopMenu :top="15" :left="10" :hidden :items @hide="emit('hide')" />
 </template>
 
 <script setup>
@@ -10,7 +10,7 @@ import { page } from '@/user/session';
 const { hidden } = defineProps({ hidden: Boolean })
 const emit = defineEmits(['hide'])
 const items = [
-  [i18n.value['editor-return-home'], () => page.value = "Home"],
-  
+  [i18n.value['editor-return-home'], () =>{ page.value = "Home"}],
+  [i18n.value['editor-settings'], () => {}]
 ]
 </script>

@@ -6,7 +6,7 @@ const translations = {
     'home-new-essay': 'New Essay',
     'home-open-library': 'Open Library',
     'library-title': 'Library',
-    'library-new': 'New Essay',
+    'library-new-essay': 'New Essay',
     'library-new-folder': 'New Folder',
     'library-rename': 'Rename',
     'library-delete': 'Delete',
@@ -35,7 +35,7 @@ const translations = {
     'home-new-essay': '新建随笔',
     'home-open-library': '我的文章',
     'library-title': '我的文章',
-    'library-new': '新建随笔',
+    'library-new-essay': '新建随笔',
     'library-new-folder': '新建文件夹',
     'library-rename': '重命名',
     'library-delete': '删除',
@@ -59,6 +59,8 @@ const translations = {
     'new-skip': '跳过命名',
     'editor-placeholder': '在这里写作...',
     'editor-return-home': '返回首页',
+    'editor-settings': '调整设置',
+    'editor-images': '',
   },
 }
 

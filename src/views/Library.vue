@@ -5,7 +5,7 @@
         <div class="title" @click="goBack">‹ {{ currentTitle }}</div>
         <div class="side-buttons">
           <button class="btn-primary" @click="createEssay">
-            {{ i18n['library-new'] }}
+            {{ i18n['library-new-essay'] }}
           </button>
           <button class="btn-secondary" @click="createFolder">
             {{ i18n['library-new-folder'] }}

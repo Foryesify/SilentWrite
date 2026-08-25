@@ -33,6 +33,7 @@ export const theme = () => EditorView.theme({
   '.cm-scroller': {
     ...cmVars,
     fontSize: '1.2em',
+    lineHeight: '1.6',
     color: 'var(--cm-fg)',
     fontFamily: 'var(--cm-font)',
     fontWeight: '400',
@@ -43,8 +44,6 @@ export const theme = () => EditorView.theme({
     '.cm-scroller': cmVarsDark,
   },
   '.cm-content': {
-    display: 'flex',
-    flexDirection: 'column',
     maxWidth: 'min(48em, 80vw)',
     flex: '1 1 auto',
     minHeight: '100%',
@@ -70,9 +69,6 @@ export const theme = () => EditorView.theme({
     opacity: '0.5',
     transition: 'opacity 0.1s ease-out',
   },
-  '.cm-line:last-child': {
-    flex: '1 0 auto',
-  },
   '.cm-activeLine': {
     opacity: '1',
     backgroundColor: 'transparent',
@@ -94,7 +90,12 @@ export const theme = () => EditorView.theme({
   // Selection
   '.cm-selectionBackground': {
     backgroundColor: 'var(--cm-selection) !important',
-    transition: `all 0.1s ease-out`,
+    transition: `all var(--duration-fast) var(--ease-accelerate)`,
+  },
+  // First-line coordsAtPos is ~1px short of the line box; inline height wins, so grow the box.
+  '.cm-selectionLayer .cm-selectionBackground:first-child': {
+    boxSizing: 'content-box',
+    paddingBottom: '1px',
   },
   // iOS Safari still paints native contenteditable selection
   // on top of drawSelection; Chromium honors transparent ::selection.
