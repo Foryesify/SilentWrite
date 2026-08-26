@@ -1,13 +1,11 @@
 import { strFromU8, strToU8, unzipSync, zipSync } from 'fflate'
-import { snapshot } from './userdata.js'
+import { library, snapshot } from './userdata.js'
 
-export const META_NAME = '._silentwrite_.json'
+const META = '._silentwrite_.json'
 
-const INVALID_NAME = /[<>:"/\\|?*\u0000-\u001f]/g
-
-export function packUserdataZip(library) {
-  const files = { [META_NAME]: strToU8(JSON.stringify(snapshot(), null, 2)) }
-  addFolderFiles(library, '', new Set(), files)
+export function packUserdataZip() {
+  const files = { [META]: strToU8(JSON.stringify(snapshot(), null, 2)) }
+  addFiles(library, '', new Set(), files)
   return zipSync(files)
 }
 
@@ -18,112 +16,62 @@ export function unpackUserdataZip(bytes) {
   } catch {
     return null
   }
-  const meta = readMeta(files)
-  if (meta) return meta
+  const key = Object.keys(files).find((k) => k.replace(/\\/g, '/').split('/').pop() === META)
+  if (key) try { return JSON.parse(strFromU8(files[key])) } catch {}
   return treeFromFiles(files)
 }
 
-function addFolderFiles(folder, prefix, used, files) {
+function addFiles(folder, prefix, used, files) {
   for (const child of folder.children) {
-    if (Array.isArray(child.children)) {
-      const name = uniqueName(used, safeName(child.name, 'folder'))
-      if (!child.children.length) files[`${prefix}${name}/`] = new Uint8Array(0)
-      else addFolderFiles(child, `${prefix}${name}/`, new Set(), files)
+    if (child.children) {
+      const name = takeName(used, child.name)
+      if (!child.children.length) files[`${prefix}${name}/`] = new Uint8Array()
+      else addFiles(child, `${prefix}${name}/`, new Set(), files)
     } else {
-      const filename = uniqueName(used, safeName(child.title, 'untitled'), '.md')
-      files[`${prefix}${filename}`] = strToU8(child.content ?? '')
+      files[`${prefix}${takeName(used, child.title)}.md`] = strToU8(child.content ?? '')
     }
   }
-}
-
-function readMeta(files) {
-  for (const [key, data] of Object.entries(files)) {
-    if (normalizePath(key) !== META_NAME) continue
-    try {
-      return JSON.parse(strFromU8(data))
-    } catch {
-      return null
-    }
-  }
-  return null
 }
 
 function treeFromFiles(files) {
   const root = { type: 'folder', name: 'library', password: '', children: [] }
   for (const [key, data] of Object.entries(files)) {
-    const path = normalizePath(key)
-    if (!path || shouldSkip(path)) continue
-    if (path.endsWith('/')) {
-      ensureFolder(root, splitPath(path.slice(0, -1)))
-      continue
+    const slash = key.replace(/\\/g, '/')
+    const parts = slash.replace(/\/$/, '').split('/').filter(Boolean)
+    if (!parts.length || parts.some((p) => p === '__MACOSX' || p.startsWith('.'))) continue
+    const isFile = parts.at(-1).toLowerCase().endsWith('.md')
+    if (!isFile && !slash.endsWith('/')) continue
+    let node = root
+    for (const part of isFile ? parts.slice(0, -1) : parts) {
+      let next = node.children.find((c) => c.children && c.name === part)
+      if (!next) {
+        next = { type: 'folder', name: part, password: '', children: [] }
+        node.children.push(next)
+      }
+      node = next
     }
-    if (!path.toLowerCase().endsWith('.md')) continue
-    const parts = splitPath(path)
-    const filename = parts.pop()
-    const parent = ensureFolder(root, parts)
-    parent.children.push({
-      type: 'file',
-      title: filename.slice(0, -3),
-      content: strFromU8(data),
-      password: '',
-    })
+    if (isFile) {
+      node.children.push({ type: 'file', title: parts.at(-1).slice(0, -3), content: strFromU8(data), password: '' })
+    }
   }
   sortTree(root)
-  return { version: 1, library: root }
-}
-
-function ensureFolder(root, parts) {
-  let node = root
-  for (const name of parts) {
-    let child = node.children.find((item) => item.type === 'folder' && item.name === name)
-    if (!child) {
-      child = { type: 'folder', name, password: '', children: [] }
-      node.children.push(child)
-    }
-    node = child
-  }
-  return node
+  return { library: root }
 }
 
 function sortTree(node) {
-  node.children.sort((a, b) => itemName(a).localeCompare(itemName(b), undefined, { numeric: true, sensitivity: 'base' }))
-  for (const child of node.children) {
-    if (child.type === 'folder') sortTree(child)
-  }
+  const name = (item) => item.name ?? item.title
+  node.children.sort((a, b) => name(a).localeCompare(name(b), undefined, { numeric: true }))
+  for (const child of node.children) if (child.children) sortTree(child)
 }
 
-function itemName(item) {
-  return item.type === 'folder' ? item.name : item.title
-}
-
-function shouldSkip(path) {
-  if (path === META_NAME) return true
-  return path.split('/').some((part) => part === '__MACOSX' || part === '.DS_Store' || part.startsWith('._'))
-}
-
-function normalizePath(path) {
-  return String(path)
-    .replace(/\\/g, '/')
-    .replace(/^\.?\//, '')
-}
-
-function splitPath(path) {
-  return path.split('/').filter(Boolean)
-}
-
-function safeName(name, fallback) {
-  const cleaned = String(name ?? '')
-    .replace(INVALID_NAME, '')
+function takeName(used, raw) {
+  let name = String(raw ?? '')
+    .replace(/[<>:"/\\|?*\x00-\x1f]/g, '')
     .replace(/[. ]+$/g, '')
     .trim()
-  if (!cleaned || cleaned === '.' || cleaned === '..') return fallback
-  return cleaned
-}
-
-function uniqueName(used, base, ext = '') {
-  let stem = base
-  let i = 2
-  while (used.has((stem + ext).toLowerCase())) stem = `${base} ${i++}`
-  used.add((stem + ext).toLowerCase())
-  return stem + ext
+  if (!name || name === '.' || name === '..') name = 'untitled'
+  let next = name
+  for (let i = 2; used.has(next.toLowerCase()); i++) next = `${name} ${i}`
+  used.add(next.toLowerCase())
+  return next
 }

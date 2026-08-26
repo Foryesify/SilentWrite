@@ -65,7 +65,6 @@ const translations = {
     'editor-export': '导出',
     'editor-import': '导入',
     'editor-language': 'English',
-    'editor-images': '',
   },
 }
 

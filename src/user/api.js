@@ -47,35 +47,19 @@ export function openEssay(file) {
 export function exportUserdata() {
   const file = library.getFile(editor.file)
   if (file) file.setContent(editor.text())
-  const blob = new Blob([packUserdataZip(library)], { type: 'application/zip' })
-  const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
-  a.href = url
-  a.download = `${exportDate()}.zip`
+  a.href = URL.createObjectURL(new Blob([packUserdataZip()], { type: 'application/zip' }))
+  a.download = `${new Date().toLocaleDateString('en-CA')}.zip`
   a.click()
-  URL.revokeObjectURL(url)
+  URL.revokeObjectURL(a.href)
 }
 
 export async function importUserdata() {
   const file = await pickZipFile()
   if (!file) return
-  let data
-  try {
-    data = unpackUserdataZip(new Uint8Array(await file.arrayBuffer()))
-  } catch {
-    return
-  }
-  if (!applyUserdata(data)) return
+  if (!applyUserdata(unpackUserdataZip(new Uint8Array(await file.arrayBuffer())))) return
   editor.file = []
   changePage('Home')
-}
-
-function exportDate() {
-  const now = new Date()
-  const y = now.getFullYear()
-  const m = String(now.getMonth() + 1).padStart(2, '0')
-  const d = String(now.getDate()).padStart(2, '0')
-  return `${y}-${m}-${d}`
 }
 
 function pickZipFile() {
