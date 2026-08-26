@@ -30,6 +30,10 @@ const translations = {
     'new-skip': 'Skip naming',
     'editor-placeholder': 'Write here...',
     'editor-return-home': 'Return Home',
+    'editor-settings': 'Settings',
+    'editor-export-json': 'Export JSON',
+    'editor-import-json': 'Import JSON',
+    'editor-language': '中文',
   },
   'zh-CN': {
     'home-new-essay': '新建随笔',
@@ -60,8 +64,15 @@ const translations = {
     'editor-placeholder': '在这里写作...',
     'editor-return-home': '返回首页',
     'editor-settings': '调整设置',
+    'editor-export-json': '导出 JSON',
+    'editor-import-json': '导入 JSON',
+    'editor-language': 'English',
     'editor-images': '',
   },
 }
 
-export const i18n = computed(() => translations[settings.lang])
+export const i18n = computed(() => translations[settings.lang] ?? translations['en-US'])
+
+export function toggleLang() {
+  settings.lang = settings.lang === 'zh-CN' ? 'en-US' : 'zh-CN'
+}

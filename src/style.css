@@ -83,7 +83,7 @@ body {
   color: var(--color-text);
   background: var(--color-background);
   line-height: 1.6;
-  font: --system-ui, sans-serif;
+  font-family: system-ui;
   font-size: 16px;
   user-select: none;
 }
@@ -95,6 +95,7 @@ body {
 }
 
 button {
+  font-family: inherit;
   box-shadow: 0 0 0 transparent;
   border: none;
   border-radius: var(--border-radius-standard);

@@ -72,11 +72,16 @@ class File {
   }
 }
 
+export function detectLang() {
+  const tag = navigator.language || navigator.languages?.[0] || ''
+  return String(tag).toLowerCase().startsWith('zh') ? 'zh-CN' : 'en-US'
+}
+
 export const settings = reactive({
   autohideDistraction: true,
   cursorMoveAnimation: true,
   cursorBlinking: true,
-  lang: 'zh-CN',
+  lang: detectLang(),
 })
 
 export const library = reactive(new Folder('library'))
@@ -110,12 +115,23 @@ function loadItem(data, parent) {
   file.content = data.content ?? ''
 }
 
-function snapshot() {
+export function snapshot() {
   return {
     version: 1,
     settings: { ...settings },
     library: dumpItem(library),
   }
+}
+
+export function applyUserdata(data) {
+  if (!data || typeof data !== 'object') return false
+  const lib = data.library
+  if (!lib || lib.type !== 'folder' || !Array.isArray(lib.children)) return false
+  library.children.splice(0)
+  library.password = lib.password ?? ''
+  for (const child of lib.children) loadItem(child, library)
+  if (data.settings && typeof data.settings === 'object') Object.assign(settings, data.settings)
+  return true
 }
 
 function openDb() {

@@ -5,7 +5,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import PopMenu from '@/basic/PopMenu.vue'
 import { i18n } from '@/user/i18n.js'
 import Rename from './Rename.vue'
@@ -24,11 +24,11 @@ const password = ref(null)
 let target = null
 let index = -1
 
-const items = [
+const items = computed(() => [
   [i18n.value['library-rename'], doRename],
   [i18n.value['library-password'], doPassword],
   [i18n.value['library-delete'], doDelete],
-]
+])
 
 function open(event, item, i) {
   target = item
