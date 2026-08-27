@@ -34,7 +34,7 @@ function open(event, item, i) {
   target = item
   index = i
   top.value = event.clientY
-  left.value = event.clientX
+  left.value = event.clientX - 120
   hidden.value = false
 }
 

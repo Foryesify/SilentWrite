@@ -25,7 +25,7 @@
   place-items: center;
   width: 100%;
   height: 100%;
-  background-color: #7774;
+  background-color: var(--color-smoke);
   backdrop-filter: blur(var(--blur));
   transition: all var(--duration-fast) var(--ease-accelerate);
 
