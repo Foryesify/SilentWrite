@@ -108,9 +108,6 @@ export const theme = () => EditorView.theme({
     borderLeft: '2px solid var(--cm-caret)',
     transition: isTouch ? 'none' : 'left 0.08s ease-out, top 0.08s ease-out',
   },
-  '&.cm-ime .cm-cursor, &.cm-ime .cm-dropCursor': {
-    transition: 'none',
-  },
   '&.cm-focused > .cm-scroller > .cm-cursorLayer': {
     animation: 'cm-blink 1s ease-in-out infinite',
   },
