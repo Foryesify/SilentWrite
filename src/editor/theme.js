@@ -32,7 +32,7 @@ const cmVars = {
   '--cm-selection': '#e9e9e9',
   '--cm-caret': '#222',
   '--cm-placeholder': '#444',
-  '--cm-hash-gutter': '5em',
+  '--cm-hash-gutter': '1em',
 }
 
 const cmVarsDark = {
