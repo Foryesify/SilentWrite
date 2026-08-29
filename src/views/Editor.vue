@@ -1,7 +1,5 @@
 <template>
-  <div class="editor" ref="host">
-    <ActionsButton :hidden />
-  </div>
+  <div class="editor" ref="host" />
 </template>
 
 <style scoped>
@@ -16,17 +14,15 @@ import { ref, watch } from 'vue'
 import { EditorState } from '@codemirror/state'
 import { EditorView, keymap } from '@codemirror/view'
 import { codemirror } from '@/editor/codemirror.js'
-import { editor, editorEpoch, page } from '@/user/session.js'
+import { actionsHidden, editor, editorEpoch, page } from '@/user/session.js'
 import { currentDoc, leaveEditor } from '@/user/document.js'
 import { saveMarkdown } from '@/user/api.js'
 import { windowControls } from '@/components/WindowControls.js'
-import ActionsButton from './Editor/ActionsButton.vue'
 
 const host = ref(null)
-const hidden = ref(false)
 
 function immersive(view) {
-  hidden.value = view.hasFocus
+  actionsHidden.value = view.hasFocus
   if (view.hasFocus) windowControls.hide()
   else windowControls.show()
 }
@@ -66,7 +62,7 @@ watch([page, host, editorEpoch], ([p, el]) => {
     leaveEditor()
     editor.view?.destroy()
     editor.init(null)
-    hidden.value = false
+    actionsHidden.value = false
     windowControls.show()
   }
 })

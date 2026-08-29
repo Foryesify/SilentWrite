@@ -4,7 +4,6 @@ import { computed } from 'vue'
 const translations = {
   'en-US': {
     'home-new-essay': 'New Essay',
-    'home-open-file': 'Open File',
     'home-open-library': 'Open Library',
     'library-title': 'Library',
     'library-new-essay': 'New Essay',
@@ -39,7 +38,6 @@ const translations = {
   },
   'zh-CN': {
     'home-new-essay': '新建随笔',
-    'home-open-file': '打开文件',
     'home-open-library': '我的文章',
     'library-title': '我的文章',
     'library-new-essay': '新建随笔',
