@@ -4,6 +4,9 @@
       <button class="btn-primary" @click="newEssay()">
         {{ i18n['home-new-essay'] }}
       </button>
+      <button v-if="canOpenFile" class="btn-secondary" @click="openMarkdown()">
+        {{ i18n['home-open-file'] }}
+      </button>
       <button class="btn-secondary" @click="openLibrary">
         {{ i18n['home-open-library'] }}
       </button>
@@ -13,8 +16,10 @@
 
 <script setup>
 import { i18n } from '@/user/i18n.js'
-import { newEssay } from '@/user/api.js'
+import { canPickMarkdown, newEssay, openMarkdown } from '@/user/api.js'
 import { changePage } from '@/user/session.js'
+
+const canOpenFile = canPickMarkdown()
 
 function openLibrary() {
   changePage('Library')

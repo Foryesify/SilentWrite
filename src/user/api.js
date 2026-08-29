@@ -1,5 +1,7 @@
-import { applyUserdata, library, pathOf } from './userdata.js'
+import { applyUserdata, library } from './userdata.js'
 import { changePage, editor } from './session.js'
+import { closeDocument, currentDoc, openDiskDoc, openLibraryDoc } from './document.js'
+import { canPickMarkdown, consumeFileLaunches, flushDisk, listenFileLaunches, pickMarkdown } from './diskFile.js'
 import { i18n } from './i18n.js'
 import { nameBox } from '@/components/Name.vue'
 import { packUserdataZip, unpackUserdataZip } from './archive.js'
@@ -25,8 +27,7 @@ export async function newEssay(parent = library) {
   })
   if (name == null) return
   const file = parent.appendChild(name, false)
-  editor.file = pathOf(file)
-  changePage('Editor')
+  openLibraryDoc(file)
 }
 
 export async function newFolder(parent = library) {
@@ -40,13 +41,32 @@ export async function newFolder(parent = library) {
 }
 
 export function openEssay(file) {
-  editor.file = pathOf(file)
-  changePage('Editor')
+  openLibraryDoc(file)
+}
+
+export { canPickMarkdown, listenFileLaunches }
+
+export async function openMarkdown(handle) {
+  try {
+    currentDoc()?.setContent(editor.text())
+    const file = handle ?? (await pickMarkdown())
+    if (!file) return
+    await openDiskDoc(file)
+  } catch {}
+}
+
+export function saveMarkdown() {
+  return flushDisk()
+}
+
+export function bindFileLaunches() {
+  consumeFileLaunches((handle) => {
+    openMarkdown(handle)
+  })
 }
 
 export function exportUserdata() {
-  const file = library.getFile(editor.file)
-  if (file) file.setContent(editor.text())
+  currentDoc()?.setContent(editor.text())
   const a = document.createElement('a')
   a.href = URL.createObjectURL(new Blob([packUserdataZip()], { type: 'application/zip' }))
   a.download = `${new Date().toLocaleDateString('en-CA')}.zip`
@@ -58,7 +78,7 @@ export async function importUserdata() {
   const file = await pickZipFile()
   if (!file) return
   if (!applyUserdata(unpackUserdataZip(new Uint8Array(await file.arrayBuffer())))) return
-  editor.file = []
+  closeDocument()
   changePage('Home')
 }
 

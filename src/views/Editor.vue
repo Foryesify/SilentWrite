@@ -14,10 +14,11 @@
 <script setup>
 import { ref, watch } from 'vue'
 import { EditorState } from '@codemirror/state'
-import { EditorView } from '@codemirror/view'
+import { EditorView, keymap } from '@codemirror/view'
 import { codemirror } from '@/editor/codemirror.js'
-import { editor, page } from '@/user/session.js'
-import { library } from '@/user/userdata.js'
+import { editor, editorEpoch, page } from '@/user/session.js'
+import { currentDoc, leaveEditor } from '@/user/document.js'
+import { saveMarkdown } from '@/user/api.js'
 import { windowControls } from '@/components/WindowControls.js'
 import ActionsButton from './Editor/ActionsButton.vue'
 
@@ -31,7 +32,7 @@ function immersive(view) {
 }
 
 function autosave(update) {
-  if (update.docChanged) library.getFile(editor.file)?.setContent(update.state.doc.toString())
+  if (update.docChanged) currentDoc()?.setContent(update.state.doc.toString())
 }
 
 function load() {
@@ -39,17 +40,30 @@ function load() {
   const view = new EditorView({
     parent: host.value,
     state: EditorState.create({
-      doc: library.getFile(editor.file)?.text() ?? '',
-      extensions: codemirror(immersive, autosave),
+      doc: currentDoc()?.text() ?? '',
+      extensions: [
+        ...codemirror(immersive, autosave),
+        keymap.of([
+          {
+            key: 'Mod-s',
+            run: () => {
+              saveMarkdown()
+              return true
+            },
+          },
+        ]),
+      ],
     }),
   })
   editor.init(view)
 }
 
-watch([page, host], ([p, el]) => {
+watch([page, host, editorEpoch], ([p, el]) => {
   if (!el) return
   if (p === 'Editor') load()
   else {
+    currentDoc()?.setContent(editor.text())
+    leaveEditor()
     editor.view?.destroy()
     editor.init(null)
     hidden.value = false

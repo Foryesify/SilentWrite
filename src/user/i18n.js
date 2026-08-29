@@ -4,6 +4,7 @@ import { computed } from 'vue'
 const translations = {
   'en-US': {
     'home-new-essay': 'New Essay',
+    'home-open-file': 'Open File',
     'home-open-library': 'Open Library',
     'library-title': 'Library',
     'library-new-essay': 'New Essay',
@@ -30,12 +31,15 @@ const translations = {
     'new-skip': 'Skip naming',
     'editor-placeholder': 'Write here...',
     'editor-return-home': 'Return Home',
+    'editor-open-file': 'Open File',
+    'editor-save-file': 'Save File',
     'editor-export': 'Export',
     'editor-import': 'Import',
     'editor-language': '中文',
   },
   'zh-CN': {
     'home-new-essay': '新建随笔',
+    'home-open-file': '打开文件',
     'home-open-library': '我的文章',
     'library-title': '我的文章',
     'library-new-essay': '新建随笔',
@@ -62,6 +66,8 @@ const translations = {
     'new-skip': '跳过命名',
     'editor-placeholder': '在这里写作...',
     'editor-return-home': '返回首页',
+    'editor-open-file': '打开文件',
+    'editor-save-file': '保存到文件',
     'editor-export': '导出',
     'editor-import': '导入',
     'editor-language': 'English',

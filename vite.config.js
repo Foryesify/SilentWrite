@@ -21,6 +21,19 @@ export default defineConfig({
         start_url: './',
         scope: './',
         lang: 'zh-CN',
+        launch_handler: {
+          client_mode: ['focus-existing', 'auto'],
+        },
+        file_handlers: [
+          {
+            action: './',
+            launch_type: 'single-client',
+            accept: {
+              'text/markdown': ['.md', '.markdown'],
+              'text/plain': ['.md', '.markdown'],
+            },
+          },
+        ],
         icons: [
           {
             src: 'favicon.png',

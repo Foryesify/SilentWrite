@@ -1,6 +1,8 @@
 import { ref } from 'vue'
 
 export const page = ref('Home')
+export const editorEpoch = ref(0)
+
 export function changePage(name) {
   page.value = name
 }
