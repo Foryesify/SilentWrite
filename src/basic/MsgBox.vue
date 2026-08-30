@@ -18,7 +18,7 @@
   border-radius: var(--border-radius-large);
   background: var(--color-foreground);
   box-shadow: var(--shadow-standard);
-  transition: all var(--duration-fast) var(--ease-accelerate);
+  transition: all var(--duration-normal) var(--ease-accelerate);
 
   &.hidden {
     opacity: 0;

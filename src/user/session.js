@@ -16,10 +16,7 @@ export function changePage(name) {
 export const editor = {
   file: [],
   view: null,
-  init(view) {
-    this.view = view
-  },
-  text() {
-    return this.view?.state.doc.toString() ?? ''
-  },
+  focused: ref(false),
+  init(view) { this.view = view, this.focused.value = !!view?.hasFocus },
+  text() { return this.view?.state.doc.toString() ?? '' },
 }

@@ -17,13 +17,13 @@
           v-for="(v, i) in items"
           class="item"
           @click="onItemClick(v)"
-          @contextmenu.prevent.stop="openActions($event, v, i)"
+          @contextmenu.prevent.stop="openMore($event, v, i)"
         >
           <div class="item-text">
             <div class="item-title">{{ itemTitle(v) }}</div>
             <span v-if="itemIcon(v)" v-html="itemIcon(v)" />
           </div>
-          <div class="item-more" @click.stop="openActions($event, v, i)">
+          <div class="more" @click.stop="openMore($event, v, i)">
             <span></span>
             <span></span>
             <span></span>
@@ -34,7 +34,7 @@
         </div>
       </div>
     </div>
-    <Actions ref="actions" :folder="current" :unlock="unlock" />
+    <More ref="more" :folder="current" :unlock="unlock" />
     <Password ref="passwordBox" />
   </div>
 </template>
@@ -126,7 +126,7 @@
       }
     }
 
-    .item-more {
+    .more {
       width: 28px;
       height: 28px;
       flex: none;
@@ -173,11 +173,11 @@ import { i18n } from '@/user/i18n.js'
 import { newEssay, newFolder, openEssay } from '@/user/api.js'
 import { library } from '@/user/userdata.js'
 import { changePage } from '@/user/session.js'
-import Actions from './Library/Actions.vue'
+import More from './Library/More.vue'
 import Password from './Library/Password.vue'
 
 const trail = ref([])
-const actions = ref(null)
+const more = ref(null)
 const passwordBox = ref(null)
 const unlocked = new WeakSet()
 
@@ -229,8 +229,8 @@ function createFolder() {
   newFolder(current.value)
 }
 
-function openActions(event, item, index) {
-  actions.value?.open(event, item, index)
+function openMore(event, item, index) {
+  more.value?.open(event, item, index)
 }
 
 async function unlock(item) {

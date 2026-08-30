@@ -18,9 +18,9 @@
   --focus-stroke-width: 2px;
   --blur-acrylic: 16px;
   --blur: 10px;
-  --duration-fast: 170ms;
-  --duration-normal: 240ms;
-  --duration-slow: 333ms;
+  --duration-fast: 110ms;
+  --duration-normal: 180ms;
+  --duration-slow: 250ms;
   --ease-standard: ease;
   --ease-accelerate: ease-out;
 }
@@ -154,8 +154,8 @@ input {
 .nav-back-enter-active,
 .nav-back-leave-active {
   transition:
-    transform var(--duration-fast) var(--ease-accelerate),
-    opacity var(--duration-fast) var(--ease-accelerate);
+    transform var(--duration-normal) var(--ease-accelerate),
+    opacity var(--duration-normal) var(--ease-accelerate);
 }
 
 .nav-forward-leave-active,

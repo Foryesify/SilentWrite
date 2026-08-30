@@ -1,6 +1,6 @@
 <template>
   <Commands :hidden="!showCommands" @hide="showCommands = false" />
-  <div class="actions-button" :class="{ hidden }" @click="showCommands = !showCommands">
+  <div class="actions" :class="{ hidden }" @click="showCommands = !showCommands">
     <span></span>
     <span></span>
     <span></span>
@@ -8,7 +8,7 @@
 </template>
 
 <style scoped>
-.actions-button {
+.actions {
   z-index: 100;
   display: flex;
   justify-content: center;

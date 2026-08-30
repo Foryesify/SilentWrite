@@ -1,7 +1,7 @@
 <template>
   <WindowControls />
   <Name />
-  <ActionsButton :hidden="actionsHidden" />
+  <Actions :hidden="actionsHidden" />
   <div class="app">
     <Transition :name="navName">
       <Home v-if="page === 'Home'" key="Home" />
@@ -16,7 +16,6 @@
   display: grid;
   grid-template: 1fr / 1fr;
   flex: 1;
-  min-height: 0;
   padding: 0 12px;
   overflow: hidden;
 
@@ -36,5 +35,5 @@ import Home from './views/Home.vue'
 import Library from './views/Library.vue'
 import WindowControls from './components/WindowControls.vue'
 import Name from './components/Name.vue'
-import ActionsButton from './views/Editor/ActionsButton.vue'
+import Actions from './components/Actions.vue'
 </script>

@@ -27,7 +27,7 @@
   height: 100%;
   background-color: var(--color-smoke);
   backdrop-filter: blur(var(--blur));
-  transition: all var(--duration-fast) var(--ease-accelerate);
+  transition: all var(--duration-normal) var(--ease-accelerate);
 
   &.hidden {
     opacity: 0;

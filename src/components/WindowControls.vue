@@ -1,8 +1,20 @@
 <template>
-  <div class="window-controls" v-if="!Appwindow.isWebsite()" :class="{ hidden }">
-    <div class="window-button" v-html="iconMin" @click="Appwindow.minimize" />
-    <div class="window-button" v-html="iconMax" @click="Appwindow.toggleMaximize" />
-    <div class="window-button" v-html="iconClose" @click="Appwindow.close" />
+  <div class="window-controls" v-if="!Appwindow.isWebsite()" :class="{ 'hidden' : editor.focused  }">
+    <div class="window-button" @click="Appwindow.minimize">
+      <svg width="12" height="12" viewBox="0 0 10 10">
+        <path fill="none" stroke="currentColor" d="M1 5h8" />
+      </svg>
+    </div>
+    <div class="window-button" @click="Appwindow.toggleMaximize">
+      <svg width="12" height="12" viewBox="0 0 10 10">
+        <path d="M1.5 1.5h7v7h-7z" fill="none" stroke="currentColor" />
+      </svg>
+    </div>
+    <div class="window-button" @click="Appwindow.close">
+      <svg width="12" height="12" viewBox="0 0 10 10">
+        <path fill="none" stroke="currentColor" d="M1.5 1.5l7 7M8.5 1.5l-7 7" />
+      </svg>
+    </div>
   </div>
 </template>
 
@@ -27,7 +39,7 @@
   aspect-ratio: 1.5;
   transition: all var(--duration-fast) var(--ease-accelerate);
 
-  :deep(svg) {
+  svg {
     width: 12px;
   }
 
@@ -44,10 +56,5 @@
 
 <script setup>
 import { Appwindow } from '@/user/api'
-import { windowControls } from './WindowControls.js'
-import iconMin from '@/assets/window-min.svg?raw'
-import iconMax from '@/assets/window-max.svg?raw'
-import iconClose from '@/assets/window-close.svg?raw'
-
-const hidden = windowControls.hidden
+import { editor } from '@/user/session.js'
 </script>

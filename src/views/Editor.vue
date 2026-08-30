@@ -17,11 +17,11 @@ import { codemirror } from '@/editor/codemirror.js'
 import { actionsHidden, editor, editorEpoch, page } from '@/user/session.js'
 import { currentDoc, leaveEditor } from '@/user/document.js'
 import { saveMarkdown } from '@/user/api.js'
-import { windowControls } from '@/components/WindowControls.js'
 
 const host = ref(null)
 
 function immersive(view) {
+  editor.focused.value = view.hasFocus
   actionsHidden.value = view.hasFocus
   if (view.hasFocus) windowControls.hide()
   else windowControls.show()
