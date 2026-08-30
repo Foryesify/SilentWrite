@@ -1,10 +1,10 @@
-import { applyUserdata, library } from './userdata.js'
+import { applyUserdata, importLibraryTree, library } from './userdata.js'
 import { changePage, editor } from './session.js'
 import { closeDocument, currentDoc, openDiskDoc, openLibraryDoc } from './document.js'
-import { canPickMarkdown, consumeFileLaunches, flushDisk, listenFileLaunches, pickMarkdown } from './diskFile.js'
+import { canPickMarkdown, consumeFileLaunches, flushDisk, listenFileLaunches, pickFolderFiles, pickMarkdown } from './diskFile.js'
 import { i18n } from './i18n.js'
 import { nameBox } from '@/components/Name.vue'
-import { packUserdataZip, unpackUserdataZip } from './archive.js'
+import { packUserdataZip, unpackUserdataFiles, unpackUserdataZip } from './archive.js'
 
 export const Appwindow = {
   minimize: () => {},
@@ -80,6 +80,20 @@ export async function importUserdata() {
   if (!applyUserdata(unpackUserdataZip(new Uint8Array(await file.arrayBuffer())))) return
   closeDocument()
   changePage('Home')
+}
+
+export async function importFolder() {
+  try {
+    const picked = await pickFolderFiles()
+    if (!picked) return
+    const data = unpackUserdataFiles(picked.files)
+    if (!data?.library?.children.length) return
+    const name = String(picked.name ?? '').trim() || 'imported'
+    const folder = library.appendChild(name, true)
+    if (!importLibraryTree(data.library, folder)) return
+    closeDocument()
+    changePage('Library')
+  } catch {}
 }
 
 function pickZipFile() {

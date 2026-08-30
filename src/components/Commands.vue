@@ -8,7 +8,7 @@ import PopMenu from '@/basic/PopMenu.vue'
 import { i18n, toggleLang } from '@/user/i18n.js'
 import { changePage, page } from '@/user/session.js'
 import { isDiskDoc } from '@/user/document.js'
-import { canPickMarkdown, exportUserdata, importUserdata, openMarkdown, saveMarkdown } from '@/user/api.js'
+import { canPickMarkdown, exportUserdata, importFolder, importUserdata, openMarkdown, saveMarkdown } from '@/user/api.js'
 
 const { hidden } = defineProps({ hidden: Boolean })
 const emit = defineEmits(['hide'])
@@ -19,6 +19,7 @@ const items = computed(() => [
   ...(isDiskDoc.value ? [[i18n.value['editor-save-file'], saveMarkdown]] : []),
   [i18n.value['editor-export'], exportUserdata],
   [i18n.value['editor-import'], importUserdata],
+  [i18n.value['editor-import-folder'], importFolder],
   [i18n.value['editor-language'], toggleLang],
 ])
 </script>

@@ -34,6 +34,7 @@ const translations = {
     'editor-save-file': 'Save File',
     'editor-export': 'Export',
     'editor-import': 'Import',
+    'editor-import-folder': 'Import Folder',
     'editor-language': '中文',
   },
   'zh-CN': {
@@ -68,6 +69,7 @@ const translations = {
     'editor-save-file': '保存到文件',
     'editor-export': '导出',
     'editor-import': '导入',
+    'editor-import-folder': '导入文件夹',
     'editor-language': 'English',
   },
 }

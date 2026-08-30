@@ -134,6 +134,12 @@ export function applyUserdata(data) {
   return true
 }
 
+export function importLibraryTree(data, parent = library) {
+  if (!data || data.type !== 'folder' || !Array.isArray(data.children)) return false
+  for (const child of data.children) loadItem(child, parent)
+  return true
+}
+
 function openDb() {
   return new Promise((resolve, reject) => {
     const req = indexedDB.open(DB_NAME, 1)

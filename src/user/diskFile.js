@@ -56,6 +56,67 @@ export function flushDisk() {
   return enqueueWrite(bound.handle, bound.content)
 }
 
+export async function pickFolderFiles() {
+  if (typeof window.showDirectoryPicker === 'function') {
+    try {
+      const handle = await window.showDirectoryPicker()
+      return { name: handle.name, files: await readDirHandle(handle) }
+    } catch {
+      return null
+    }
+  }
+  const list = await pickFolderInput()
+  if (!list?.length) return null
+  return filesFromFileList(list)
+}
+
+async function readDirHandle(handle, prefix = '') {
+  const files = {}
+  for await (const child of handle.values()) {
+    const name = child.name
+    const skip = name === '__MACOSX' || (name.startsWith('.') && name !== '._silentwrite_.json')
+    if (skip) continue
+    if (child.kind === 'directory') {
+      const nested = await readDirHandle(child, `${prefix}${name}/`)
+      Object.assign(files, nested)
+      if (!Object.keys(nested).length) files[`${prefix}${name}/`] = new Uint8Array()
+    } else if (name === '._silentwrite_.json' || /\.(md|markdown)$/i.test(name)) {
+      files[`${prefix}${name}`] = new Uint8Array(await (await child.getFile()).arrayBuffer())
+    }
+  }
+  return files
+}
+
+function pickFolderInput() {
+  return new Promise((resolve) => {
+    const input = document.createElement('input')
+    input.type = 'file'
+    input.webkitdirectory = true
+    input.multiple = true
+    input.addEventListener('change', () => resolve([...(input.files ?? [])]), { once: true })
+    input.addEventListener('cancel', () => resolve([]), { once: true })
+    input.click()
+  })
+}
+
+async function filesFromFileList(list) {
+  const files = {}
+  let root = ''
+  for (const file of list) {
+    const parts = (file.webkitRelativePath || file.name).replace(/\\/g, '/').split('/').filter(Boolean)
+    if (parts.length >= 2) root ||= parts[0]
+    const inner = (parts.length >= 2 ? parts.slice(1) : parts).join('/')
+    const base = inner.split('/').pop()
+    if (!base || inner.split('/').some((p) => p === '__MACOSX' || (p.startsWith('.') && p !== '._silentwrite_.json'))) {
+      continue
+    }
+    if (base === '._silentwrite_.json' || /\.(md|markdown)$/i.test(base)) {
+      files[inner] = new Uint8Array(await file.arrayBuffer())
+    }
+  }
+  return { name: root || 'imported', files }
+}
+
 export async function pickMarkdown() {
   if (!canPickMarkdown()) return null
   try {

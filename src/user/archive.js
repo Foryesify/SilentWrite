@@ -16,6 +16,11 @@ export function unpackUserdataZip(bytes) {
   } catch {
     return null
   }
+  return unpackUserdataFiles(files)
+}
+
+export function unpackUserdataFiles(files) {
+  if (!files || typeof files !== 'object') return null
   const key = Object.keys(files).find((k) => k.replace(/\\/g, '/').split('/').pop() === META)
   let meta
   if (key) try { meta = JSON.parse(strFromU8(files[key])) } catch {}
@@ -40,7 +45,7 @@ function treeFromFiles(files) {
     const slash = key.replace(/\\/g, '/')
     const parts = slash.replace(/\/$/, '').split('/').filter(Boolean)
     if (!parts.length || parts.some((p) => p === '__MACOSX' || p.startsWith('.'))) continue
-    const file = parts.at(-1).toLowerCase().endsWith('.md')
+    const file = /\.(md|markdown)$/i.test(parts.at(-1))
     if (!file && !slash.endsWith('/')) continue
     let node = root
     for (const part of file ? parts.slice(0, -1) : parts) {
@@ -48,7 +53,14 @@ function treeFromFiles(files) {
       if (!next) node.children.push((next = { type: 'folder', name: part, password: '', children: [] }))
       node = next
     }
-    if (file) node.children.push({ type: 'file', title: parts.at(-1).slice(0, -3), content: strFromU8(data), password: '' })
+    if (file) {
+      node.children.push({
+        type: 'file',
+        title: parts.at(-1).replace(/\.markdown$/i, '').replace(/\.md$/i, ''),
+        content: strFromU8(data),
+        password: '',
+      })
+    }
   }
   return root
 }
