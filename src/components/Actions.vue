@@ -1,6 +1,6 @@
 <template>
   <Commands :hidden="!showCommands" @hide="showCommands = false" />
-  <div class="actions" :class="{ hidden }" @click="showCommands = !showCommands">
+  <div class="actions" :class="{ hidden: editor.focused }" @click="showCommands = true">
     <span></span>
     <span></span>
     <span></span>
@@ -17,6 +17,7 @@
   width: 40px;
   height: 40px;
   border-radius: 100%;
+  cursor: pointer;
   transition: all 0.2s ease;
   position: absolute;
   top: 10px;
@@ -43,11 +44,8 @@ span {
 
 <script setup>
 import { ref } from 'vue'
+import { editor } from '@/user/session';
 import Commands from '@/components/Commands.vue'
-
-defineProps({
-  hidden: Boolean,
-})
 
 const showCommands = ref(false)
 </script>

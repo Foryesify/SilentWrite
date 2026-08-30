@@ -1,7 +1,7 @@
 <template>
   <WindowControls />
   <Name />
-  <Actions :hidden="actionsHidden" />
+  <Actions />
   <div class="app">
     <Transition :name="navName">
       <Home v-if="page === 'Home'" key="Home" />
@@ -13,23 +13,52 @@
 
 <style scoped>
 .app {
-  display: grid;
-  grid-template: 1fr / 1fr;
+  display: flex;
   flex: 1;
-  padding: 0 12px;
   overflow: hidden;
 
   & > * {
-    grid-area: 1 / 1;
-    min-width: 0;
-    min-height: 0;
-    overflow: auto;
+    flex: 1;
   }
+}
+
+.nav-forward-enter-active,
+.nav-forward-leave-active,
+.nav-back-enter-active,
+.nav-back-leave-active {
+  transition: all var(--duration-normal) var(--ease-accelerate);
+}
+
+.nav-forward-leave-active,
+.nav-back-leave-active {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.nav-forward-enter-from {
+  opacity: 0;
+  transform: translateX(28px);
+}
+
+.nav-forward-leave-to {
+  opacity: 0;
+  transform: translateX(-12px);
+}
+
+.nav-back-enter-from {
+  opacity: 0;
+  transform: translateX(-28px);
+}
+
+.nav-back-leave-to {
+  opacity: 0;
+  transform: translateX(12px);
 }
 </style>
 
 <script setup>
-import { actionsHidden, navName, page } from './user/session.js'
+import { navName, page } from './user/session.js'
 import Editor from './views/Editor.vue'
 import Home from './views/Home.vue'
 import Library from './views/Library.vue'

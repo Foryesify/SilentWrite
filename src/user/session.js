@@ -1,8 +1,7 @@
-import { ref } from 'vue'
+import { ref, shallowReactive } from 'vue'
 
 export const page = ref('Home')
 export const editorEpoch = ref(0)
-export const actionsHidden = ref(false)
 export const navName = ref('nav-forward')
 
 const PAGE_DEPTH = { Home: 0, Library: 1, Editor: 2 }
@@ -13,10 +12,13 @@ export function changePage(name) {
   page.value = name
 }
 
-export const editor = {
+export const editor = shallowReactive({
   file: [],
   view: null,
-  focused: ref(false),
-  init(view) { this.view = view, this.focused.value = !!view?.hasFocus },
+  focused: false,
+  init(view) {
+    this.view = view
+    this.focused = !!view?.hasFocus
+  },
   text() { return this.view?.state.doc.toString() ?? '' },
-}
+})

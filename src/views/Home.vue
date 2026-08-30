@@ -23,6 +23,7 @@ function openLibrary() {
 
 <style scoped>
 .home {
+  padding: 0 12px;
   display: grid;
   place-items: center;
 }

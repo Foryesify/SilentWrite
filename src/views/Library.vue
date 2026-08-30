@@ -2,7 +2,7 @@
   <div class="library">
     <div class="main">
       <div class="header">
-        <div class="title" @click="goBack">‹ {{ currentTitle }}</div>
+        <div class="title">{{ currentTitle }}</div>
         <div class="side-buttons">
           <button class="btn-primary" @click="createEssay">
             {{ i18n['library-new-essay'] }}
@@ -41,9 +41,7 @@
 
 <style scoped>
 .library {
-  width: 100%;
-  overflow-x: hidden;
-  min-height: 100%;
+  padding: 12px 20px;
 }
 
 .main {
@@ -65,7 +63,6 @@
     font-size: 22px;
     font-weight: bold;
     color: var(--color-text-bold);
-    cursor: pointer;
   }
 
   .side-buttons {
@@ -172,7 +169,6 @@ import iconLock from '@/assets/lock.svg?raw'
 import { i18n } from '@/user/i18n.js'
 import { newEssay, newFolder, openEssay } from '@/user/api.js'
 import { library } from '@/user/userdata.js'
-import { changePage } from '@/user/session.js'
 import More from './Library/More.vue'
 import Password from './Library/Password.vue'
 
@@ -214,11 +210,6 @@ function onItemClick(item) {
     if (isFolder(item)) trail.value.push(item)
     else openEssay(item)
   })
-}
-
-function goBack() {
-  if (trail.value.length) trail.value.pop()
-  else changePage('Home')
 }
 
 function createEssay() {

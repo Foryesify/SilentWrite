@@ -94,12 +94,12 @@ body {
   line-height: 1.6;
   font-size: 16px;
   user-select: none;
-}
 
-#root {
-  display: flex;
-  flex-direction: column;
-  min-height: 100dvh;
+  #root {
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh;
+  }
 }
 
 button {
@@ -149,36 +149,9 @@ input {
   }
 }
 
-.nav-forward-enter-active,
-.nav-forward-leave-active,
-.nav-back-enter-active,
-.nav-back-leave-active {
-  transition:
-    transform var(--duration-normal) var(--ease-accelerate),
-    opacity var(--duration-normal) var(--ease-accelerate);
-}
-
-.nav-forward-leave-active,
-.nav-back-leave-active {
-  pointer-events: none;
-}
-
-.nav-forward-enter-from {
-  opacity: 0;
-  transform: translateX(28px);
-}
-
-.nav-forward-leave-to {
-  opacity: 0;
-  transform: translateX(-12px);
-}
-
-.nav-back-enter-from {
-  opacity: 0;
-  transform: translateX(-28px);
-}
-
-.nav-back-leave-to {
-  opacity: 0;
-  transform: translateX(12px);
+.card {
+  border: var(--stroke-width) solid var(--color-border);
+  border-radius: var(--border-radius-large);
+  box-shadow: var(--shadow-card);
+  background-color: var(--color-foreground);
 }
