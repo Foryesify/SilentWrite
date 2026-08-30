@@ -137,10 +137,6 @@ button {
   cursor: pointer;
 }
 
-button:focus-visible {
-  box-shadow: 0 0 0 var(--focus-stroke-width) var(--color-focus-ring);
-}
-
 .btn-primary {
   background-color: var(--color-primary);
   color: var(--color-text-on-accent);
@@ -150,11 +146,6 @@ button:focus-visible {
 
   &:hover {
     background-color: var(--color-primary-hover);
-  }
-
-  &:active {
-    background-color: var(--color-pressed);
-    color: var(--color-text);
   }
 
   &:focus-visible {
@@ -228,4 +219,47 @@ input::placeholder {
 .popmenu {
   background: var(--color-overlay);
   backdrop-filter: blur(var(--blur-acrylic));
+}
+
+.nav-forward-enter-active,
+.nav-forward-leave-active,
+.nav-back-enter-active,
+.nav-back-leave-active {
+  transition:
+    transform var(--duration-fast) var(--ease-accelerate),
+    opacity var(--duration-fast) var(--ease-accelerate);
+}
+
+.nav-forward-leave-active,
+.nav-back-leave-active {
+  pointer-events: none;
+}
+
+.nav-forward-enter-from {
+  opacity: 0;
+  transform: translateX(28px);
+}
+
+.nav-forward-leave-to {
+  opacity: 0;
+  transform: translateX(-12px);
+}
+
+.nav-back-enter-from {
+  opacity: 0;
+  transform: translateX(-28px);
+}
+
+.nav-back-leave-to {
+  opacity: 0;
+  transform: translateX(12px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-forward-enter-active,
+  .nav-forward-leave-active,
+  .nav-back-enter-active,
+  .nav-back-leave-active {
+    transition: none;
+  }
 }

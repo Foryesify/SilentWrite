@@ -3,26 +3,34 @@
   <Name />
   <ActionsButton :hidden="actionsHidden" />
   <div class="app">
-    <Home v-show="page === 'Home'" />
-    <Editor v-show="page === 'Editor'" />
-    <Library v-show="page === 'Library'" />
+    <Transition :name="navName">
+      <Home v-if="page === 'Home'" key="Home" />
+      <Editor v-else-if="page === 'Editor'" key="Editor" />
+      <Library v-else-if="page === 'Library'" key="Library" />
+    </Transition>
   </div>
 </template>
 
 <style scoped>
 .app {
-  display: flex;
+  display: grid;
+  grid-template: 1fr / 1fr;
   flex: 1;
+  min-height: 0;
   padding: 0 12px;
+  overflow: hidden;
 
   & > * {
-    flex: 1;
+    grid-area: 1 / 1;
+    min-width: 0;
+    min-height: 0;
+    overflow: auto;
   }
 }
 </style>
 
 <script setup>
-import { actionsHidden, page } from './user/session.js'
+import { actionsHidden, navName, page } from './user/session.js'
 import Editor from './views/Editor.vue'
 import Home from './views/Home.vue'
 import Library from './views/Library.vue'
