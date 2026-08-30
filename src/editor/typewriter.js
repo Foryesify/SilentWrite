@@ -1,12 +1,11 @@
 import { ViewPlugin } from '@codemirror/view'
-import { NARROW_QUERY } from './theme'
 
 const ANCHOR = 0.45
 const EPSILON = 4
 const DURATION = 220
 
 function desktopOk() {
-  return !matchMedia(NARROW_QUERY).matches && !matchMedia('(pointer: coarse)').matches
+  return !matchMedia('(pointer: coarse)').matches
 }
 
 function imeBusy(view) {
