@@ -1,6 +1,6 @@
 import { EditorView } from "@codemirror/view"
 
-const isTouch = matchMedia('(pointer: coarse)').matches
+// const isTouch = matchMedia('(pointer: coarse)').matches
 export const NARROW_QUERY = '(max-width: 750px)'
 
 const cmVars = {
@@ -106,7 +106,8 @@ export const theme = () => EditorView.theme({
   // Cursor
   '.cm-cursor, .cm-dropCursor': {
     borderLeft: '2px solid var(--cm-caret)',
-    transition: isTouch ? 'none' : 'left 0.08s ease-out, top 0.08s ease-out',
+    // transition: isTouch ? 'none' : 'left 0.08s ease-out, top 0.08s ease-out',
+    transition: 'left 0.08s ease-out, top 0.08s ease-out',
   },
   '&.cm-focused > .cm-scroller > .cm-cursorLayer': {
     animation: 'cm-blink 1s ease-in-out infinite',

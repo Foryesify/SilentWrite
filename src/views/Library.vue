@@ -12,7 +12,7 @@
           </button>
         </div>
       </div>
-      <div class="content">
+      <div class="content card">
         <div
           v-for="(v, i) in items"
           class="item"
@@ -82,6 +82,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.15rem;
+  padding: 4px;
 
   .item {
     display: flex;
