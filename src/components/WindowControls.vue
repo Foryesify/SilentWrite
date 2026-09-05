@@ -1,5 +1,5 @@
 <template>
-  <div class="window-controls" v-if="!Appwindow.isWebsite()" :class="{ 'hidden' : editor.focused  }">
+  <div class="window-controls" v-if="!Appwindow.isWebsite()" :class="{ hidden: editor.focused }">
     <div class="window-button" @click="Appwindow.minimize">
       <svg width="12" height="12" viewBox="0 0 10 10">
         <path fill="none" stroke="currentColor" d="M1 5h8" />

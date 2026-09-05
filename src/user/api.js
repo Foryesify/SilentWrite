@@ -6,18 +6,7 @@ import { i18n } from './i18n.js'
 import { nameBox } from '@/components/Name.vue'
 import { packUserdataZip, unpackUserdataFiles, unpackUserdataZip } from './archive.js'
 
-export const Appwindow = {
-  minimize: () => {},
-  toggleMaximize: () => {},
-  close: () => {},
-  toggleFullscreen: () => {},
-  isWebsite: () =>
-    !(
-      window.__TAURI_INTERNALS__ ||
-      navigator.userAgent.includes('Electron') ||
-      window.__FORYES_APP__
-    ),
-}
+export { Appwindow } from './appwindow.js'
 
 export async function newEssay(parent = library) {
   if (!parent?.appendChild) parent = library

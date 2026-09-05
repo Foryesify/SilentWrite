@@ -4,8 +4,13 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { VitePWA } from 'vite-plugin-pwa'
 
+const tauri = Boolean(process.env.TAURI_ENV_PLATFORM || process.env.TAURI_DEV_HOST)
+const host = process.env.TAURI_DEV_HOST
+
 export default defineConfig({
   base: './',
+  clearScreen: false,
+  envPrefix: ['VITE_', 'TAURI_ENV_'],
   plugins: [
     vue(),
     VitePWA({
@@ -62,6 +67,21 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
+    },
+  },
+  server: {
+    port: tauri ? 1420 : 5173,
+    strictPort: tauri,
+    host: host || false,
+    hmr: host
+      ? {
+          protocol: 'ws',
+          host,
+          port: 1421,
+        }
+      : undefined,
+    watch: {
+      ignored: ['**/src-tauri/**'],
     },
   },
   build: {
