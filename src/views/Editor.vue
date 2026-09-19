@@ -1,64 +1,39 @@
 <template>
-  <div class="editor" ref="host" />
+  <div class="editor"></div>
 </template>
 
 <style scoped>
 .editor {
   display: flex;
+  z-index: 900;
   padding: 55px 8px;
+  background-color: transparent;
 }
 </style>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { onMounted, ref } from 'vue'
 import { EditorState } from '@codemirror/state'
 import { EditorView, keymap } from '@codemirror/view'
-import { codemirror } from '@/editor/codemirror.js'
-import { editor, editorEpoch, page } from '@/user/session.js'
-import { currentDoc, leaveEditor } from '@/user/document.js'
-import { saveMarkdown } from '@/user/api.js'
+import { editor } from '@/editor/editor.js'
+import { EditorManager } from '@/user/api'
 
-const host = ref(null)
-
-function immersive(view) {
-  editor.focused = view.hasFocus
+function onFocus() {
+  EditorManager.focus.value
 }
 
-function autosave(update) {
-  if (update.docChanged) currentDoc()?.setContent(update.state.doc.toString())
+function onUpdate() {
+  // auto save the file
 }
 
-function load() {
-  editor.view?.destroy()
-  const view = new EditorView({
-    parent: host.value,
+onMounted(() => {
+  const config = {
+    parent: document.querySelector('.editor'),
     state: EditorState.create({
-      doc: currentDoc()?.text() ?? '',
-      extensions: [
-        ...codemirror(immersive, autosave),
-        keymap.of([
-          {
-            key: 'Mod-s',
-            run: () => {
-              saveMarkdown()
-              return true
-            },
-          },
-        ]),
-      ],
+      doc: '',
+      extensions: editor(onFocus, onUpdate),
     }),
-  })
-  editor.init(view)
-}
-
-watch([page, host, editorEpoch], ([p, el]) => {
-  if (!el) return
-  if (p === 'Editor') load()
-  else {
-    currentDoc()?.setContent(editor.text())
-    leaveEditor()
-    editor.view?.destroy()
-    editor.init(null)
   }
+  EditorManager.init(new EditorView(config))
 })
 </script>

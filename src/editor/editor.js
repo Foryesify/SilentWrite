@@ -3,14 +3,13 @@ import { defaultKeymap, history, historyKeymap, indentWithTab } from '@codemirro
 import { markdown } from '@codemirror/lang-markdown'
 import { yamlFrontmatter } from '@codemirror/lang-yaml'
 import { cm6ThemeSilent } from './cm6ThemeSilent'
-import { i18n } from '@/user/i18n.js'
 
-export function codemirror(onFocus, onUpdate) {
+export function editor(onFocus, onUpdate) {
   return [
     ...cm6ThemeSilent,
     yamlFrontmatter({ content: markdown() }),
     history(),
-    placeholder(i18n.value['editor-placeholder']),
+    placeholder('Type here...'),
     EditorView.lineWrapping,
     keymap.of([indentWithTab, ...defaultKeymap, ...historyKeymap]),
     EditorView.updateListener.of((update) => {
