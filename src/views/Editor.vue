@@ -18,22 +18,21 @@ import { EditorView, keymap } from '@codemirror/view'
 import { editor } from '@/editor/editor.js'
 import { EditorManager } from '@/user/api'
 
-function onFocus() {
-  EditorManager.focus.value
-}
-
-function onUpdate() {
-  // auto save the file
+/**
+ * 当编辑器
+ */
+function onUpdate(u) {
+  if (u.focusChanged) EditorManager.setFocus()
+  if (u.docChanged) EditorManager.saveDoc()
 }
 
 onMounted(() => {
-  const config = {
-    parent: document.querySelector('.editor'),
-    state: EditorState.create({
-      doc: '',
-      extensions: editor(onFocus, onUpdate),
+  EditorManager.init(
+    new EditorView({
+      parent: document.querySelector('.editor'),
+      state: EditorState.create({ extensions: editor(onUpdate) }),
     }),
-  }
-  EditorManager.init(new EditorView(config))
+    'This'
+  )
 })
 </script>

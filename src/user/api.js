@@ -89,8 +89,21 @@ export const EditorManager = {
    * 初始化全局编辑器对象
    * @param {EditorView} editorObject 一个CodeMirror6的EditorView类
    */
-  init(editorObject) {
+  init(editorObject, doc = '') {
     this.editorObject = editorObject
+    this.fillText(doc)
+  },
+  /**
+   * 设置当前是否有焦点
+   */
+  setFocus() {
+    this.focus.value = this.editorObject.hasFocus
+  },
+  /**
+   * 保存文件
+   */
+  saveDoc() {
+    // TODO: 保存文件
   },
   /**
    * 获取编辑器文字内容

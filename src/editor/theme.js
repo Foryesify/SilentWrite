@@ -4,28 +4,12 @@ import { EditorView } from "@codemirror/view"
 export const NARROW_QUERY = '(max-width: 750px)'
 
 const cmVars = {
-  '--cm-font': `system-ui,
-                -apple-system,
-                "Segoe UI",
-                Roboto,
-                "Helvetica Neue",
-                Arial,
-                "Noto Sans",
-                "PingFang SC",
-                "Hiragino Sans GB",
-                "Microsoft YaHei",
-                sans-serif`,
-  '--cm-mono': `ui-monospace,
-                SFMono-Regular,
-                "SF Mono",
-                Menlo,
-                Consolas,
-                "Cascadia Mono",
-                "Roboto Mono",
-                "DejaVu Sans Mono",
-                "Liberation Mono",
-                "Courier New",
-                monospace`,
+  '--cm-font': `system-ui, -apple-system, "Segoe UI", Roboto,
+                "Helvetica Neue", Arial, "Noto Sans", "PingFang SC",
+                "Hiragino Sans GB", "Microsoft YaHei", sans-serif`,
+  '--cm-mono': `ui-monospace, SFMono-Regular, "SF Mono", Menlo,
+                Consolas, "Cascadia Mono", "Roboto Mono", "DejaVu Sans Mono",
+                "Liberation Mono", "Courier New", monospace`,
   '--cm-fg': '#222',
   '--cm-heading': '#141414',
   '--cm-muted': '#aaa',
@@ -110,8 +94,7 @@ export const theme = () => EditorView.theme({
     backgroundColor: 'var(--cm-caret)',
     transform: 'translateX(0.5px)',
     borderRadius: '2px',
-    // transition: isTouch ? 'none' : 'left 0.08s ease-out, top 0.08s ease-out',
-    transition: 'all 120ms ease-out',
+    transition: 'all 120ms ease',
   },
   '&.cm-focused > .cm-scroller > .cm-cursorLayer': {
     animation: 'cm-blink 1s ease-in-out infinite',
@@ -124,22 +107,11 @@ export const theme = () => EditorView.theme({
   // Selection
   '.cm-selectionBackground': {
     backgroundColor: 'var(--cm-selection) !important',
-    transition: `all var(--duration-fast) var(--ease-accelerate)`,
+    transition: `all 120ms ease`,
   },
-  // First-line coordsAtPos is ~1px short of the line box; inline height wins, so grow the box.
   '.cm-selectionLayer .cm-selectionBackground:first-child': {
     boxSizing: 'content-box',
     paddingBottom: '1px',
-  },
-  // iOS Safari still paints native contenteditable selection
-  // on top of drawSelection; Chromium honors transparent ::selection.
-  '.cm-line::selection, .cm-line ::selection': {
-    backgroundColor: 'transparent !important',
-    color: 'inherit !important',
-  },
-  '.cm-content::selection, .cm-content ::selection': {
-    backgroundColor: 'transparent !important',
-    color: 'inherit !important',
   },
 
   // Heading hang: hashes stay in flow (selectable); text-indent hangs them.

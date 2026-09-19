@@ -4,7 +4,7 @@ import { markdown } from '@codemirror/lang-markdown'
 import { yamlFrontmatter } from '@codemirror/lang-yaml'
 import { cm6ThemeSilent } from './cm6ThemeSilent'
 
-export function editor(onFocus, onUpdate) {
+export function editor(onUpdate) {
   return [
     ...cm6ThemeSilent,
     yamlFrontmatter({ content: markdown() }),
@@ -12,9 +12,6 @@ export function editor(onFocus, onUpdate) {
     placeholder('Type here...'),
     EditorView.lineWrapping,
     keymap.of([indentWithTab, ...defaultKeymap, ...historyKeymap]),
-    EditorView.updateListener.of((update) => {
-      if (update.focusChanged) onFocus?.(update.view)
-      onUpdate?.(update)
-    }),
+    EditorView.updateListener.of(onUpdate),
   ]
 }
