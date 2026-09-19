@@ -216,3 +216,8 @@ export const LibraryManager = {
   library: new Folder('/')
   // TODO:
 }
+
+/** 会话接口，记录此次临时全局变量 */
+export const Session = {
+  
+}

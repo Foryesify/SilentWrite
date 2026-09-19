@@ -20,6 +20,8 @@ html {
 
 :root {
   --danger: #c42b1c;
+  --shadow-light: 0 5px 8px 1px #7773;
+  --shadow-heavy: 0px 0px 18px 3px #7778;
   --fast: 100ms;
   --normal: 200ms;
   --slow: 300ms;
@@ -37,6 +39,6 @@ html {
     --bg: #202020;
     --text: #fbfbfb;
     --hover: #7775;
-    --border: #7777;
+    --border: #7775;
   }
 }

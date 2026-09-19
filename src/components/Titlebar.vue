@@ -31,7 +31,7 @@
 
   &.showBorder {
     border-bottom: 1px solid var(--border);
-    box-shadow: 0 5px 8px 1px var(--hover);
+    box-shadow: var(--shadow-light);
   }
 }
 
