@@ -30,15 +30,80 @@ html {
 :root {
   --bg: #f4f4f4;
   --text: #191a1a;
-  --hover: #7773;
-  --border: #7775;
+  --surface: #ffffff;
+  --surface-secondary: #eaeaea;
+  --hover: #e6e6e6;
+  --border: #d4d4d4;
+  --accent: #52675f;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --bg: #202020;
     --text: #fbfbfb;
-    --hover: #7775;
-    --border: #7775;
+    --surface: #292929;
+    --surface-secondary: #252525;
+    --hover: #373737;
+    --border: #414141;
+    --accent: #a9c2b7;
+  }
+}
+
+:root.pwa-dark {
+  color-scheme: dark;
+  --bg: #202020;
+  --text: #fbfbfb;
+  --surface: #292929;
+  --surface-secondary: #252525;
+  --hover: #373737;
+  --border: #414141;
+  --accent: #a9c2b7;
+}
+
+.pwa-dark .cm-editor .cm-scroller {
+  --cm-fg: #e8e8e8;
+  --cm-heading: #f2f2f2;
+  --cm-muted: rgba(232, 232, 232, 0.52);
+  --cm-selection: #555;
+  --cm-caret: #f2f2f2;
+  --cm-placeholder: rgba(232, 232, 232, 0.34);
+}
+
+button {
+  margin: 0;
+  padding: 5px 8px;
+  border: 2px solid var(--text);
+  border-radius: 6px;
+  background: var(--text);
+  color: var(--bg);
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  outline: none;
+  white-space: nowrap;
+  transition: all var(--fast) ease-in;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+button.secondary {
+  background: var(--bg);
+  color: var(--text);
+  border: 2px solid var(--text);
+
+  &:hover {
+    opacity: 1;
+    background: var(--hover);
+  }
+}
+
+button.lowpriority {
+  background: var(--bg);
+
+  &:hover {
+    border: 2px solid var(--text);
   }
 }

@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <link rel="icon" href="/favicon.png">
-  <link rel="stylesheet" href="src/style.css" />
+  <link rel="manifest" href="/manifest.webmanifest">
   <link rel="apple-touch-icon" href="/favicon.png">
   <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
   <meta name="theme-color" content="#f3f3f3" media="(prefers-color-scheme: light)">
@@ -12,18 +12,61 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="SilentWrite">
-  <title>SilentWrite</title>
   <script>
     (function () {
-      var dark = matchMedia('(prefers-color-scheme: dark)').matches
-      document.documentElement.style.background = dark ? '#202020' : '#f3f3f3'
-      document.documentElement.style.colorScheme = dark ? 'dark' : 'light'
+      var isInstalledPwa = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true
+      window.__SILENTWRITE_PWA__ = isInstalledPwa
+      if (!isInstalledPwa) return
+
+      document.documentElement.classList.add('pwa-dark')
+      document.querySelector('meta[name="theme-color"][media*="light"]').media = 'not all'
+      document.querySelector('meta[name="theme-color"][media*="dark"]').media = 'all'
     })()
   </script>
+  <link rel="stylesheet" href="src/style.css" />
+  <title>SilentWrite</title>
+  <style>
+    #startup-cover {
+      position: fixed;
+      inset: 0;
+      z-index: 2147483647;
+      background: #202020;
+      opacity: 1;
+      visibility: visible;
+      transition: opacity 450ms ease, visibility 450ms ease;
+    }
+
+    #startup-cover.is-hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      #startup-cover {
+        transition-duration: 1ms;
+      }
+    }
+  </style>
   <script type="module" src="/src/main.js"></script>
 </head>
 
 <body>
+  <script>
+    (function () {
+      if (!window.__SILENTWRITE_PWA__) return
+
+      var cover = document.createElement('div')
+      cover.id = 'startup-cover'
+      document.body.appendChild(cover)
+      window.dismissStartupCover = function () {
+        cover.classList.add('is-hidden')
+        window.setTimeout(function () {
+          cover.remove()
+        }, 500)
+      }
+    })()
+  </script>
   <div id="root"></div>
 </body>
 

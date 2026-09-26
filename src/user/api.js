@@ -103,7 +103,23 @@ export const EditorManager = {
    * 保存文件
    */
   saveDoc() {
-    // TODO: 保存文件
+    const fileHandle = Session.fileHandle
+    if (!fileHandle || Session.isLoading) return Promise.resolve()
+
+    const content = this.readText()
+    Session.saveQueue = Session.saveQueue.then(async () => {
+      const writable = await fileHandle.createWritable()
+      try {
+        await writable.write(content)
+        await writable.close()
+      } catch (error) {
+        await writable.abort()
+        throw error
+      }
+    }).catch((error) => {
+      console.error('Failed to save the opened file:', error)
+    })
+    return Session.saveQueue
   },
   /**
    * 获取编辑器文字内容
@@ -219,5 +235,7 @@ export const LibraryManager = {
 
 /** 会话接口，记录此次临时全局变量 */
 export const Session = {
-  
+  fileHandle: null,
+  isLoading: false,
+  saveQueue: Promise.resolve(),
 }
