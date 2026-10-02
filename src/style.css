@@ -22,6 +22,11 @@ html {
   -moz-osx-font-smoothing: grayscale;
 }
 
+html.acrylic,
+html.acrylic .titlebar {
+  background-color: transparent;
+}
+
 :root {
   --danger: #c42b1c;
   --shadow-light: 0 5px 8px 1px #7773;

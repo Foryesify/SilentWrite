@@ -10,11 +10,9 @@
 </style>
 
 <script setup>
-import { onMounted, ref } from 'vue'
-import { EditorState } from '@codemirror/state'
-import { EditorView, keymap } from '@codemirror/view'
+import { onMounted } from 'vue'
 import { editor } from '@/editor/editor.js'
-import { EditorManager } from '@/user/api'
+import { EditorManager } from './api.js'
 
 function onUpdate(u) {
   if (u.focusChanged) EditorManager.setFocus()
