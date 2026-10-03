@@ -28,10 +28,12 @@
       </div>
     </div>
   </div>
+  <div class="press-area" v-else></div>
 </template>
 
 <style scoped>
-.titlebar {
+.titlebar,
+.press-area {
   box-sizing: content-box;
   position: fixed;
   z-index: 1000;
@@ -43,7 +45,7 @@
   align-items: center;
   background-color: var(--bg);
   border-bottom: 1px solid transparent;
-  transition: all ease-in var(--fast);
+  transition: all ease-in var(--normal);
   color: var(--text);
 
   .draggable {
@@ -64,6 +66,10 @@
   &:hover {
     opacity: 1 !important;
   }
+}
+
+.press-area:active {
+  background-color: var(--hover);
 }
 
 .left {
