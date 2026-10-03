@@ -1,4 +1,5 @@
 import { ref } from 'vue'
+import { invoke, isTauri } from '@tauri-apps/api/core'
 import { getCurrentWindow, Effect } from '@tauri-apps/api/window'
 
 /** 应用窗口接口，负责应用端的Tauri窗口操作 */
@@ -62,6 +63,16 @@ export const EditorManager = {
    * 保存文件
    */
   saveDoc() {
+    const path = Session.filePath
+    if (path && isTauri()) {
+      if (Session.isLoading) return Promise.resolve()
+      const content = this.readText()
+      Session.saveQueue = Session.saveQueue
+        .then(() => invoke('write_markdown_file', { path, content }))
+        .catch((error) => console.error('Failed to save the opened file:', error))
+      return Session.saveQueue
+    }
+
     const fileHandle = Session.fileHandle
     if (!fileHandle || Session.isLoading) return Promise.resolve()
 
@@ -100,6 +111,7 @@ export const EditorManager = {
 /** 会话接口，记录此次临时全局变量 */
 export const Session = {
   fileHandle: null,
+  filePath: null,
   isLoading: false,
   saveQueue: Promise.resolve(),
 }
