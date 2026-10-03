@@ -5,7 +5,7 @@
 <style scoped>
 .editor {
   display: flex;
-  padding: 55px 8px;
+  padding: 44px 8px;
 }
 </style>
 

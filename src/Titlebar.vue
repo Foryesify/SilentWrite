@@ -1,10 +1,16 @@
 <template>
-  <div class="titlebar" :class="{ showBorder, hide }">
-    <div class="left"></div>
+  <div class="titlebar" :class="{ showBorder, hide }" v-if="AppWindow.available()">
+    <div class="left">
+      <div class="actions">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
     <div class="center">
       <div class="draggable" data-tauri-drag-region></div>
     </div>
-    <div class="window-controls right" v-if="AppWindow.available()">
+    <div class="window-controls right">
       <div @click="AppWindow.minimize">
         <svg viewBox="0 0 10 10">
           <path fill="none" stroke="currentColor" d="M1 5h8" />
@@ -38,6 +44,7 @@
   background-color: var(--bg);
   border-bottom: 1px solid transparent;
   transition: all ease-in var(--fast);
+  color: var(--text);
 
   .draggable {
     -webkit-app-region: drag;
@@ -60,7 +67,29 @@
 }
 
 .left {
-  display: block;
+  height: 100%;
+  
+  .actions {
+    width: 48px;
+    height: 100%;
+    display: flex;
+    gap: 3px;
+    justify-content: center;
+    align-items: center;
+    transition: all var(--fast) ease-in;
+
+    span {
+      margin-top: 2px;
+      width: 4px;
+      aspect-ratio: 1;
+      border-radius: 100%;
+      background-color: var(--text-secondary);
+    }
+
+    &:hover {
+      background-color: var(--hover);
+    }
+  }
 }
 
 .center {
@@ -75,12 +104,10 @@
   div {
     aspect-ratio: 1.5;
     height: 100%;
-    color: var(--text);
+    color: var(--text-secondary);
     display: grid;
     place-items: center;
-    transition:
-      background-color var(--fast) ease-in,
-      color var(--fast) ease-in;
+    transition: all var(--fast) ease-in;
   }
 
   div:hover {

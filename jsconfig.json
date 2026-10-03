@@ -15,7 +15,7 @@
     "isolatedModules": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    "types": ["vite/client", "vite-plugin-pwa/client"]
+    "types": ["vite/client"]
   },
   "vueCompilerOptions": {
     "target": 3.5

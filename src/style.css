@@ -39,6 +39,7 @@ html.acrylic .titlebar {
 :root {
   --bg: #f4f4f4;
   --text: #191a1a;
+  --text-secondary: #4a4a4a;
   --surface: #ffffff;
   --surface-secondary: #eaeaea;
   --hover: #e6e6e6;
@@ -50,6 +51,7 @@ html.acrylic .titlebar {
   :root {
     --bg: #202020;
     --text: #fbfbfb;
+  --text-secondary: #ccc;
     --surface: #292929;
     --surface-secondary: #252525;
     --hover: #373737;
