@@ -15,8 +15,9 @@
         "title": "silentwrite",
         "width": 800,
         "height": 600,
+        "minWidth": 270,
+        "minHeight": 200,
         "visible": false,
-        "transparent": true,
         "decorations": false
       }
     ],
