@@ -18,11 +18,13 @@ import { EditorManager, Session } from './api.js'
 
 let fileOpenQueue = Promise.resolve()
 
+/** 处理编辑器更新时的事件 */
 function onUpdate(u) {
   if (u.focusChanged) EditorManager.setFocus()
   if (u.docChanged) EditorManager.saveDoc()
 }
 
+/** 处理外部调用打开文件 */
 function openPendingFiles() {
   fileOpenQueue = fileOpenQueue.then(async () => {
     const paths = await invoke('take_pending_files')
@@ -46,6 +48,7 @@ function openPendingFiles() {
 onMounted(async () => {
   EditorManager.init(editor('.editor', onUpdate), '')
 
+  // open file from explorer
   if (isTauri()) {
     await listen('markdown-open-request', openPendingFiles)
     await openPendingFiles()

@@ -1,7 +1,7 @@
 <template>
   <div class="titlebar" :class="{ showBorder, hide }" v-if="AppWindow.available()">
     <div class="left">
-      <div class="actions">
+      <div class="actions" v-if="false">
         <span></span>
         <span></span>
         <span></span>
