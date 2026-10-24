@@ -1,24 +1,21 @@
 <template>
   <div class="titlebar" :class="{ showBorder, hide }" v-if="AppWindow.available()">
-    <div class="left">
-      <div class="actions" v-if="false">
-        <span></span>
-        <span></span>
-        <span></span>
+    <div class="center-draggable" data-tauri-drag-region></div>
+    <div class="window-controls">
+      <div>
+        <svg class="big" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <rect x="4" y="2.5" width="16" height="19" rx="2.5" fill="none" />
+          <path d="M8 8h8M8 12h8M8 16h5" />
+        </svg>
       </div>
-    </div>
-    <div class="center">
-      <div class="draggable" data-tauri-drag-region></div>
-    </div>
-    <div class="window-controls right">
       <div @click="AppWindow.minimize">
         <svg viewBox="0 0 10 10">
           <path fill="none" stroke="currentColor" d="M1 5h8" />
         </svg>
       </div>
       <div @click="AppWindow.toggleMaximize">
-        <svg viewBox="0 0 10 10">
-          <path d="M1.5 1.5h7v7h-7z" fill="none" stroke="currentColor" />
+        <svg viewBox="0 0 10 10" fill="none">
+          <rect x="1.5" y="1.5" width="7" height="7" rx="1" stroke="currentColor" />
         </svg>
       </div>
       <div class="danger" @click="AppWindow.close">
@@ -28,31 +25,19 @@
       </div>
     </div>
   </div>
-  <div class="press-area" v-else></div>
 </template>
 
 <style scoped>
-.titlebar,
-.press-area {
-  box-sizing: content-box;
+.titlebar {
+  display: flex;
   position: fixed;
   z-index: 1000;
   user-select: none;
   width: 100%;
   height: 32px;
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: center;
   background-color: var(--bg);
-  border-bottom: 1px solid transparent;
-  transition: all ease-in var(--normal);
   color: var(--text);
-
-  .draggable {
-    -webkit-app-region: drag;
-    flex: 1;
-    height: 100%;
-  }
+  transition: opacity var(--fast) ease-in;
 
   &.showBorder {
     border-bottom: 1px solid var(--border);
@@ -68,65 +53,39 @@
   }
 }
 
-.press-area:active {
-  background-color: var(--hover);
-}
-
-.left {
-  height: 100%;
-  
-  .actions {
-    width: 48px;
-    height: 100%;
-    display: flex;
-    gap: 3px;
-    justify-content: center;
-    align-items: center;
-    transition: all var(--fast) ease-in;
-
-    span {
-      margin-top: 2px;
-      width: 4px;
-      aspect-ratio: 1;
-      border-radius: 100%;
-      background-color: var(--text-secondary);
-    }
-
-    &:hover {
-      background-color: var(--hover);
-    }
-  }
-}
-
-.center {
-  display: flex;
+.center-draggable {
+  flex: 1;
   height: 100%;
 }
 
 .window-controls {
+  flex: 0;
   display: flex;
-  height: 100%;
 
   div {
-    aspect-ratio: 1.5;
-    height: 100%;
-    color: var(--text-secondary);
+    width: 48px;
+    height: 32px;
+    color: var(--text);
     display: grid;
     place-items: center;
     transition: all var(--fast) ease-in;
-  }
 
-  div:hover {
-    background-color: var(--hover);
-  }
+    &:hover {
+      background-color: var(--hover);
+    }
 
-  div.danger:hover {
-    background-color: var(--danger);
-    color: white;
+    &:last-child:hover {
+      background-color: var(--danger);
+      color: white;
+    }
   }
 
   svg {
-    height: 40%;
+    height: 14px;
+
+    &.big {
+      height: 16px;
+    }
   }
 }
 </style>
