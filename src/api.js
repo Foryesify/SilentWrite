@@ -12,7 +12,15 @@ export const AppWindow = {
   /** 最小化窗口 */
   minimize() { getCurrentWindow().minimize() },
   /** 最大化或还原窗口 */
-  toggleMaximize() { getCurrentWindow().toggleMaximize() },
+  async toggleMaximize() { 
+    const win = getCurrentWindow()
+    const fullscreen = await win.isFullscreen()
+    if (fullscreen) {
+      win.setFullscreen(false)
+    } else {
+      win.toggleMaximize()
+    }
+  },
   /** 关闭窗口 */
   close() { getCurrentWindow().close() },
   /** 切换全屏 */
